@@ -72,7 +72,7 @@ export default Vue.extend({
 
     submitOrder (): void {
       this.isSubmit = true
-
+      // hide alert box
       setTimeout(() => {
         this.isSubmit = false
       }, 3000)
