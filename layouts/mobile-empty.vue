@@ -1,6 +1,6 @@
 <template>
   <div class="app-wrapper">
-    <nuxt/>
+    <nuxt />
   </div>
 </template>
 
@@ -13,5 +13,16 @@ export default Vue.extend({})
 <style>
 .app-wrapper {
   margin: 20px;
+}
+
+.ant-btn:hover {
+  color: black;
+  border-color: black;
+}
+
+.ant-btn.ant-btn-primary {
+  background: black;
+  color: white;
+  border-color: black;
 }
 </style>

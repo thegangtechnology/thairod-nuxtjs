@@ -3,7 +3,6 @@
  * FRONTEND Interface
  */
 export interface Address {
-  id: number
   firstName: string
   lastName: string
   telephone: string

@@ -1,13 +1,13 @@
 <template>
   <div>
     <h4>Package Name</h4>
-    <img :src="require('~/assets/images/mockup/default-img.svg')" width="160"/>
+    <img :src="require('~/assets/images/mockup/default-img.svg')" width="160">
 
-    <a-row type="flex" justify="space-between" class="item-wrapper">
+    <a-row class="item-wrapper" justify="space-between" type="flex">
       <a-col v-for="(item, itemIndex) in items" :key="itemIndex" span="11">
         <a-row>
           <a-col span="11">
-            <img :src="require('~/assets/images/mockup/default-img.svg')" width="40"/>
+            <img :src="require('~/assets/images/mockup/default-img.svg')" width="40">
           </a-col>
           <a-col span="11">
             <h5>{{ item.name }}</h5>
@@ -20,12 +20,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { PropType } from 'vue'
+import { OrderLine } from '~/types/order.type'
 
 export default Vue.extend({
   props: {
     items: {
-      type: Array,
+      type: Array as PropType<OrderLine[]>,
       default: () => []
     }
   }

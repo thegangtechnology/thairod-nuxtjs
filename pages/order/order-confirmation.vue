@@ -3,27 +3,27 @@
     <h2 v-if="!isSubmit">
       กรุณาตรวจสอบข้อมูล
     </h2>
-    <a-alert v-else message="Successfully Submit" type="success" show-icon/>
+    <a-alert v-else class="alert-box" message="Successfully Submit" type="success" />
 
     <h3>Order Detail:</h3>
-    <ItemOrder :items="items"/>
+    <ItemOrder :items="order.orderLines" />
 
-    <a-divider/>
+    <a-divider />
 
     <h3>Address Detail:</h3>
-    <AddressOrder/>
+    <AddressOrder :detail="order.address" />
 
-    <a-row type="flex" justify="space-around">
+    <a-row class="button-wrapper" justify="space-around" type="flex">
       <a-col span="11">
         <a-button block @click="backToAddress">
           Back
         </a-button>
       </a-col>
 
-      <a-col span="2"/>
+      <a-col span="2" />
 
       <a-col span="11">
-        <a-button type="primary" block @click="submitOrder">
+        <a-button block type="primary" @click="submitOrder">
           Submit
         </a-button>
       </a-col>
@@ -35,6 +35,8 @@
 import Vue from 'vue'
 import ItemOrder from '~/components/order/ItemOrder.vue'
 import AddressOrder from '~/components/order/AddressOrder.vue'
+import OrderModule from '~/store/order.module'
+import { Order } from '~/types/order.type'
 
 export default Vue.extend({
   components: {
@@ -44,26 +46,16 @@ export default Vue.extend({
   layout: 'mobile-empty',
   data () {
     return {
-      items: [
-        {
-          name: 'Item 1',
-          total: 2
-        },
-        {
-          name: 'Item 2',
-          total: 5
-        },
-        {
-          name: 'Item 3',
-          total: 1
-        },
-        {
-          name: 'Item 4',
-          total: 10
-        }
-      ],
       isSubmit: false
     }
+  },
+  computed: {
+    order (): Order {
+      return OrderModule.order
+    }
+  },
+  async mounted () {
+    await OrderModule.getOrder({ id: 1 })
   },
   methods: {
     backToAddress (): void {
@@ -80,3 +72,24 @@ export default Vue.extend({
   }
 })
 </script>
+
+<style scoped>
+.button-wrapper {
+  margin-top: 10px;
+}
+
+.ant-divider {
+  height: 4px;
+}
+
+.ant-alert.ant-alert-success {
+  background: #096F5A;
+  margin-bottom: 8px;
+}
+</style>
+
+<style>
+.alert-box .ant-alert-message {
+  color: white;
+}
+</style>
