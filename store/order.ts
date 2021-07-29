@@ -2,6 +2,8 @@ import { VuexModule, Module, Action, Mutation } from "vuex-module-decorators";
 import moment from "moment";
 import { IOrder } from "~/types/order.type";
 
+type Status = "wait" | "print" | "out" | "received";
+
 const randomCID = (): string => {
   return String(
     Math.floor(Math.random() * (9999999999999 - 1111111111111 + 1)) +
@@ -58,10 +60,26 @@ export default class Order extends VuexModule {
     });
   }
 
+  @Mutation
+  SET_STATUS(payload: { dataIndex: string; selectedRows: string[] }) {
+    this.orderList.forEach(item => {
+      item[payload.dataIndex as keyof IOrder] = payload.selectedRows.includes(
+        item.orderId
+      );
+    });
+  }
+
   @Action({ rawError: true })
   public initialiseOrder() {
+    const currentTime = moment().format("YYYY-MM-DD");
     const randomItem: string[] = ["Green Package", "Yellow Package"];
-    const randomBatch: string[] = ["Unassigned", "Batch 1", "Batch 2"];
+    const randomStatus: Status[] = ["wait", "print", "out", "received"];
+    const randomBatch: string[] = [
+      "ยังไม่ได้มอบหมาย",
+      `${currentTime}-01`,
+      `${currentTime}-02`
+    ];
+    const randomBoolean: boolean[] = [true, false];
     const temp: IOrder[] = [];
     for (let i = 0; i < 100; i++) {
       temp.push({
@@ -73,7 +91,7 @@ export default class Order extends VuexModule {
         orderedDate: moment(randomDate()).format(),
         exportBatch:
           randomBatch[Math.floor(Math.random() * randomBatch.length)],
-        trackingNo: "N/A",
+        trackingNo: `KT${i}${moment(randomDate()).format("x")}`,
         warehouse: "EDP",
         orderedBy: "Dr. Some Body",
         updatedBy: "Update User",
@@ -83,7 +101,12 @@ export default class Order extends VuexModule {
         district: "บางรัก",
         subDistrict: "สี่พระยา",
         zipCode: "10130",
-        remark: "Blue House"
+        remark: "Blue House",
+        deliveryStatus:
+          randomBoolean[Math.floor(Math.random() * randomBoolean.length)],
+        printStatus:
+          randomBoolean[Math.floor(Math.random() * randomBoolean.length)],
+        status: randomStatus[Math.floor(Math.random() * randomStatus.length)]
       });
     }
     if (this.orderList.length < 1) this.SET_ORDER_LIST(temp);
@@ -107,5 +130,18 @@ export default class Order extends VuexModule {
     selectedRows: string[];
   }) {
     this.SET_BATCH_NUM(payload);
+  }
+
+  @Action({ rawError: true })
+  public setPrintStatus(selectedRows: string[]) {
+    this.SET_STATUS({ dataIndex: "printStatus", selectedRows });
+  }
+
+  @Action({ rawError: true })
+  public updateDeliveryStatus(selectedRows: string[]) {
+    this.SET_STATUS({
+      dataIndex: "deliveryStatus",
+      selectedRows
+    });
   }
 }

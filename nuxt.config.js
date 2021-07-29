@@ -18,13 +18,20 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ["@/assets/styles/antd.less"],
+  css: [
+    "@/assets/styles/antd.less",
+    "@/assets/styles/order-overview/main.less",
+    "@/assets/styles/print/main.less",
+    "@/assets/styles/delivery/main.less"
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     "@/plugins/antd-ui",
     "~plugins/order-components.ts",
-    "~plugins/assign-components.ts"
+    "~plugins/assign-components.ts",
+    "~plugins/print-components.ts",
+    "~plugins/delivery-components.ts"
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

@@ -171,7 +171,7 @@ export default class AssignOverview extends Vue {
         .filter(column => column.dataIndex)
         .map(column => column.dataIndex);
       const searchedArray = columsDataIndex.map(col =>
-        row[col as keyof IOrder].includes(this.filterForm.searchRecord)
+        String(row[col as keyof IOrder]).includes(this.filterForm.searchRecord)
       );
       return searchedArray.some(Boolean);
     }
