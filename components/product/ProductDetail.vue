@@ -24,8 +24,8 @@
               v-for="(item, i) in data.itemSets"
               :key="i"
               :xs="24"
-              :sm="12"
-              :md="8"
+              :sm="24"
+              :md="12"
               :lg="8"
               :xl="8"
               class="product-card__item-container"
@@ -160,7 +160,7 @@ export default Vue.extend({
 })
 </script>
 
-<style>
+<style scoped lang="less">
 .product-detail{
   margin-bottom: 60px;
 }
