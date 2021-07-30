@@ -31,7 +31,8 @@ export default {
     "~plugins/order-components.ts",
     "~plugins/assign-components.ts",
     "~plugins/print-components.ts",
-    "~plugins/delivery-components.ts"
+    "~plugins/delivery-components.ts",
+    "@/plugins/accessor.ts"
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -50,7 +51,11 @@ export default {
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL:
+      process.env.SERVER_URL ||
+      'https://backend.thairod.thegang.tech/',
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
