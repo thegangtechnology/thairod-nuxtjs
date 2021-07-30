@@ -50,10 +50,6 @@ export default {
     '@nuxtjs/axios'
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    baseURL: process.env.SERVER_URL || 'https://backend.thairod.thegang.tech/'
-  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
@@ -65,5 +61,11 @@ export default {
         additionalData: '@import "@/assets/styles/antd.less";'
       }
     }
+  },
+  publicRuntimeConfig: {
+    // Axios module configuration: https://go.nuxtjs.dev/config-axios
+    axios: {
+      baseURL: process.env.SERVER_URL || 'https://backend.thairod.thegang.tech/'
+    },
   }
 }
