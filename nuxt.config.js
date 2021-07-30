@@ -66,4 +66,9 @@ export default {
       },
     },
   },
+
+  env: {
+    username: process.env.USER,
+    password: process.env.PASSWORD,
+  },
 }

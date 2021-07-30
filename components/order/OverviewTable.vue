@@ -181,7 +181,7 @@ interface IFilter extends IMain {
 }
 
 interface IOrder {
-  orderId: string
+  orderId: number
   cid: string
   patientName: string
   orderedItem: string
@@ -240,8 +240,8 @@ export default class OverviewTable extends Vue {
   ]
 
   data: IOrder[] = []
-  selectedRowKeys: string[] = []
-  originalSelectedRowKeys: string[] = []
+  selectedRowKeys: number[] = []
+  originalSelectedRowKeys: number[] = []
   visibleSubmitDialog: boolean = false
 
   filterForm: IFilter = {
@@ -424,7 +424,7 @@ export default class OverviewTable extends Vue {
     }
   }
 
-  saveToStore(ids: string[], status: Status) {
+  saveToStore(ids: number[], status: Status) {
     OrderModule.updateStatus({ status, selectedRows: ids })
   }
 
@@ -435,7 +435,7 @@ export default class OverviewTable extends Vue {
     this.visibleSubmitDialog = false
   }
 
-  onSelectChange(selectedRowKeys: string[]) {
+  onSelectChange(selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
   }
 

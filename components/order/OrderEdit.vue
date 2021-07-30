@@ -202,92 +202,92 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Emit } from "vue-property-decorator";
-import { OrderModule } from "~/store";
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
+import { OrderModule } from '~/store'
 
-import { IOrder } from "~/types/order.type";
+import { IOrder, IOrderDetail } from '~/types/order.type'
 
 export interface IAddress {
-  district: string;
-  districtEng: string;
-  amphoe: string;
-  amphoeEng: string;
-  province: string;
-  provinceEng: string;
-  zipcode: number;
+  district: string
+  districtEng: string
+  amphoe: string
+  amphoeEng: string
+  province: string
+  provinceEng: string
+  zipcode: number
 }
 
 @Component
 export default class OrderEdit extends Vue {
-  @Prop({ required: true }) detail!: IOrder;
+  @Prop({ required: true }) detail!: IOrderDetail
 
-  form: IOrder = JSON.parse(JSON.stringify(this.detail));
+  form: IOrderDetail = JSON.parse(JSON.stringify(this.detail))
 
-  location: IAddress[] = [];
+  location: IAddress[] = []
 
-  visibleSaveModal: boolean = false;
+  visibleSaveModal: boolean = false
 
-  @Emit("onEdit")
+  @Emit('onEdit')
   onEditChange() {
-    return false;
+    return false
   }
 
   get getProvince() {
-    return [...new Set(this.location.map(loc => loc.province))];
+    return [...new Set(this.location.map((loc) => loc.province))]
   }
 
   get getDistrict() {
     return [
       ...new Set(
         this.location
-          .filter(loc => loc.province === this.form.province)
-          .map(loc => loc.amphoe)
-      )
-    ];
+          // .filter(loc => loc.province === this.form.province)
+          .map((loc) => loc.amphoe)
+      ),
+    ]
   }
 
   get getSubDistrict() {
     return [
       ...new Set(
         this.location
-          .filter(loc => loc.amphoe === this.form.district)
-          .map(loc => loc.district)
-      )
-    ];
+          // .filter(loc => loc.amphoe === this.form.district)
+          .map((loc) => loc.district)
+      ),
+    ]
   }
 
   get canSave() {
-    const filterEmpty = Object.values(this.form).includes("");
-    if (filterEmpty) return false;
+    const filterEmpty = Object.values(this.form).includes('')
+    if (filterEmpty) return false
     return !Object.keys(this.detail)
-      .map(key => {
+      .map((key) => {
         return (
           this.form[key as keyof IOrder] === this.detail[key as keyof IOrder]
-        );
+        )
       })
-      .every(Boolean);
+      .every(Boolean)
   }
 
   mounted() {
     fetch(
-      "https://gist.githubusercontent.com/ChaiyachetU/a72a3af3c6561b97883d7af935188c6b/raw/0e9389fa1fc06b532f9081793b3e36db31a1e1c6/thailand.json"
+      'https://gist.githubusercontent.com/ChaiyachetU/a72a3af3c6561b97883d7af935188c6b/raw/0e9389fa1fc06b532f9081793b3e36db31a1e1c6/thailand.json'
     )
-      .then(response => response.json())
-      .then(data => (this.location = data));
+      .then((response) => response.json())
+      .then((data) => (this.location = data))
   }
 
   handleProvinceChange() {
-    this.form.district = "";
-    this.form.subDistrict = "";
+    this.form.district = ''
+    this.form.subDistrict = ''
   }
 
   handleDistrictChange() {
-    this.form.subDistrict = "";
+    this.form.subDistrict = ''
   }
 
   onSave() {
-    OrderModule.updateOrder(this.form);
-    this.onEditChange();
+    OrderModule.updateOrder(this.form)
+    this.onEditChange()
   }
 }
 </script>

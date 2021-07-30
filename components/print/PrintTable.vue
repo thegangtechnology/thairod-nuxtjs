@@ -5,9 +5,7 @@
         กรุณาเลือกรายการสั่งซื้อที่ทำการพิมพ์ใบจัดส่งสินค้าแล้วเพื่อป้องกันการพิมพ์ซ้ำ
       </div>
       <div class="print-filter__container">
-        <div class="print-filter__header">
-          ตัวกรองข้อมูล
-        </div>
+        <div class="print-filter__header">ตัวกรองข้อมูล</div>
         <a-form layout="vertical">
           <div class="print-filter__form">
             <div class="date">
@@ -33,7 +31,7 @@
           row-key="orderId"
           :row-selection="{
             selectedRowKeys: selectedRowKeys,
-            onChange: onSelectChange
+            onChange: onSelectChange,
           }"
           :columns="columns"
           :data-source="data"
@@ -65,9 +63,7 @@
     </div>
     <div class="print-button__container">
       <a-button class="print-button__cta cancel" @click="goBack">
-        <span>
-          ยกเลิก
-        </span>
+        <span> ยกเลิก </span>
       </a-button>
       <a-button
         class="print-button__cta submit"
@@ -115,189 +111,189 @@
 </template>
 
 <script lang="ts">
-import moment from "moment";
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-import BoxSvg from "~/assets/images/print/box.svg";
-import CorrectSvg from "~/assets/icons/correct.svg";
-import { OrderModule } from "~/store";
-import { IOrder } from "~/types/order.type";
+import moment from 'moment'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import BoxSvg from '~/assets/images/print/box.svg'
+import CorrectSvg from '~/assets/icons/correct.svg'
+import { OrderModule } from '~/store'
+import { Batch, IOrder } from '~/types/order.type'
 
 interface IMain {
-  [key: string]: string;
+  [key: string]: string
 }
 
 interface IFilter extends IMain {
-  orderedDate: string;
-  orderedItem: string;
-  searchRecord: string;
+  orderedDate: string
+  orderedItem: string
+  searchRecord: string
 }
 
 @Component
 export default class PrintTable extends Vue {
-  @Prop({ required: true }) search!: string;
+  @Prop({ required: true }) search!: string
 
-  private BoxImg = BoxSvg;
-  private CorrectIcon = CorrectSvg;
+  private BoxImg = BoxSvg
+  private CorrectIcon = CorrectSvg
 
   columns = [
     {
-      title: "เลขที่รายการสั่งซื้อ",
-      dataIndex: "orderId"
+      title: 'เลขที่รายการสั่งซื้อ',
+      dataIndex: 'orderId',
     },
     {
-      title: "รายการสินค้า",
-      dataIndex: "orderedItem"
+      title: 'รายการสินค้า',
+      dataIndex: 'orderedItem',
     },
     {
-      title: "จำนวน"
+      title: 'จำนวน',
       // dataIndex: "orderedItem"
     },
     {
-      title: "CID",
-      dataIndex: "cid"
+      title: 'CID',
+      dataIndex: 'cid',
     },
     {
-      title: "ผู้รับการรักษา",
-      dataIndex: "patientName"
+      title: 'ผู้รับการรักษา',
+      dataIndex: 'patientName',
     },
     {
-      title: "ล็อตการจัดส่ง",
-      dataIndex: "exportBatch"
+      title: 'ล็อตการจัดส่ง',
+      dataIndex: 'exportBatch',
     },
     {
-      title: "สถานะการจัดส่ง",
-      scopedSlots: { customRender: "deliveryStatus" }
+      title: 'สถานะการจัดส่ง',
+      scopedSlots: { customRender: 'deliveryStatus' },
     },
     {
-      title: "สถานะการพิมพ์ใบจัดส่ง",
-      scopedSlots: { customRender: "printStatus" }
-    }
-  ];
+      title: 'สถานะการพิมพ์ใบจัดส่ง',
+      scopedSlots: { customRender: 'printStatus' },
+    },
+  ]
 
-  data: IOrder[] = [];
-  originalData: IOrder[] = [];
+  data: IOrder[] = []
+  originalData: IOrder[] = []
 
   filterForm: IFilter = {
-    orderedDate: "",
-    exportBatch: "",
-    orderedItem: "",
-    searchRecord: ""
-  };
+    orderedDate: '',
+    exportBatch: '',
+    orderedItem: '',
+    searchRecord: '',
+  }
 
-  selectedRowKeys: string[] = [];
+  selectedRowKeys: number[] = []
 
-  visibleSubmitDialog: boolean = false;
+  visibleSubmitDialog: boolean = false
 
-  @Watch("search", { immediate: true, deep: true })
+  @Watch('search', { immediate: true, deep: true })
   onSearchChange() {
-    this.filterForm.searchRecord = this.search;
+    this.filterForm.searchRecord = this.search
   }
 
-  @Watch("filterForm", { immediate: true, deep: true })
+  @Watch('filterForm', { immediate: true, deep: true })
   onFilterChange() {
-    this.filterData();
+    this.filterData()
   }
 
-  @Watch("tabKey", { immediate: true, deep: true })
+  @Watch('tabKey', { immediate: true, deep: true })
   onTabChange() {
-    this.importData();
+    this.importData()
   }
 
   get recordsLength(): number {
-    return this.data.length;
+    return this.data.length
   }
 
-  get exportBatchSelect(): string[] {
+  get exportBatchSelect(): (Batch | null)[] {
     return [
       ...new Set(
         this.originalData
-          .map(item => item.exportBatch)
-          .filter(mapped => mapped !== "Unassigned")
-      )
-    ];
+          .map((item) => item.exportBatch)
+          .filter((mapped) => mapped !== null)
+      ),
+    ]
   }
 
   get updateAmount(): number {
-    return this.data.filter(item => {
+    return this.data.filter((item) => {
       const orignalItem = this.originalData.find(
-        original => original.orderId === item.orderId
-      );
+        (original) => original.orderId === item.orderId
+      )
       if (orignalItem) {
-        return orignalItem.printStatus
+        return orignalItem.label_printed
           ? !this.selectedRowKeys.includes(orignalItem.orderId)
-          : this.selectedRowKeys.includes(orignalItem.orderId);
+          : this.selectedRowKeys.includes(orignalItem.orderId)
       }
-      return false;
-    }).length;
+      return false
+    }).length
   }
 
   mounted() {
-    this.importData();
+    this.importData()
   }
 
   importData() {
-    this.originalData = OrderModule.getOrderList;
+    this.originalData = OrderModule.getOrderList
     this.selectedRowKeys = this.originalData
-      .filter(item => item.printStatus)
-      .map(filtered => filtered.orderId);
-    this.data = this.originalData;
+      .filter((item) => item.label_printed)
+      .map((filtered) => filtered.orderId)
+    this.data = this.originalData
   }
 
   onDateFilterChange(_date: object, dateString: string) {
-    this.filterForm.orderedDate = dateString;
+    this.filterForm.orderedDate = dateString
   }
 
   handleBatchFilterChange(value: { key: string; value: string }) {
-    this.filterForm.exportBatch = value.key;
+    this.filterForm.exportBatch = value.key
   }
 
   handleOrderedItemFilterChange(value: { key: string; value: string }) {
-    this.filterForm.orderedItem = value.key;
+    this.filterForm.orderedItem = value.key
   }
 
   filterData() {
-    this.data = this.originalData.filter(row => {
-      const result: boolean[] = [];
-      Object.keys(this.filterForm).forEach(key => {
+    this.data = this.originalData.filter((row) => {
+      const result: boolean[] = []
+      Object.keys(this.filterForm).forEach((key) => {
         result.push(
-          this.filterForm[key] !== "" ? this.filterFields(key, row) : true
-        );
-      });
-      return result.every(Boolean);
-    });
+          this.filterForm[key] !== '' ? this.filterFields(key, row) : true
+        )
+      })
+      return result.every(Boolean)
+    })
   }
 
   filterFields(key: string, row: IOrder): boolean {
-    if (key === "orderedDate") {
+    if (key === 'orderedDate') {
       return (
-        moment(row.orderedDate).format("YYYY-MM-DD") ===
+        moment(row.orderedDate).format('YYYY-MM-DD') ===
         this.filterForm.orderedDate
-      );
+      )
     }
-    if (key === "searchRecord") {
+    if (key === 'searchRecord') {
       const columsDataIndex = this.columns
-        .filter(column => column.dataIndex)
-        .map(column => column.dataIndex);
-      const searchedArray = columsDataIndex.map(col =>
+        .filter((column) => column.dataIndex)
+        .map((column) => column.dataIndex)
+      const searchedArray = columsDataIndex.map((col) =>
         String(row[col as keyof IOrder]).includes(this.filterForm.searchRecord)
-      );
-      return searchedArray.some(Boolean);
+      )
+      return searchedArray.some(Boolean)
     }
-    return row[key as keyof IOrder] === this.filterForm[key];
+    return row[key as keyof IOrder] === this.filterForm[key]
   }
 
-  onSelectChange(selectedRowKeys: string[]) {
-    this.selectedRowKeys = selectedRowKeys;
+  onSelectChange(selectedRowKeys: number[]) {
+    this.selectedRowKeys = selectedRowKeys
   }
 
   goBack() {
-    this.$router.go(-1);
+    this.$router.go(-1)
   }
 
   onSave() {
-    this.visibleSubmitDialog = true;
-    OrderModule.setPrintStatus(this.selectedRowKeys);
-    this.$router.push(`/order-overview`);
+    this.visibleSubmitDialog = true
+    // OrderModule.setPrintStatus(this.selectedRowKeys);
+    this.$router.push(`/order-overview`)
   }
 }
 </script>

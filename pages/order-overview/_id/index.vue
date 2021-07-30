@@ -14,28 +14,30 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { OrderModule } from "~/store";
-import { IOrder } from "~/types/order.type";
+import { Vue, Component } from 'vue-property-decorator'
+import { OrderModule } from '~/store'
+import { IOrder } from '~/types/order.type'
 
 @Component
 export default class DetailPage extends Vue {
-  detail: IOrder | null = null;
+  detail: IOrder | null = null
 
-  isEdit: boolean = false;
+  isEdit: boolean = false
 
   created() {
-    this.importDetail();
+    this.importDetail()
   }
 
   fromEdit() {
-    this.isEdit = false;
-    this.importDetail();
+    this.isEdit = false
+    this.importDetail()
   }
 
   async importDetail() {
-    const res = await OrderModule.getOrderDetail(this.$route.params.id);
-    if (res) this.detail = res;
+    const res = await OrderModule.getOrderDetail(
+      parseInt(this.$route.params.id)
+    )
+    if (res) this.detail = res
   }
 }
 </script>

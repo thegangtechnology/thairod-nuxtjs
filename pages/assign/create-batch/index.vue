@@ -6,24 +6,24 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { OrderModule } from "~/store";
-import { IOrder } from "~/types/order.type";
+import { Vue, Component } from 'vue-property-decorator'
+import { OrderModule } from '~/store'
+import { IOrder } from '~/types/order.type'
 
 @Component
 export default class Main extends Vue {
-  data: IOrder[] = [];
+  data: IOrder[] = []
 
   created() {
     if (OrderModule.getOrderListLength < 1) {
-      OrderModule.initialiseOrder();
+      OrderModule.initialiseOrder()
     }
   }
 
   mounted() {
     this.data = OrderModule.getOrderList.filter(
-      item => item.exportBatch === "Unassigned"
-    );
+      (item) => item.exportBatch !== null
+    )
   }
 }
 </script>

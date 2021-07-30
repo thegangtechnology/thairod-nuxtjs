@@ -29,53 +29,50 @@
 </template>
 
 <script lang="ts">
-import moment from "moment";
-import { Vue, Component } from "vue-property-decorator";
-import { OrderModule } from "~/store";
+import moment from 'moment'
+import { Vue, Component } from 'vue-property-decorator'
+import { OrderModule } from '~/store'
 
-import { IOrder } from "~/types/order.type";
+import { IOrder } from '~/types/order.type'
 
 @Component
 export default class AssignOverview extends Vue {
-  tabKey: string = "All";
+  tabKey: string = 'All'
 
-  data: IOrder[] = [];
+  data: IOrder[] = []
 
   mounted() {
     this.data = OrderModule.getOrderList.filter(
-      item => item.exportBatch === "Unassigned"
-    );
+      (item) => item.exportBatch === null
+    )
   }
 
   get todayTabContent(): IOrder[] {
-    return this.data.filter(item => {
-      return moment(item.orderedDate).isSame(moment(), "day");
-    });
+    return this.data.filter((item) => {
+      return moment(item.orderedDate).isSame(moment(), 'day')
+    })
   }
 
   get yesterdayTabContent(): IOrder[] {
-    return this.data.filter(item => {
-      return moment(item.orderedDate).isSame(
-        moment().subtract(1, "day"),
-        "day"
-      );
-    });
+    return this.data.filter((item) => {
+      return moment(item.orderedDate).isSame(moment().subtract(1, 'day'), 'day')
+    })
   }
 
   get totalAmount() {
-    return this.data.length;
+    return this.data.length
   }
 
   get todayAmount() {
-    return this.todayTabContent.length;
+    return this.todayTabContent.length
   }
 
   get yesterdayAmount() {
-    return this.yesterdayTabContent.length;
+    return this.yesterdayTabContent.length
   }
 
   onTabChange(key: string) {
-    this.tabKey = key;
+    this.tabKey = key
   }
 }
 </script>
