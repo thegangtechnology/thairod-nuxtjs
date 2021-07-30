@@ -1,11 +1,14 @@
-import { getModule, Module, MutationAction, VuexModule } from 'vuex-module-decorators'
-import apiPath from '~/data/api_path'
+import {
+  getModule,
+  Module,
+  MutationAction,
+  VuexModule,
+} from 'vuex-module-decorators'
 import { store } from '@/store'
 import { Order } from '~/types/order.type'
-import { $axios } from '@/utils/api'
 
 // remove duplicate module
-const name: string = 'orderModule'
+const name: string = 'checkoutModule'
 if (store.state[name]) {
   store.unregisterModule(name)
 }
@@ -13,21 +16,15 @@ if (store.state[name]) {
 @Module({
   dynamic: true,
   name,
-  store
+  store,
 })
-class OrderModule extends VuexModule {
+class CheckoutModule extends VuexModule {
   order: Order = {} as Order
 
   @MutationAction({ mutate: ['order'] })
-  public async getOrder ({
-    id
-  }: {
-    id: number
-  }) {
-    const path: string = `${apiPath.order}/${id}`
+  public async getOrder({ id }: { id: number }) {
+    const path: string = `order/${id}`
     await Promise.resolve(path)
-    // const res = await $axios.get(path)
-    // console.log(res)
 
     // delete this later
     const order: Order = {
@@ -36,23 +33,23 @@ class OrderModule extends VuexModule {
         {
           id: 1,
           name: 'Item 1',
-          total: 2
+          total: 2,
         },
         {
           id: 2,
           name: 'Item 2',
-          total: 5
+          total: 5,
         },
         {
           id: 3,
           name: 'Item 3',
-          total: 1
+          total: 1,
         },
         {
           id: 4,
           name: 'Item 4',
-          total: 10
-        }
+          total: 10,
+        },
       ],
       address: {
         firstName: 'First',
@@ -63,13 +60,14 @@ class OrderModule extends VuexModule {
         district: 1,
         subDistrict: 1,
         zipcode: '',
-        optional: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo numquam optio voluptatum?'
-      }
+        optional:
+          'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo numquam optio voluptatum?',
+      },
     }
     return {
-      order
+      order,
     }
   }
 }
 
-export default getModule(OrderModule)
+export default getModule(CheckoutModule)
