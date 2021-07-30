@@ -3,9 +3,7 @@
     @back="onBackButtonClick"
   >
     <template slot="backIcon">
-      <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 1.46875L1 6.1329L6 10.5312" stroke="black" stroke-width="2.2" stroke-linecap="square" />
-      </svg>
+      <a-icon type="left" />
     </template>
     <span slot="title" class="title">
       {{ title }}
@@ -29,13 +27,13 @@ export default Vue.extend({
   .ant-page-header {
     background-color: @primary-color;
     text-align: center;
-    padding: 16px 24px 12px 24px;
+    padding: 14px 24px 12px 24px;
+    height: 60px;
   }
 
   .title {
     color: black;
     font-size: 24px;
-    line-height: 16px;
     font-weight: bold;
   }
 

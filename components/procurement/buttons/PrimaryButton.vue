@@ -2,16 +2,16 @@
   <a-button
     type="primary"
     shape="round"
-    :style="{backgroundColor: '#F9B7B7', color: '#000000', borderColor: '#ffc1c1'}"
+    :style="{backgroundColor: '#F9B7B7', color: '#000000', borderColor: '#ffc1c1', fontSize: '18px', textShadow: 'none'}"
     :size="size"
     :block="block"
     @click="onClick"
   >
-    {{ text }}
+    <b>{{ text }}</b>
   </a-button>
 </template>
 
-<script>
+<script lang="ts">
 
 import Vue from 'vue'
 

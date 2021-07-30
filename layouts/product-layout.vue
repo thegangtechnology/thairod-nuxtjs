@@ -85,7 +85,7 @@ export default Vue.extend({
 })
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 .ant-page-header {
   background-color: @primary-color;
   text-align: center;

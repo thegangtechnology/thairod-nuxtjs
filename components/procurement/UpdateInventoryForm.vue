@@ -3,7 +3,7 @@
     <div class="container">
       <img
         alt="item-image"
-        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+        src="~/assets/images/procurement/item/green-box.svg"
       >
       <a-form
         :form="form"
@@ -16,7 +16,7 @@
             v-decorator="['quantity', { rules: [{ required: true, message: 'กรุณาระบุจำนวนที่เข้ามาใหม่' }] }]"
             :precision="0"
             :min="1"
-            :step="100"
+            :step="10"
           />
         </a-form-item>
         <a-form-item label="ราคาทุน">
@@ -24,7 +24,7 @@
             v-decorator="['cost', { rules: [{ required: true, message: 'กรุณาระบุราคาทุน' }] }]"
             :precision="0"
             :min="0"
-            :step="100"
+            :step="10"
           />
         </a-form-item>
         <a-form-item label="คลังสินค้า">
@@ -43,7 +43,7 @@
       </a-form>
       <a-row type="flex" class="button-group">
         <a-col :span="12">
-          <secondary-button :text="'ยกเลิก'" :on-click="closeModal" />
+          <secondary-button :text="'ยกเลิก'" :on-click="onCancel" />
         </a-col>
         <a-col :span="12">
           <primary-button :text="'ยืนยัน'" :on-click="showModal" />
@@ -58,7 +58,7 @@
       :style="{width: '130px'}"
       @cancel="closeModal"
     >
-      <ConfirmModalContent :close-modal="closeModal" :handle-submit="handleSubmit" :form-data="form.getFieldsValue()" />
+      <confirm-modal-content :close-modal="closeModal" :handle-submit="handleSubmit" :form-data="form.getFieldsValue()" />
     </a-modal>
   </div>
 </template>
@@ -83,7 +83,6 @@ export default Vue.extend({
   },
   methods: {
     showModal () {
-      console.log(this.form.getFieldsValue())
       this.form.validateFields((err) => {
         if (!err) {
           this.modal.visible = true
@@ -94,20 +93,39 @@ export default Vue.extend({
       this.modal.visible = false
     },
     handleSubmit () {
-      // this.modal.confirmLoading = true
-      // console.log('form submitted')
-      // this.modal.confirmLoading = false
+      this.modal.confirmLoading = true
+      this.modal.confirmLoading = false
       this.closeModal()
       this.form.resetFields()
+      this.$router.push('/procurement/item-detail')
     },
     onCancel (): void {
       this.form.resetFields()
-      console.log('back')
+      this.$router.push('/procurement/item-detail')
     }
   }
 }
 )
 </script>
+
+<style lang="less">
+.ant-select-selection {
+  border-radius: 25px;
+  height: 38px;
+}
+
+.ant-input-number-handler-wrap {
+  background-color: transparent;
+}
+
+.ant-modal {
+  max-width: 80vw;
+}
+
+#cost.ant-input-number, #quantity.ant-input-number {
+  height: 38px;
+}
+</style>
 
 <style scoped lang="less">
 
@@ -119,11 +137,12 @@ img {
   display: block;
   width: 100%;
   margin-bottom: 18px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .ant-input-number {
   width: 100%;
+  border-radius: 25px;
 }
 
 .ant-card {
