@@ -38,21 +38,21 @@
         </a-col>
       </a-row>
 
-      <a-menu :default-selected-keys="['1']" mode="inline">
+      <a-menu :default-selected-keys="[selectedMenu]" mode="inline">
         <a-menu-item key="1">
-          <a-icon type="user" />
+          <a-icon type="shop" />
           <span>จัดการคลังสินค้า</span>
         </a-menu-item>
-        <a-menu-item key="2">
-          <a-icon type="user" />
+        <a-menu-item key="order-overview" @click="goToPage('/order-overview')">
+          <a-icon type="profile" />
           <span>ภาพรวมรายการจัดส่ง</span>
         </a-menu-item>
-        <a-menu-item key="3">
-          <a-icon type="video-camera" />
+        <a-menu-item key="order-overview-delivery" @click="goToPage('/order-overview/delivery')">
+          <a-icon type="file-search" />
           <span>จัดการล็อตรายการจัดส่ง</span>
         </a-menu-item>
-        <a-menu-item key="4">
-          <a-icon type="upload" />
+        <a-menu-item key="print" @click="goToPage('/print')">
+          <a-icon type="printer" />
           <span>พิมพ์ใบจัดส่งสินค้า</span>
         </a-menu-item>
       </a-menu>
@@ -70,7 +70,23 @@ import Vue from 'vue'
 export default Vue.extend({
   data () {
     return {
-      collapsed: false
+      collapsed: false,
+      menuPaths: ['order-overview', 'order-overview-delivery', 'print']
+    }
+  },
+  computed: {
+    selectedMenu() : string {
+      const selected = this.menuPaths.find(path => path === this.$route.name)
+      if(selected) {
+        return selected
+      } else {
+        return 'order-overview'
+      }
+    }
+  },
+  methods: {
+    goToPage(path: string): void {
+      this.$router.push(`${path}`)
     }
   }
 })
