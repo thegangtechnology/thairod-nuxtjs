@@ -13,12 +13,9 @@
               alt="Logo Thairod Mall"
               :src="require('@/assets/images/logo.svg')"
               class="img-responsive"
-            >
+            />
           </div>
-          <a-icon
-            type="left"
-            @click="() => (collapsed = !collapsed)"
-          />
+          <a-icon type="left" @click="() => (collapsed = !collapsed)" />
         </div>
         <div v-if="!collapsed" class="pa-4">
           <div class="mb-3">
@@ -43,12 +40,10 @@
             ไทยรอดMALL
           </span>
           <a href="/carts" class="carts__button">
-            <a-badge dot>
               <a-icon
                 class="trigger float-right shopping-cart__button"
                 type="shopping-cart"
               />
-            </a-badge>
           </a>
         </a-layout-header>
         <a-layout-content>
@@ -67,16 +62,16 @@ export default Vue.extend({
   components: {
     DoctorDetail
   },
-  data () {
+  data() {
     return {
       collapsed: true
     }
   },
   methods: {
-    hiddenMenu () {
+    hiddenMenu() {
       this.collapsed = false
     },
-    goToPage (path:string):void {
+    goToPage(path: string): void {
       console.log('path', path)
       this.hiddenMenu()
       this.$router.push(`${path}`)
@@ -86,71 +81,70 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-.ant-page-header {
+.product-layout .ant-page-header {
   background-color: @primary-color;
   text-align: center;
   padding: 16px 24px 12px 24px;
+  height: 60px;
 }
-.ant-layout-header{
+.product-layout .ant-layout-header {
   background-color: @primary-color!important;
-  text-align: center!important;
-  padding: 16px 24px 12px 24px!important;
-
+  text-align: center !important;
+  padding: 16px 24px 12px 24px !important;
 }
-.ant-layout-header .page-name{
+.product-layout .ant-layout-header .page-name {
   font-family: 'FC Minimal', sans-serif;
   font-size: 30px;
   font-weight: bold;
   color: #001740;
 }
-.product-layout .ant-layout-has-sider{
-  height:100vh;
-  overflow:hidden;
+.product-layout .ant-layout-has-sider {
+  height: 100vh;
+  overflow: hidden;
 }
-.ant-layout-content {
+.product-layout .ant-layout-content {
   background-color: #ffffff;
-  min-height:auto;
+  min-height: auto;
 }
 .product-layout .ant-layout-sider {
   position: absolute;
   height: 100vh;
   z-index: 7;
   left: 0;
-  min-width: 300px!important;
-  width:300px!important;
-  -webkit-box-shadow: 2px 0px 5px 0px rgba(161,161,161,1);
--moz-box-shadow: 2px 0px 5px 0px rgba(161,161,161,1);
-box-shadow: 2px 0px 5px 0px rgba(161,161,161,1);
+  min-width: 300px !important;
+  width: 300px !important;
+  -webkit-box-shadow: 2px 0px 5px 0px rgba(161, 161, 161, 1);
+  -moz-box-shadow: 2px 0px 5px 0px rgba(161, 161, 161, 1);
+  box-shadow: 2px 0px 5px 0px rgba(161, 161, 161, 1);
 }
 .product-layout .ant-layout-sider-collapsed {
   left: -80px;
   min-width: 0 !important;
   width: 0 !important;
 }
-.product-layout ul{
-  border-right:none;
-
+.product-layout ul {
+  border-right: none;
 }
-.ant-layout-header {
+.product-layout .ant-layout-header {
   align-items: center;
   display: flex;
   justify-content: space-between;
 }
-.carts__button .anticon-shopping-cart {
+.product-layout .carts__button .anticon-shopping-cart {
   display: flex;
 }
-a.carts__button {
+.product-layout a.carts__button {
   color: #000000;
   line-height: 10px;
 }
-.carts__button .ant-badge-dot {
+.product-layout .carts__button .ant-badge-dot {
   position: absolute;
   left: 55%;
 }
-.menu-back{
+.product-layout .menu-back {
   display: flex;
-  justify-content:space-between;
-  padding:12px 24px;
+  justify-content: space-between;
+  padding: 12px 24px;
   align-items: center;
 }
 </style>

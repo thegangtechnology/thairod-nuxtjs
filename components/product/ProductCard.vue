@@ -60,10 +60,10 @@ export default Vue.extend({
   //min-width: 160px;
   max-width: 350px;
   width: 100%;
-  background-color: #ffffff;
-  border-radius: 10px;
+  background-color: #ffffff!important;;
+  border-radius: 10px!important;
+  border-color: #e9ecf2!important;;
   overflow: hidden;
-  border-color: #e9ecf2;
 }
 .product-card .ant-card-cover img {
   border-radius: 6px;

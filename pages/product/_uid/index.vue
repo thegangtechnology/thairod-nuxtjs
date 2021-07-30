@@ -1,6 +1,10 @@
 <template>
   <div>
-    <ProductDetail :item="product"/>
+    <ProductHeader
+      :title="product.name"
+      :on-back-button-click="onBackButtonClick"
+    />
+    <ProductDetail :item="product" />
   </div>
 </template>
 
@@ -9,22 +13,29 @@ import Vue from 'vue'
 import ProductDetail from '~/components/product/ProductDetail.vue'
 import ProductModule from '~/store/product.module'
 import { Product } from '~/types/product.type'
+import ProductHeader from '~/components/product/ProductHeader'
 
 export default Vue.extend({
   components: {
-    ProductDetail
+    ProductDetail,
+    ProductHeader
   },
-  layout: 'product-layout',
+  layout: 'empty',
   data() {
     return {}
   },
   computed: {
-    product(): Product{
+    product(): Product {
       return ProductModule.product
     }
   },
   async mounted() {
     await ProductModule.getProduct({ id: 1 })
+  },
+  methods: {
+    onBackButtonClick(): void {
+      this.$router.push(`/product`)
+    }
   }
 })
 </script>
