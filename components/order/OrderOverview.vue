@@ -16,7 +16,7 @@
       </a-tab-pane>
       <a-tab-pane key="wait">
         <span slot="tab">
-          ที่ต้องจัดส่ง ({{ getTabContentAmount("wait") }})
+          ที่ต้องจัดส่ง ({{ getTabContentAmount('wait') }})
         </span>
         <OverviewTable
           :originalData="getTabContent('wait')"
@@ -27,7 +27,7 @@
       </a-tab-pane>
       <a-tab-pane key="print">
         <span slot="tab">
-          พิมพ์ใบจัดส่งแล้ว ({{ getTabContentAmount("print") }})
+          พิมพ์ใบจัดส่งแล้ว ({{ getTabContentAmount('print') }})
         </span>
         <OverviewTable
           :originalData="getTabContent('print')"
@@ -38,7 +38,7 @@
       </a-tab-pane>
       <a-tab-pane key="out">
         <span slot="tab">
-          ดำเนินการส่งแล้ว ({{ getTabContentAmount("out") }})
+          ดำเนินการส่งแล้ว ({{ getTabContentAmount('out') }})
         </span>
         <OverviewTable
           :originalData="getTabContent('out')"
@@ -49,7 +49,7 @@
       </a-tab-pane>
       <a-tab-pane key="received">
         <span slot="tab">
-          ส่งมอบสำเร็จ ({{ getTabContentAmount("received") }})
+          ส่งมอบสำเร็จ ({{ getTabContentAmount('received') }})
         </span>
         <OverviewTable
           :originalData="getTabContent('received')"
@@ -87,48 +87,48 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-import { OrderModule } from "~/store";
-import { IOrder } from "~/types/order.type";
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { OrderModule } from '~/store'
+import { IOrder } from '~/types/order.type'
 
 @Component
 export default class OrderOverview extends Vue {
-  @Prop({ required: true }) search!: string;
+  @Prop({ required: true }) search!: string
 
-  tabKey: string = "wait";
-  updateOption: string = "default";
+  tabKey: string = 'wait'
+  updateOption: string = 'default'
 
-  originalData: IOrder[] = [];
+  originalData: IOrder[] = []
 
   onTabChange(key: string) {
-    this.tabKey = key;
-    this.updateOption = "default";
+    this.tabKey = key
+    this.updateOption = 'default'
   }
 
   get allData() {
-    return OrderModule.getOrderList;
+    return OrderModule.getOrderList
   }
 
   get canUpdatePrint() {
-    return this.tabKey !== "received" && this.tabKey !== "out";
+    return this.tabKey !== 'received' && this.tabKey !== 'out'
   }
 
   get canUpdateOutForDelivery() {
-    return this.tabKey !== "wait" && this.tabKey !== "received";
+    return this.tabKey !== 'wait' && this.tabKey !== 'received'
   }
 
   get canUpdateReceived() {
-    return this.tabKey !== "wait" && this.tabKey !== "print";
+    return this.tabKey !== 'wait' && this.tabKey !== 'print'
   }
 
   getTabContent(tabKey: string): IOrder[] {
     return this.allData.filter(item => {
-      return item.status === tabKey;
-    });
+      return item.status === tabKey
+    })
   }
 
   getTabContentAmount(tabKey: string): number {
-    return this.getTabContent(tabKey).length;
+    return this.getTabContent(tabKey).length
   }
 }
 </script>
