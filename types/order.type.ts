@@ -2,6 +2,11 @@
 /**
  * FRONTEND Interface
  */
+type Status = "wait" | "print" | "out" | "received";
+export interface Main {
+  [key: string]: string | boolean;
+}
+
 export interface Address {
   firstName: string;
   lastName: string;
@@ -44,7 +49,7 @@ export interface OrderJson {
   order_lines: OrderLineJson[];
   grand_total_price: string;
 }
-export interface IOrder {
+export interface IOrder extends Main {
   orderId: string;
   cid: string;
   patientName: string;
@@ -63,4 +68,7 @@ export interface IOrder {
   subDistrict: string;
   zipCode: string;
   remark: string;
+  deliveryStatus: boolean;
+  printStatus: boolean;
+  status: Status;
 }

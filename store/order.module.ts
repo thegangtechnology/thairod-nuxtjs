@@ -1,6 +1,8 @@
 import { getModule, Module, MutationAction, VuexModule } from 'vuex-module-decorators'
+import apiPath from '~/data/api_path'
 import { store } from '@/store'
 import { Order } from '~/types/order.type'
+import { $axios } from '@/utils/api'
 
 // remove duplicate module
 const name: string = 'orderModule'
@@ -22,8 +24,10 @@ class OrderModule extends VuexModule {
   }: {
     id: number
   }) {
-    const path: string = `order/${id}`
+    const path: string = `${apiPath.order}/${id}`
     await Promise.resolve(path)
+    // const res = await $axios.get(path)
+    // console.log(res)
 
     // delete this later
     const order: Order = {

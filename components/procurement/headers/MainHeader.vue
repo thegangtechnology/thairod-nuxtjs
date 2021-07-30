@@ -36,6 +36,7 @@ export default Vue.extend({
   font-size: 24px;
   font-weight: bold;
   min-width: 120px;
+  line-height: 32px;
 }
 
 </style>

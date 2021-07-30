@@ -26,14 +26,14 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import SecondaryButton from './buttons/SecondaryButton'
-import { ItemOverView } from '~/types/procurement.type'
+import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
+import { ItemOverViewInfo } from '~/types/procurement.type'
 
 export default Vue.extend({
   components: { SecondaryButton },
   props: {
     item: {
-      type: Object as PropType<ItemOverView>,
+      type: Object as PropType<ItemOverViewInfo>,
       default: () => ({})
     }
   },
@@ -70,8 +70,9 @@ button {
 }
 
 .title {
-  padding-top: 6px;
+  padding: 12px 0 4px 0;
   font-weight: bold;
+  font-size: 20px;
 }
 
 .last-update {

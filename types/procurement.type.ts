@@ -17,7 +17,7 @@ export interface InventoryDetailCard {
   unit: string
 }
 
-export interface ItemOverView {
+export interface ItemOverViewInfo {
   id: string,
   name: string,
   stock: number,

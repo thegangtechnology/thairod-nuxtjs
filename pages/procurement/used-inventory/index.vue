@@ -15,6 +15,7 @@ import ProcurementHeader from '~/components/procurement/headers/ProcurementHeade
 import InventoryDetail from '~/components/procurement/InventoryDetail.vue'
 export default Vue.extend({
   components: { InventoryDetail, ProcurementHeader },
+  layout: 'empty',
   data () {
     return {
       warehouseStocks: [

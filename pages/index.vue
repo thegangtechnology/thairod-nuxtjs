@@ -41,6 +41,7 @@ import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 
 export default Vue.extend({
   components: { PrimaryButton },
+  layout: 'empty',
   data () {
     return {
       form: this.$form.createForm(this)

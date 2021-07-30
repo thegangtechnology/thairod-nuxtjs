@@ -8,7 +8,6 @@
         collapsible
         collapsed-width="0"
         width="300px"
-        :style="{boxShadow: '10px 10px 5px grey'}"
       >
         <img
           alt="logo"
@@ -70,24 +69,26 @@
 import Vue from 'vue'
 import MainHeader from '~/components/procurement/headers/MainHeader.vue'
 import ItemOverview from '~/components/procurement/ItemOverview.vue'
+import { ItemOverViewInfo } from '~/types/procurement.type'
 
 export default Vue.extend({
   components: { MainHeader, ItemOverview },
+  layout: 'empty',
   data () {
     return {
       search: '',
       collapsed: true,
       userInfo: [{ firstName: 'เติมศิริ', lastName: 'ธัยยามาตย์', role: 'Admin' }],
       items: [
-        { id: 0, name: 'กล่องสีเขียว', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' },
-        { id: 1, name: 'กล่องสีเหลือง', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' },
-        { id: 2, name: 'ยาฟาวิพิราเวียร์', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' },
-        { id: 3, name: 'ฟ้าทะลายโจร', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' }
+        { id: '0', name: 'กล่องสีเขียว', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' },
+        { id: '1', name: 'กล่องสีเหลือง', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' },
+        { id: '2', name: 'ยาฟาวิพิราเวียร์', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' },
+        { id: '3', name: 'ฟ้าทะลายโจร', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' }
       ]
     }
   },
   computed: {
-    filteredItems () : Array<ItemOverview> {
+    filteredItems () : Array<ItemOverViewInfo> {
       return this.items.filter(item =>
         item.name.toLowerCase().includes(this.search.toLowerCase())
       )
@@ -117,10 +118,6 @@ export default Vue.extend({
   margin: 0;
   z-index: 100;
   padding: 8px 4px;
-}
-
-.ant-layout-sider {
-  max-width: 300px;
 }
 
 .logo-image {
@@ -174,6 +171,8 @@ export default Vue.extend({
 .logout-button {
   position: fixed;
   bottom: 10px;
+  width: 160px;
+  text-align: left;
   border: 0;
   padding-left: 24px
 }

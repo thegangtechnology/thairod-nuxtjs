@@ -16,6 +16,7 @@ import ItemDetail from '~/components/procurement/ItemDetail.vue'
 
 export default Vue.extend({
   components: { ProcurementHeader, ItemDetail },
+  layout: 'empty',
   props: {
     headerTitle: { type: String, default: 'กล่องสีเขียว' }
   },

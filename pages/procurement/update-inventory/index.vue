@@ -17,6 +17,7 @@ import ProcurementHeader from '~/components/procurement/headers/ProcurementHeade
 export default Vue.extend(
   {
     components: { UpdateInventoryForm, ProcurementHeader },
+    layout: 'empty',
     data () {
       return {
       }
