@@ -20,6 +20,7 @@ jobs:
         with:
             node-version: '14.17.4'
             cache: 'npm'
+      - name: NPM Install
         run: npm install
       - name: SonarCloud Scan
         uses: sonarsource/sonarqube-scan-action@master
