@@ -1,6 +1,9 @@
 <template>
-  <div class="container">
-    <a-icon type="medicine-box" /><br>
+  <div class="modal-container">
+    <img
+      alt="modal-image"
+      src="~/assets/images/procurement/icon/modal-image.svg"
+    ><br>
     <b class="title">ยืนยันการอัปเดตสินค้า</b><br>
     <p>
       กล่องสินค้า <span>{{ formData.quantity ? formData.quantity.toLocaleString(): '' }} กล่อง</span><br>
@@ -38,17 +41,13 @@ export default Vue.extend(
 
 <style scoped lang="less">
 
-.container {
+.modal-container {
   text-align: center;
+  padding: 24px 0;
 }
 
 .title {
   line-height: 50px;
-}
-
-.anticon {
-  font-size: 75px;
-  padding: 24px 0 14px 0;
 }
 
 button {

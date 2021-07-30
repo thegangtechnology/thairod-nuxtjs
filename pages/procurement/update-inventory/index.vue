@@ -1,9 +1,9 @@
 <template>
   <div>
-    <ProcurementHeader :title="'อัปเดตคลังสินค้า'" :on-back-button-click="onBackButtonClick" />
+    <procurement-header :title="'อัปเดตคลังสินค้า'" :on-back-button-click="onBackButtonClick" />
     <a-row type="flex" justify="center">
       <a-col :xs="24" :sm="24" :md="20" :lg="12">
-        <UpdateInventoryForm />
+        <update-inventory-form />
       </a-col>
     </a-row>
   </div>
@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import UpdateInventoryForm from '~/components/procurement/UpdateInventoryForm.vue'
-import ProcurementHeader from '~/components/procurement/ProcurementHeader.vue'
+import ProcurementHeader from '~/components/procurement/headers/ProcurementHeader.vue'
 
 export default Vue.extend(
   {
@@ -23,7 +23,7 @@ export default Vue.extend(
     },
     methods: {
       onBackButtonClick () : void {
-        console.log('back')
+        this.$router.push('/procurement/item-detail')
       }
     }
   }

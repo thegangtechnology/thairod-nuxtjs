@@ -1,34 +1,38 @@
 <template>
   <div class="container">
-    <a-row>
-      <a-col :span="12">
-        <div class="card left-card" :style="lessVars">
-          <div> {{ leftCard.title }}</div>
-          <b>{{ leftCard.amount.toLocaleString() }} {{ leftCard.unit }}</b>
-        </div>
-      </a-col>
-      <a-col :span="12">
-        <div class="card right-card" :style="lessVars">
-          <div>{{ rightCard.title }}</div>
-          <b>{{ rightCard.amount.toLocaleString() }} {{ rightCard.unit }}</b>
+    <a-row type="flex" justify="center">
+      <a-col :xs="24" :sm="24" :md="20" :lg="12">
+        <a-row>
+          <a-col :span="12">
+            <div class="card left-card" :style="lessVars">
+              <div> {{ leftCard.title }}</div>
+              <b>{{ leftCard.amount.toLocaleString() }} {{ leftCard.unit }}</b>
+            </div>
+          </a-col>
+          <a-col :span="12">
+            <div class="card right-card" :style="lessVars">
+              <div>{{ rightCard.title }}</div>
+              <b>{{ rightCard.amount.toLocaleString() }} {{ rightCard.unit }}</b>
+            </div>
+          </a-col>
+        </a-row>
+        <div class="warehouse-list">
+          <b class="list-title"> ชื่อคลังสินค้า </b>
+          <a-list :data-source="warehouseStocks" size="small">
+            <a-list-item slot="renderItem" slot-scope="{warehouse, amount, unit}">
+              <div>
+                <span slot="title">
+                  {{ warehouse }}
+                </span>
+              </div>
+              <b>
+                {{ amount.toLocaleString() }} {{ unit }}
+              </b>
+            </a-list-item>
+          </a-list>
         </div>
       </a-col>
     </a-row>
-    <div class="warehouse-list">
-      <b class="list-title"> ชื่อคลังสินค้า </b>
-      <a-list :data-source="warehouseStocks" size="small">
-        <a-list-item slot="renderItem" slot-scope="{warehouse, amount, unit}">
-          <div>
-            <span slot="title">
-              {{ warehouse }}
-            </span>
-          </div>
-          <b>
-            {{ amount.toLocaleString() }} {{ unit }}
-          </b>
-        </a-list-item>
-      </a-list>
-    </div>
   </div>
 </template>
 
@@ -39,8 +43,8 @@ import { WarehouseStock, InventoryDetailCard } from '~/types/procurement.type'
 export default Vue.extend({
   props: {
     warehouseStocks: {
-      type: Object as PropType<WarehouseStock>,
-      default: () => ({})
+      type: Array as PropType<Array<WarehouseStock>>,
+      default: () => ([])
     },
     leftCard: {
       type: Object as PropType<InventoryDetailCard>,
@@ -78,10 +82,10 @@ export default Vue.extend({
 
 <style scoped lang="less">
 
-//.ant-list-split .ant-list-item {
-//  border-bottom: 0;
-//  padding: 0;
-//}
+.ant-list-split .ant-list-item {
+  border-bottom: 0;
+  padding: 0;
+}
 
 .list-title {
   line-height: 36px;
