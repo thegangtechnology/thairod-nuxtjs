@@ -40,10 +40,10 @@
             ไทยรอดMALL
           </span>
           <a href="/carts" class="carts__button">
-              <a-icon
-                class="trigger float-right shopping-cart__button"
-                type="shopping-cart"
-              />
+            <a-icon
+              class="trigger float-right shopping-cart__button"
+              type="shopping-cart"
+            />
           </a>
         </a-layout-header>
         <a-layout-content>

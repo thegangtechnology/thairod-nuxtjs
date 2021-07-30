@@ -16,7 +16,7 @@
         <a-button
           block
           class="card-button"
-          :style="{backgroundColor: '#ffcdcd', border: 0, color: '#454545'}"
+          :style="{backgroundColor: '#001740C6', border: 0, color: '#ffffff'}"
           @click="moreCurrentInventoryInfo"
         >
           ดูรายละเอียดเพิ่มเติม
@@ -34,7 +34,7 @@
         <a-button
           block
           class="card-button"
-          :style="{backgroundColor: '#aeaeae', border: 0, color: '#454545'}"
+          :style="{backgroundColor: '#aeaeae', border: 0, color: '#ffffff'}"
           @click="moreUsedInventoryInfo"
         >
           ดูรายละเอียดเพิ่มเติม
@@ -49,7 +49,7 @@
           <a-list-item-meta
             :description="quantity + ' ' + unit"
           >
-            <a slot="title">{{ name }}</a>
+            <span slot="title">{{ name }}</span>
             <a-avatar
               slot="avatar"
               src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
@@ -82,13 +82,13 @@ export default Vue.extend({
   computed: {},
   methods: {
     updateInventory () : void {
-      console.log('to update inventory view')
+      this.$router.push('/procurement/update-inventory')
     },
     moreCurrentInventoryInfo () : void {
-      console.log('to current inventory view')
+      this.$router.push('/procurement/current-inventory')
     },
     moreUsedInventoryInfo () : void {
-      console.log('to used inventory view')
+      this.$router.push('/procurement/used-inventory')
     }
   }
 })
@@ -120,22 +120,22 @@ img {
 .card {
   border-radius: 8px 8px 0 0;
   padding: 8px 20px;
-  color: #454545;
+  color: white;
   line-height: 22px;
   border-width: 0;
 }
 
 .left-card {
-  background-color: @primary-color;
+  background-color: #001740;
 }
 
 .right-card {
-  background-color: #969696;
+  background-color: #92959A;
 }
 
 .card > .ant-divider-horizontal {
   margin: 8px 0 5px 0;
-  background-color: #454545;
+  background-color: #ffffff;
 }
 
 .card > div {
@@ -143,11 +143,11 @@ img {
 }
 
 .card > .acc-amount {
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .card > b {
-  font-size: 23px;
+  font-size: 22px;
 }
 
 .card-button {
