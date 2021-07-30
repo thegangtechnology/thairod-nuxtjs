@@ -29,6 +29,11 @@ class ProductModule extends VuexModule {
     const path: string = '/products/'
     await Promise.resolve(path)
 
+
+    // const path: string = `${apiPath.product}/`
+    // const res = await $axios.get(path)
+    // console.log(res)
+
     // delete this later
     const productList: Product[] = [
       {

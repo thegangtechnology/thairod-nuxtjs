@@ -1,11 +1,11 @@
 <template>
   <div class="page-header-product">
     <div class="ant-layout-header">
-        <a-icon type="left"  @click="onBackButtonClick"/>
+      <a-icon type="left" @click="onBackButtonClick" />
       <span class="page-name">
         {{ title }}
       </span>
-      <a href="/carts" class="carts__button">
+      <a href="/carts" class="carts__button" v-if="isDetail">
         <a-icon
           class="trigger float-right shopping-cart__button"
           type="shopping-cart"
@@ -18,10 +18,12 @@
 <script lang="ts">
 import Vue from 'vue'
 
+
 export default Vue.extend({
   props: {
     title: { type: String, default: '' },
-    onBackButtonClick: { type: Function, default: () => null }
+    onBackButtonClick: { type: Function, default: () => null },
+    isDetail:{type:Boolean,default:true}
   }
 })
 </script>
@@ -44,7 +46,7 @@ export default Vue.extend({
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding:0 10px;
+  padding: 0 10px;
 }
 .page-header-product a.carts__button {
   color: #000000;

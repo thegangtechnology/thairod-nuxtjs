@@ -62,7 +62,7 @@
           จำนวนสินค้าในคลัง
         </div>
         <div class="product-detail__description">
-          {{ data.amount }} กระปุก
+          100 กระปุก
         </div>
       </a-col>
     </a-row>
@@ -215,7 +215,7 @@ export default Vue.extend({
   align-items: center;
   margin: auto;
 }
-.product-card__button-container .ant-input-number-input-wrap input {
+.product-card__button-container .ant-input-number-input-wrap input{
   text-align: center;
 }
 .product-card__button-container .input-amount {
@@ -259,5 +259,11 @@ export default Vue.extend({
   .product-detail__name {
     margin-top: 1rem;
   }
+}
+</style>
+
+<style lang="less">
+.input-amount > .ant-input-number-input-wrap input{
+  text-align: center;
 }
 </style>

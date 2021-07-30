@@ -13,7 +13,7 @@ import Vue from 'vue'
 import ProductDetail from '~/components/product/ProductDetail.vue'
 import ProductModule from '~/store/product.module'
 import { Product } from '~/types/product.type'
-import ProductHeader from '~/components/product/ProductHeader'
+import ProductHeader from '~/components/product/ProductHeader.vue'
 
 export default Vue.extend({
   components: {
