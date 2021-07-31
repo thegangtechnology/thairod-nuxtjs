@@ -17,16 +17,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { OrderModule } from "~/store";
+import { Vue, Component } from 'vue-property-decorator'
+import { ShipmentModule } from '~/store'
 
 @Component
 export default class Main extends Vue {
-  search: string = "";
+  search: string = ''
 
   created() {
-    if (OrderModule.getOrderListLength < 1) {
-      OrderModule.initialiseOrder();
+    if (ShipmentModule.getShipmentLength < 1) {
+      ShipmentModule.initialiseOrder()
     }
   }
 }

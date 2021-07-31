@@ -10,23 +10,23 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { OrderModule } from "~/store";
+import { Vue, Component } from 'vue-property-decorator'
+import { ShipmentModule } from '~/store'
 
 @Component
 export default class Main extends Vue {
   created() {
-    if (OrderModule.getOrderListLength < 1) {
-      OrderModule.initialiseOrder();
+    if (ShipmentModule.getOrderListLength < 1) {
+      ShipmentModule.initialiseOrder()
     }
   }
 
   toOrder() {
-    this.$router.push(`/order-overview`);
+    this.$router.push(`/order-overview`)
   }
 
   assignBatch() {
-    this.$router.push(`/assign/create-batch`);
+    this.$router.push(`/assign/create-batch`)
   }
 }
 </script>

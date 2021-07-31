@@ -88,7 +88,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { OrderModule } from '~/store'
+import { ShipmentModule } from '~/store'
 import { IOrder } from '~/types/order.type'
 
 @Component
@@ -106,7 +106,7 @@ export default class OrderOverview extends Vue {
   }
 
   get allData() {
-    return OrderModule.getOrderList
+    return ShipmentModule.getOrderList
   }
 
   get canUpdatePrint() {
@@ -122,7 +122,7 @@ export default class OrderOverview extends Vue {
   }
 
   getTabContent(tabKey: string): IOrder[] {
-    return this.allData.filter(item => {
+    return this.allData.filter((item) => {
       return item.status === tabKey
     })
   }

@@ -1,13 +1,13 @@
 /* eslint-disable import/no-mutable-exports */
-import { Store } from "vuex";
-import { getModule } from "vuex-module-decorators";
+import { Store } from 'vuex'
+import { getModule } from 'vuex-module-decorators'
 
-import Order from "@/store/order";
+import Shipment from '@/store/shipment.module'
 
-let OrderModule: Order;
+let ShipmentModule: Shipment
 
 function initialiseStores(store: Store<any>): void {
-  OrderModule = getModule(Order, store);
+  ShipmentModule = getModule(Shipment, store)
 }
 
-export { initialiseStores, OrderModule };
+export { initialiseStores, ShipmentModule }

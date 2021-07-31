@@ -105,7 +105,7 @@
 import moment from 'moment'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import BoxSvg from '~/assets/images/delivery/box.svg'
-import { OrderModule } from '~/store'
+import { ShipmentModule } from '~/store'
 import { Batch, IOrder } from '~/types/order.type'
 
 interface IMain {
@@ -221,7 +221,7 @@ export default class PrintTable extends Vue {
   }
 
   importData() {
-    this.originalData = OrderModule.getOrderList
+    this.originalData = ShipmentModule.getOrderList
     this.data = this.originalData
   }
 
@@ -274,7 +274,7 @@ export default class PrintTable extends Vue {
 
   onSave() {
     this.visibleSubmitDialog = true
-    // OrderModule.updateDeliveryStatus(this.selectedRows);
+    // ShipmentModule.updateDeliveryStatus(this.selectedRows);
     this.$router.push(`/order-overview`)
   }
 }

@@ -1,9 +1,7 @@
 import { VuexModule, Module, Action, Mutation } from 'vuex-module-decorators'
 import moment from 'moment'
-import { IOrder, IShipmentResponse } from '~/types/order.type'
+import { ShipmentLine, ShipmentResponse, Status } from '~/types/shipment.type'
 import { $axios } from '@/utils/api'
-
-type Status = 'wait' | 'print' | 'out' | 'received'
 
 const randomCID = (): string => {
   return String(
@@ -35,33 +33,33 @@ const getStatus = (deliver: boolean, label_printed: boolean): Status => {
   return 'received'
 }
 
-@Module({ name: 'order', stateFactory: true, namespaced: true })
-export default class Order extends VuexModule {
-  orderList: IOrder[] = []
+@Module({ name: 'shipmentModule', stateFactory: true, namespaced: true })
+export default class Shipment extends VuexModule {
+  shipmentList: ShipmentLine[] = []
 
-  public get getOrderList(): IOrder[] {
-    return this.orderList
+  public get getShipmentList(): ShipmentLine[] {
+    return this.shipmentList
   }
 
-  public get getOrderListLength(): number {
-    return this.orderList.length
-  }
-
-  @Mutation
-  SET_ORDER_LIST(payload: IOrder[]) {
-    this.orderList = payload
+  public get getShipmentLength(): number {
+    return this.shipmentList.length
   }
 
   @Mutation
-  UPDATE_ORDER(payload: IOrder) {
-    this.orderList = this.orderList.map((order) =>
+  SET_SHIPMENT_LIST(payload: ShipmentLine[]) {
+    this.shipmentList = payload
+  }
+
+  @Mutation
+  UPDATE_SHIPMENT(payload: ShipmentLine) {
+    this.shipmentList = this.shipmentList.map((order) =>
       order.orderId === payload.orderId ? payload : order
     )
   }
 
   // @Mutation
   // SET_BATCH_NUM(payload: { batchNo: string; selectedRows: string[] }) {
-  //   this.orderList.forEach((item) => {
+  //   this.shipmentList.forEach((item) => {
   //     if (payload.selectedRows.includes(item.orderId)) {
   //       item.exportBatch = payload.batchNo
   //     }
@@ -70,7 +68,7 @@ export default class Order extends VuexModule {
 
   @Mutation
   SET_STATUS(payload: { status: Status; selectedRows: number[] }) {
-    this.orderList.forEach((item) => {
+    this.shipmentList.forEach((item) => {
       if (payload.selectedRows.includes(item.orderId))
         item.status = payload.status
     })
@@ -78,27 +76,9 @@ export default class Order extends VuexModule {
 
   @Action({ rawError: true })
   public async initialiseOrder() {
-    const tokenRes: { data: { access: string } } = await $axios.post(
-      '/api/token/',
-      {
-        username: process.env.username,
-        password: process.env.password,
-      }
-    )
-    $axios.setToken(tokenRes.data.access, 'Bearer')
     const shipmentResponse = await $axios.get('/api/shipments/')
-    const shipment: IShipmentResponse = shipmentResponse.data
-    console.log('shipmentResponse :>> ', shipmentResponse)
-    // const currentTime = moment().format('YYYY-MM-DD')
-    // const randomItem: string[] = ['Green Package', 'Yellow Package']
-    // const randomStatus: Status[] = ['wait', 'print', 'out', 'received']
-    // const randomBatch: string[] = [
-    //   'ยังไม่ได้มอบหมาย',
-    //   `${currentTime}-01`,
-    //   `${currentTime}-02`,
-    // ]
-    // const randomBoolean: boolean[] = [true, false]
-    const temp: IOrder[] = []
+    const shipment: ShipmentResponse = shipmentResponse.data
+    const temp: ShipmentLine[] = []
     shipment.results.forEach((result) => {
       temp.push({
         orderId: result.id,
@@ -113,47 +93,19 @@ export default class Order extends VuexModule {
         patientName: `First ${result.id} Last ${result.id}`,
       })
     })
-    // for (let i = 0; i < 100; i++) {
-    //   temp.push({
-    //     orderId: `${i + 1}`,
-    //     cid: formatPhoneNumber(),
-    //     patientName: `First ${i} Last ${i}`,
-    //     phoneNumber: '081-111-1111',
-    //     orderedItem: randomItem[Math.floor(Math.random() * randomItem.length)],
-    //     orderedDate: moment(randomDate()).format(),
-    //     exportBatch:
-    //       randomBatch[Math.floor(Math.random() * randomBatch.length)],
-    //     trackingNo: `KT${i}${moment(randomDate()).format('x')}`,
-    //     warehouse: 'EDP',
-    //     orderedBy: 'Dr. Some Body',
-    //     updatedBy: 'Update User',
-    //     updatedDate: moment(randomDate()).format(),
-    //     address: '130/8 Moo 11 Suksawad Road Kru Nai, 10130 Phra Pradaeng',
-    //     province: 'กรุงเทพมหานคร',
-    //     district: 'บางรัก',
-    //     subDistrict: 'สี่พระยา',
-    //     zipCode: '10130',
-    //     remark: 'Blue House',
-    //     deliver:
-    //       randomBoolean[Math.floor(Math.random() * randomBoolean.length)],
-    //     label_printed:
-    //       randomBoolean[Math.floor(Math.random() * randomBoolean.length)],
-    //     status: randomStatus[Math.floor(Math.random() * randomStatus.length)],
-    //   })
-    // }
-    if (this.orderList.length < 1) this.SET_ORDER_LIST(temp)
+    if (this.shipmentList.length < 1) this.SET_SHIPMENT_LIST(temp)
   }
 
   @Action({ rawError: true })
   public getOrderDetail(orderId: number) {
     return Promise.resolve(
-      this.orderList.find((order) => order.orderId === orderId)
+      this.shipmentList.find((order) => order.orderId === orderId)
     )
   }
 
   @Action({ rawError: true })
-  public updateOrder(payload: IOrder) {
-    this.UPDATE_ORDER(payload)
+  public updateOrder(payload: ShipmentLine) {
+    this.UPDATE_SHIPMENT(payload)
   }
 
   @Action({ rawError: true })

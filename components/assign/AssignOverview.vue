@@ -31,7 +31,7 @@
 <script lang="ts">
 import moment from 'moment'
 import { Vue, Component } from 'vue-property-decorator'
-import { OrderModule } from '~/store'
+import { ShipmentModule } from '~/store'
 
 import { IOrder } from '~/types/order.type'
 
@@ -42,7 +42,7 @@ export default class AssignOverview extends Vue {
   data: IOrder[] = []
 
   mounted() {
-    this.data = OrderModule.getOrderList.filter(
+    this.data = ShipmentModule.getOrderList.filter(
       (item) => item.exportBatch === null
     )
   }

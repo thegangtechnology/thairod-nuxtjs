@@ -203,7 +203,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
-import { OrderModule } from '~/store'
+import { ShipmentModule } from '~/store'
 
 import { IOrder, IOrderDetail } from '~/types/order.type'
 
@@ -286,7 +286,7 @@ export default class OrderEdit extends Vue {
   }
 
   onSave() {
-    OrderModule.updateOrder(this.form)
+    ShipmentModule.updateOrder(this.form)
     this.onEditChange()
   }
 }

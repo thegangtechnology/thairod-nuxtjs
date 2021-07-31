@@ -165,7 +165,7 @@ import FilterSvg from '~/assets/icons/filter.svg'
 import CorrectSvg from '~/assets/icons/correct.svg'
 import RightSvg from '~/assets/icons/right-table.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
-import { OrderModule } from '~/store'
+import { ShipmentModule } from '~/store'
 
 type Status = 'wait' | 'print' | 'out' | 'received'
 
@@ -425,7 +425,7 @@ export default class OverviewTable extends Vue {
   }
 
   saveToStore(ids: number[], status: Status) {
-    OrderModule.updateStatus({ status, selectedRows: ids })
+    ShipmentModule.updateStatus({ status, selectedRows: ids })
   }
 
   onSave() {

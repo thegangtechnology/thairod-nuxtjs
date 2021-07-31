@@ -15,12 +15,12 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { OrderModule } from '~/store'
-import { IOrder } from '~/types/order.type'
+import { ShipmentModule } from '~/store'
+import { ShipmentDetail } from '~/types/shipment.type'
 
 @Component
 export default class DetailPage extends Vue {
-  detail: IOrder | null = null
+  detail: ShipmentDetail | null = null
 
   isEdit: boolean = false
 
@@ -34,7 +34,7 @@ export default class DetailPage extends Vue {
   }
 
   async importDetail() {
-    const res = await OrderModule.getOrderDetail(
+    const res = await ShipmentModule.getOrderDetail(
       parseInt(this.$route.params.id)
     )
     if (res) this.detail = res

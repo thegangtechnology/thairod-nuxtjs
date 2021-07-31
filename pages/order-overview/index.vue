@@ -6,15 +6,11 @@
         <div class="overview-button__container">
           <a-button class="overview-button__cta" @click="toPrint">
             <img :src="PrinterIcon" alt="PrinterIcon" />
-            <span>
-              พิมพ์ใบจัดส่งสินค้า
-            </span>
+            <span> พิมพ์ใบจัดส่งสินค้า </span>
           </a-button>
           <a-button class="overview-button__cta" @click="toDelivery">
             <img :src="TruckIcon" alt="TruckIcon" />
-            <span>
-              อัปเดตการจัดส่ง
-            </span>
+            <span> อัปเดตการจัดส่ง </span>
           </a-button>
         </div>
         <a-input
@@ -31,29 +27,29 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import TruckSvg from "~/assets/icons/truck.svg";
-import PrinterSvg from "~/assets/icons/printer.svg";
-import { OrderModule } from "~/store";
+import { Vue, Component } from 'vue-property-decorator'
+import TruckSvg from '~/assets/icons/truck.svg'
+import PrinterSvg from '~/assets/icons/printer.svg'
+import { ShipmentModule } from '~/store'
 
 @Component
 export default class Main extends Vue {
-  private TruckIcon = TruckSvg;
-  private PrinterIcon = PrinterSvg;
-  search: string = "";
+  private TruckIcon = TruckSvg
+  private PrinterIcon = PrinterSvg
+  search: string = ''
 
   created() {
-    if (OrderModule.getOrderListLength < 1) {
-      OrderModule.initialiseOrder();
+    if (ShipmentModule.getShipmentLength < 1) {
+      ShipmentModule.initialiseOrder()
     }
   }
 
   toPrint() {
-    this.$router.push(`/print`);
+    this.$router.push(`/print`)
   }
 
   toDelivery() {
-    this.$router.push(`/order-overview/delivery`);
+    this.$router.push(`/order-overview/delivery`)
   }
 }
 </script>

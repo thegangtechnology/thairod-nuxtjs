@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { OrderModule } from '~/store'
+import { ShipmentModule } from '~/store'
 import { IOrder } from '~/types/order.type'
 
 @Component
@@ -15,13 +15,13 @@ export default class Main extends Vue {
   data: IOrder[] = []
 
   created() {
-    if (OrderModule.getOrderListLength < 1) {
-      OrderModule.initialiseOrder()
+    if (ShipmentModule.getOrderListLength < 1) {
+      ShipmentModule.initialiseOrder()
     }
   }
 
   mounted() {
-    this.data = OrderModule.getOrderList.filter(
+    this.data = ShipmentModule.getOrderList.filter(
       (item) => item.exportBatch !== null
     )
   }

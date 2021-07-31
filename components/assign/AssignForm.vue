@@ -67,128 +67,128 @@
 </template>
 
 <script lang="ts">
-import moment from "moment";
-import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-import { OrderModule } from "~/store";
-import { IOrder } from "~/types/order.type";
+import moment from 'moment'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { ShipmentModule } from '~/store'
+import { IOrder } from '~/types/order.type'
 
 interface IMain {
-  [key: string]: string;
+  [key: string]: string
 }
 
 interface IFilter extends IMain {
-  orderedDateStart: string;
-  orderedDateEnd: string;
+  orderedDateStart: string
+  orderedDateEnd: string
 }
 
 @Component
 export default class AssignOverview extends Vue {
-  @Prop({ required: true }) originalData!: IOrder[];
+  @Prop({ required: true }) originalData!: IOrder[]
 
-  tabKey: string = "All";
+  tabKey: string = 'All'
 
-  batchNo: string = "";
+  batchNo: string = ''
 
-  data: IOrder[] = this.originalData ? this.originalData : [];
+  data: IOrder[] = this.originalData ? this.originalData : []
 
-  visibleSaveModal: boolean = false;
+  visibleSaveModal: boolean = false
 
   columns = [
     {
-      title: "Order ID",
-      dataIndex: "orderId"
+      title: 'Order ID',
+      dataIndex: 'orderId',
     },
     {
-      title: "CID",
-      dataIndex: "cid"
+      title: 'CID',
+      dataIndex: 'cid',
     },
     {
-      title: "Patient Name",
-      dataIndex: "patientName"
+      title: 'Patient Name',
+      dataIndex: 'patientName',
     },
     {
-      title: "Ordered Item",
-      dataIndex: "orderedItem"
+      title: 'Ordered Item',
+      dataIndex: 'orderedItem',
     },
     {
-      title: "Ordered Date",
-      dataIndex: "orderedDate"
+      title: 'Ordered Date',
+      dataIndex: 'orderedDate',
     },
     {
-      title: "Export Batch",
-      dataIndex: "exportBatch"
-    }
-  ];
+      title: 'Export Batch',
+      dataIndex: 'exportBatch',
+    },
+  ]
 
   filterForm: IFilter = {
-    orderedDateStart: "",
-    orderedDateEnd: ""
-  };
-
-  selectedRows: string[] = [];
-
-  @Watch("filterForm", { immediate: true, deep: true })
-  onFilterChange() {
-    this.filterData();
+    orderedDateStart: '',
+    orderedDateEnd: '',
   }
 
-  @Watch("originalData", { immediate: true, deep: true })
+  selectedRows: string[] = []
+
+  @Watch('filterForm', { immediate: true, deep: true })
+  onFilterChange() {
+    this.filterData()
+  }
+
+  @Watch('originalData', { immediate: true, deep: true })
   onOriginalChange() {
-    this.data = this.originalData;
+    this.data = this.originalData
   }
 
   get recordsLength(): number {
-    return this.data.length;
+    return this.data.length
   }
 
   get rowSelection() {
     return {
       onChange: (selectedRowKeys: any, _selectedRows: any) => {
-        this.selectedRows = selectedRowKeys;
+        this.selectedRows = selectedRowKeys
       },
       getCheckboxProps: (record: any) => ({
         props: {
-          disabled: record.name === "Disabled User", // Column configuration not to be checked
-          name: record.name
-        }
-      })
-    };
+          disabled: record.name === 'Disabled User', // Column configuration not to be checked
+          name: record.name,
+        },
+      }),
+    }
   }
 
   get canSave() {
-    return this.batchNo !== "" && this.selectedRows.length > 0;
+    return this.batchNo !== '' && this.selectedRows.length > 0
   }
 
   onTabChange(key: string) {
-    this.tabKey = key;
+    this.tabKey = key
   }
 
   onDateFilterChange(_date: moment.Moment[], dateString: string[]) {
-    this.filterForm.orderedDateStart = dateString[0];
-    this.filterForm.orderedDateEnd = dateString[1];
+    this.filterForm.orderedDateStart = dateString[0]
+    this.filterForm.orderedDateEnd = dateString[1]
   }
 
   filterData() {
-    this.data = this.originalData.filter(row => {
+    this.data = this.originalData.filter((row) => {
       return moment(row.orderedDate).isBetween(
         this.filterForm.orderedDateStart,
         this.filterForm.orderedDateEnd,
-        "day",
-        "[]"
-      );
-    });
+        'day',
+        '[]'
+      )
+    })
   }
 
   goBack() {
-    this.$router.go(-1);
+    this.$router.go(-1)
   }
 
   onSave() {
-    OrderModule.updateExportBatch({
+    ShipmentModule.updateExportBatch({
       batchNo: this.batchNo,
-      selectedRows: this.selectedRows
-    });
-    this.$router.push(`/order-overview`);
+      selectedRows: this.selectedRows,
+    })
+    this.$router.push(`/order-overview`)
   }
 }
 </script>
