@@ -1,6 +1,18 @@
-import { VuexModule, Module, Action, Mutation } from 'vuex-module-decorators'
+import {
+  getModule,
+  VuexModule,
+  Module,
+  Action,
+  Mutation,
+} from 'vuex-module-decorators'
+import { store } from '@/store'
 import moment from 'moment'
-import { ShipmentLine, ShipmentResponse, Status } from '~/types/shipment.type'
+import {
+  ShipmentDetail,
+  ShipmentLine,
+  ShipmentResponse,
+  Status,
+} from '~/types/shipment.type'
 import { $axios } from '@/utils/api'
 
 const randomCID = (): string => {
@@ -33,8 +45,17 @@ const getStatus = (deliver: boolean, label_printed: boolean): Status => {
   return 'received'
 }
 
-@Module({ name: 'shipmentModule', stateFactory: true, namespaced: true })
-export default class Shipment extends VuexModule {
+const name: string = 'shipmentModule'
+if (store.state[name]) {
+  store.unregisterModule(name)
+}
+
+@Module({
+  dynamic: true,
+  name,
+  store,
+})
+class ShipmentModule extends VuexModule {
   shipmentList: ShipmentLine[] = []
 
   public get getShipmentList(): ShipmentLine[] {
@@ -45,6 +66,12 @@ export default class Shipment extends VuexModule {
     return this.shipmentList.length
   }
 
+  public get getNextBatchName() {
+    return Promise.resolve(
+      $axios.get('/api/batch-shipments/next_generated_name/')
+    )
+  }
+
   @Mutation
   SET_SHIPMENT_LIST(payload: ShipmentLine[]) {
     this.shipmentList = payload
@@ -53,7 +80,7 @@ export default class Shipment extends VuexModule {
   @Mutation
   UPDATE_SHIPMENT(payload: ShipmentLine) {
     this.shipmentList = this.shipmentList.map((order) =>
-      order.orderId === payload.orderId ? payload : order
+      order.id === payload.id ? payload : order
     )
   }
 
@@ -69,23 +96,24 @@ export default class Shipment extends VuexModule {
   @Mutation
   SET_STATUS(payload: { status: Status; selectedRows: number[] }) {
     this.shipmentList.forEach((item) => {
-      if (payload.selectedRows.includes(item.orderId))
-        item.status = payload.status
+      if (payload.selectedRows.includes(item.id)) item.status = payload.status
     })
   }
 
   @Action({ rawError: true })
-  public async initialiseOrder() {
+  public async initialiseShipment() {
     const shipmentResponse = await $axios.get('/api/shipments/')
     const shipment: ShipmentResponse = shipmentResponse.data
     const temp: ShipmentLine[] = []
     shipment.results.forEach((result) => {
       temp.push({
-        orderId: result.id,
-        orderedItem: result.order.map((order) => order.product_variation),
-        orderedDate: result.created_date,
-        exportBatch: result.batch,
-        trackingNo: result.tracking_code,
+        id: result.id,
+        shipmentItem: result.order.map((order) => {
+          return { ...order.product_variation, quantity: order.quantity }
+        }),
+        created_date: result.created_date,
+        batch: result.batch,
+        tracking_code: result.tracking_code,
         deliver: result.deliver,
         label_printed: result.label_printed,
         status: getStatus(result.deliver, result.label_printed),
@@ -93,26 +121,53 @@ export default class Shipment extends VuexModule {
         patientName: `First ${result.id} Last ${result.id}`,
       })
     })
-    if (this.shipmentList.length < 1) this.SET_SHIPMENT_LIST(temp)
+    this.SET_SHIPMENT_LIST(temp)
   }
 
   @Action({ rawError: true })
-  public getOrderDetail(orderId: number) {
-    return Promise.resolve(
-      this.shipmentList.find((order) => order.orderId === orderId)
-    )
+  public getShipmentDetail(shipmentId: number): Promise<ShipmentDetail> {
+    const exist = this.shipmentList.find((order) => order.id === shipmentId)
+    if (exist) {
+      const shipment: ShipmentDetail = {
+        ...exist,
+        phoneNumber: '081-111-1111',
+        warehouse: 'EDP',
+        orderedBy: 'Dr. Some Body',
+        updatedBy: 'Update User',
+        updatedDate: moment(randomDate()).format(),
+        address: '130/8 Moo 11 Suksawad Road Kru Nai, 10130 Phra Pradaeng',
+        province: 'กรุงเทพมหานคร',
+        district: 'บางรัก',
+        subDistrict: 'สี่พระยา',
+        zipCode: '10130',
+        remark: 'Blue House',
+      }
+      return Promise.resolve(shipment)
+    } else {
+      return Promise.reject()
+    }
   }
 
   @Action({ rawError: true })
-  public updateOrder(payload: ShipmentLine) {
+  public updateShipment(payload: ShipmentLine) {
     this.UPDATE_SHIPMENT(payload)
   }
 
   @Action({ rawError: true })
-  public updateExportBatch(payload: {
+  public async updateBatch(payload: {
     batchNo: string
-    selectedRows: string[]
+    selectedRowKeys: number[]
   }) {
+    try {
+      await $axios.post('/api/batch-shipments/assign/', {
+        batch_name: payload.batchNo,
+        shipments: payload.selectedRowKeys,
+      })
+    } catch (error) {
+      console.log('Error update Batch: ', error)
+    } finally {
+      await this.initialiseShipment()
+    }
     // this.SET_BATCH_NUM(payload)
   }
 
@@ -137,3 +192,5 @@ export default class Shipment extends VuexModule {
     })
   }
 }
+
+export default getModule(ShipmentModule)

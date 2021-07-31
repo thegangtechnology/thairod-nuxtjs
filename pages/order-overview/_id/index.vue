@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { ShipmentModule } from '~/store'
+import ShipmentModule from '~/store/shipment.module'
 import { ShipmentDetail } from '~/types/shipment.type'
 
 @Component
@@ -34,7 +34,7 @@ export default class DetailPage extends Vue {
   }
 
   async importDetail() {
-    const res = await ShipmentModule.getOrderDetail(
+    const res = await ShipmentModule.getShipmentDetail(
       parseInt(this.$route.params.id)
     )
     if (res) this.detail = res

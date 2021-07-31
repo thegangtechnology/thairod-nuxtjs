@@ -1,6 +1,121 @@
 <template>
-  <div class="overview-container">
-    <a-form layout="vertical">
+  <div class="assign-body">
+    <div class="assign-body__container">
+      <div class="assign-body__header">
+        กรุณาเลือกรายการสั่งซื้อเพื่อเพิ่มลงในล็อตการจัดส่ง
+        <span>{{ batchNo }}</span>
+      </div>
+      <div class="assign-filter__container">
+        <div class="assign-filter__header">
+          <img :src="FilterIcon" alt="FilterIcon" />
+          <span> ตัวกรองข้อมูล </span>
+        </div>
+        <a-form layout="vertical">
+          <div class="assign-filter__form">
+            <div class="date">
+              <a-form-item label="วันและเวลาที่สั่ง">
+                <a-input placeholder="input search text" />
+              </a-form-item>
+            </div>
+            <div class="package">
+              <a-form-item label="สินค้าในรายการสั่งซื้อ">
+                <a-input placeholder="input search text" />
+              </a-form-item>
+            </div>
+          </div>
+        </a-form>
+      </div>
+      <div class="assign-table__container">
+        <a-table
+          row-key="id"
+          :row-selection="{
+            selectedRowKeys: selectedRowKeys,
+            onChange: onSelectChange,
+          }"
+          :columns="columns"
+          :data-source="data"
+        >
+          <div slot="id" slot-scope="text, record" class="table-form__input">
+            <div>
+              {{ record.id }}
+            </div>
+            <div>
+              {{ record.created_date }}
+            </div>
+          </div>
+          <div
+            slot="shipmentItem"
+            slot-scope="text, record"
+            class="table-form__input"
+          >
+            <div v-for="item in record.shipmentItem" :key="item.id">
+              {{ item.name }}
+            </div>
+          </div>
+          <div
+            slot="quantity"
+            slot-scope="text, record"
+            class="table-form__input"
+          >
+            <div v-for="item in record.shipmentItem" :key="item.id">
+              x{{ item.quantity }} {{ item.unit }}
+            </div>
+          </div>
+          <div
+            slot="patientName"
+            slot-scope="text, record"
+            class="table-form__input"
+          >
+            <div>
+              {{ text }}
+            </div>
+            <div>
+              {{ record.cid }}
+            </div>
+          </div>
+          <div slot="batch" slot-scope="text, record" class="table-form__input">
+            <div v-if="record.batch === null">N/A</div>
+            <div v-else>
+              {{ record.batch.name }}
+            </div>
+          </div>
+          <div slot="status" slot-scope="text" class="table-form__input">
+            <div v-if="text === 'wait'" class="assign-status-container">
+              <div class="assign-row__status wait">
+                <span> รอพิมพ์ใบจัดส่ง </span>
+              </div>
+            </div>
+            <div v-else-if="text === 'print'" class="assign-status-container">
+              <div class="assign-row__status print">
+                <span> รอจัดส่ง </span>
+              </div>
+            </div>
+            <div v-else-if="text === 'out'" class="assign-status-container">
+              <div class="assign-row__status out">
+                <span>รอรับสินค้า </span>
+              </div>
+            </div>
+            <div v-else class="assign-status-container">
+              <div class="assign-row__status received">
+                <span> ได้รับเรียบร้อย </span>
+              </div>
+            </div>
+          </div>
+        </a-table>
+      </div>
+    </div>
+    <div class="assign-button__container">
+      <a-button class="assign-button__cta cancel" @click="goBack">
+        <span> ยกเลิก </span>
+      </a-button>
+      <a-button
+        class="assign-button__cta submit"
+        @click="visibleSubmitDialog = true"
+      >
+        <span> สร้าง ({{ selectedRowKeys.length }}) </span>
+      </a-button>
+    </div>
+    <!-- <a-form layout="vertical">
       <a-row>
         <a-col :span="4">
           <a-form-item label="Export Batch No.">
@@ -8,8 +123,8 @@
               v-model="batchNo"
               placeholder="Batch No."
               style="width: 200px"
+            @search="onSearchRecords"
             />
-            <!-- @search="onSearchRecords" -->
           </a-form-item>
         </a-col>
         <a-col :span="4">
@@ -19,8 +134,8 @@
         </a-col>
       </a-row>
     </a-form>
-    <div class="overview-table__container">
-      <div class="overview-table__table">
+    <div class="assign-table__container">
+      <div class="assign-table__table">
         <a-table
           row-key="orderId"
           :row-selection="rowSelection"
@@ -32,33 +147,52 @@
           </div>
         </a-table>
       </div>
-    </div>
+    </div> -->
 
-    <div class="button-container">
+    <!-- <div class="button-container">
       <div class="button-right">
         <a-button @click="goBack">Cancel</a-button>
         <a-button
           :disabled="!canSave"
           type="primary"
-          @click="visibleSaveModal = true"
+          @click="visibleSubmitDialog = true"
           >Save</a-button
         >
       </div>
-    </div>
-    <!-- Save Modal -->
-
-    <a-modal v-model="visibleSaveModal" centered :closable="false">
-      <div class="modal__title">Confirm Save?</div>
-      <div class="modal__subtitle">
-        {{ selectedRows.length }} record(s) will be assigned to {{ batchNo }}
+    </div> -->
+    <!-- visibleSubmitDialog -->
+    <a-modal
+      v-model="visibleSubmitDialog"
+      class="assign-modal__container"
+      centered
+      :closable="false"
+      :width="480"
+    >
+      <div class="assign-modal__img">
+        <img :src="BoxImg" alt="BoxImg" />
+      </div>
+      <div class="assign-modal__title">ยืนยันการสร้างล็อตการจัดส่ง</div>
+      <div class="assign-modal__subtitle">
+        รายการสั่งซื้อจำนวน
+        {{ selectedRowKeys.length }} รายการกำลังจะถูกเพิ่มลงในล็อตการจัดส่ง
+        <span>{{ batchNo }}</span>
       </div>
       <template slot="footer">
-        <div class="flex justify-center">
-          <a-button key="back" @click="visibleSaveModal = false">
-            Cancel
+        <div class="assign-modal__footer">
+          <a-button
+            key="back"
+            class="assign-button__cta cancel"
+            @click="visibleSubmitDialog = false"
+          >
+            ยกเลิก
           </a-button>
-          <a-button key="submit" type="primary" @click="onSave">
-            Confirm
+          <a-button
+            key="submit"
+            class="assign-button__cta submit"
+            type="primary"
+            @click="onSave"
+          >
+            ยืนยัน
           </a-button>
         </div>
       </template>
@@ -67,10 +201,12 @@
 </template>
 
 <script lang="ts">
-import moment from 'moment'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { ShipmentModule } from '~/store'
-import { IOrder } from '~/types/order.type'
+import moment from 'moment'
+import FilterSvg from '~/assets/icons/filter.svg'
+import BoxSvg from '~/assets/images/print/box.svg'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentLine } from '~/types/shipment.type'
 
 interface IMain {
   [key: string]: string
@@ -82,41 +218,52 @@ interface IFilter extends IMain {
 }
 
 @Component
-export default class AssignOverview extends Vue {
-  @Prop({ required: true }) originalData!: IOrder[]
+export default class AssignForm extends Vue {
+  @Prop({ required: true }) originalData!: ShipmentLine[]
+
+  private FilterIcon = FilterSvg
+  private BoxImg = BoxSvg
 
   tabKey: string = 'All'
 
   batchNo: string = ''
 
-  data: IOrder[] = this.originalData ? this.originalData : []
+  data: ShipmentLine[] = this.originalData ? this.originalData : []
 
-  visibleSaveModal: boolean = false
+  visibleSubmitDialog: boolean = false
 
   columns = [
     {
-      title: 'Order ID',
-      dataIndex: 'orderId',
+      title: 'เลขที่รายการสั่งซื้อ',
+      scopedSlots: { customRender: 'id' },
     },
     {
-      title: 'CID',
-      dataIndex: 'cid',
+      title: 'รายการสินค้า',
+      scopedSlots: { customRender: 'shipmentItem' },
     },
     {
-      title: 'Patient Name',
+      title: 'จำนวน',
+      scopedSlots: { customRender: 'quantity' },
+    },
+    {
+      title: 'ผู้รับการรักษา',
       dataIndex: 'patientName',
+      scopedSlots: { customRender: 'patientName' },
     },
     {
-      title: 'Ordered Item',
-      dataIndex: 'orderedItem',
+      title: 'หมายเลขติดตาม',
+      dataIndex: 'tracking_code',
     },
     {
-      title: 'Ordered Date',
-      dataIndex: 'orderedDate',
+      title: 'สถานะการจัดส่ง',
+      dataIndex: 'status',
+      scopedSlots: { customRender: 'status' },
+      align: 'center',
     },
     {
-      title: 'Export Batch',
-      dataIndex: 'exportBatch',
+      title: 'ล็อตการจัดส่ง',
+      dataIndex: 'batch',
+      scopedSlots: { customRender: 'batch' },
     },
   ]
 
@@ -125,7 +272,7 @@ export default class AssignOverview extends Vue {
     orderedDateEnd: '',
   }
 
-  selectedRows: string[] = []
+  selectedRowKeys: number[] = []
 
   @Watch('filterForm', { immediate: true, deep: true })
   onFilterChange() {
@@ -141,22 +288,13 @@ export default class AssignOverview extends Vue {
     return this.data.length
   }
 
-  get rowSelection() {
-    return {
-      onChange: (selectedRowKeys: any, _selectedRows: any) => {
-        this.selectedRows = selectedRowKeys
-      },
-      getCheckboxProps: (record: any) => ({
-        props: {
-          disabled: record.name === 'Disabled User', // Column configuration not to be checked
-          name: record.name,
-        },
-      }),
-    }
+  get canSave() {
+    return this.batchNo !== '' && this.selectedRowKeys.length > 0
   }
 
-  get canSave() {
-    return this.batchNo !== '' && this.selectedRows.length > 0
+  async created() {
+    const res = await ShipmentModule.getNextBatchName
+    this.batchNo = res.data.name
   }
 
   onTabChange(key: string) {
@@ -170,7 +308,7 @@ export default class AssignOverview extends Vue {
 
   filterData() {
     this.data = this.originalData.filter((row) => {
-      return moment(row.orderedDate).isBetween(
+      return moment(row.created_date).isBetween(
         this.filterForm.orderedDateStart,
         this.filterForm.orderedDateEnd,
         'day',
@@ -179,14 +317,18 @@ export default class AssignOverview extends Vue {
     })
   }
 
+  onSelectChange(selectedRowKeys: number[]) {
+    this.selectedRowKeys = selectedRowKeys
+  }
+
   goBack() {
     this.$router.go(-1)
   }
 
-  onSave() {
-    ShipmentModule.updateExportBatch({
+  async onSave() {
+    await ShipmentModule.updateBatch({
       batchNo: this.batchNo,
-      selectedRows: this.selectedRows,
+      selectedRowKeys: this.selectedRowKeys,
     })
     this.$router.push(`/order-overview`)
   }

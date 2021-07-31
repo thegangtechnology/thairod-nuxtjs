@@ -27,10 +27,10 @@
                   <a-select-option value=""> All </a-select-option>
                   <a-select-option
                     v-for="batch in exportBatchSelect"
-                    :key="batch"
-                    :value="batch"
+                    :key="batch.id"
+                    :value="batch.name"
                   >
-                    {{ batch }}
+                    {{ batch.name }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -56,12 +56,9 @@
         </a-form>
       </div>
       <div class="overview-table__container">
-        <div class="overview-table__status">
-          Displaying {{ recordsLength }} records
-        </div>
         <div class="overview-table__table">
           <a-table
-            row-key="orderId"
+            row-key="id"
             :row-selection="
               option === 'default'
                 ? null
@@ -74,29 +71,78 @@
             :data-source="data"
             :custom-row="customRow"
           >
+            <div slot="id" slot-scope="text, record" class="table-form__input">
+              <div>
+                {{ record.id }}
+              </div>
+              <div>
+                {{ record.created_date }}
+              </div>
+            </div>
             <div
-              slot="orderId"
+              slot="shipmentItem"
+              slot-scope="text, record"
+              class="table-form__input"
+            >
+              <div v-for="item in record.shipmentItem" :key="item.id">
+                {{ item.name }}
+              </div>
+            </div>
+            <div
+              slot="quantity"
+              slot-scope="text, record"
+              class="table-form__input"
+            >
+              <div v-for="item in record.shipmentItem" :key="item.id">
+                x{{ item.quantity }} {{ item.unit }}
+              </div>
+            </div>
+            <div
+              slot="patientName"
               slot-scope="text, record"
               class="table-form__input"
             >
               <div>
-                {{ record.orderId }}
+                {{ text }}
               </div>
               <div>
-                {{ record.orderedDate }}
+                {{ record.cid }}
+              </div>
+            </div>
+            <div
+              slot="batch"
+              slot-scope="text, record"
+              class="table-form__input"
+            >
+              <div v-if="record.batch === null">N/A</div>
+              <div v-else>
+                {{ record.batch.name }}
               </div>
             </div>
             <div slot="status" slot-scope="text" class="table-form__input">
-              <div v-if="text === 'wait'" class="overview-row__status">
-                รอพิมพ์ใบจัดส่ง
+              <div v-if="text === 'wait'" class="overview-status-container">
+                <div class="overview-row__status wait">
+                  <span> รอพิมพ์ใบจัดส่ง </span>
+                </div>
               </div>
-              <div v-else-if="text === 'print'" class="overview-row__status">
-                รอจัดส่ง
+              <div
+                v-else-if="text === 'print'"
+                class="overview-status-container"
+              >
+                <div class="overview-row__status print">
+                  <span> รอจัดส่ง </span>
+                </div>
               </div>
-              <div v-else-if="text === 'out'" class="overview-row__status">
-                รอรับสินค้า
+              <div v-else-if="text === 'out'" class="overview-status-container">
+                <div class="overview-row__status out">
+                  <span>รอรับสินค้า </span>
+                </div>
               </div>
-              <div v-else>ได้รับเรียบร้อย</div>
+              <div v-else class="overview-status-container">
+                <div class="overview-row__status received">
+                  <span> ได้รับเรียบร้อย </span>
+                </div>
+              </div>
             </div>
             <div slot="operation" class="table-form__input">
               <img :src="RightIcon" alt="RightIcon" />
@@ -165,7 +211,8 @@ import FilterSvg from '~/assets/icons/filter.svg'
 import CorrectSvg from '~/assets/icons/correct.svg'
 import RightSvg from '~/assets/icons/right-table.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
-import { ShipmentModule } from '~/store'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentBatch, ShipmentLine } from '~/types/shipment.type'
 
 type Status = 'wait' | 'print' | 'out' | 'received'
 
@@ -180,20 +227,9 @@ interface IFilter extends IMain {
   searchRecord: string
 }
 
-interface IOrder {
-  orderId: number
-  cid: string
-  patientName: string
-  orderedItem: string
-  orderedDate: string
-  exportBatch: string
-  trackingNo: string
-  status: Status
-}
-
 @Component
 export default class OverviewTable extends Vue {
-  @Prop({ required: true }) originalData!: IOrder[]
+  @Prop({ required: true }) originalData!: ShipmentLine[]
   @Prop({ required: true }) option!: string
   @Prop({ required: true }) search!: string
   @Prop({ required: true }) tabKey!: string
@@ -207,31 +243,35 @@ export default class OverviewTable extends Vue {
   columns = [
     {
       title: 'เลขที่รายการสั่งซื้อ',
-      scopedSlots: { customRender: 'orderId' },
+      scopedSlots: { customRender: 'id' },
     },
     {
       title: 'รายการสินค้า',
-      dataIndex: 'orderedItem',
+      scopedSlots: { customRender: 'shipmentItem' },
     },
     {
       title: 'จำนวน',
+      scopedSlots: { customRender: 'quantity' },
     },
     {
       title: 'ผู้รับการรักษา',
       dataIndex: 'patientName',
+      scopedSlots: { customRender: 'patientName' },
     },
     {
       title: 'ล็อตการจัดส่ง',
-      dataIndex: 'exportBatch',
+      dataIndex: 'batch',
+      scopedSlots: { customRender: 'batch' },
     },
     {
       title: 'สถานะการจัดส่ง',
       dataIndex: 'status',
       scopedSlots: { customRender: 'status' },
+      align: 'center',
     },
     {
       title: 'หมายเลขติดตาม',
-      dataIndex: 'trackingNo',
+      dataIndex: 'tracking_code',
     },
     {
       key: 'operation',
@@ -239,7 +279,7 @@ export default class OverviewTable extends Vue {
     },
   ]
 
-  data: IOrder[] = []
+  data: ShipmentLine[] = []
   selectedRowKeys: number[] = []
   originalSelectedRowKeys: number[] = []
   visibleSubmitDialog: boolean = false
@@ -280,14 +320,20 @@ export default class OverviewTable extends Vue {
     return this.data.length
   }
 
-  get exportBatchSelect(): string[] {
-    return [...new Set(this.originalData.map((item) => item.exportBatch))]
+  get exportBatchSelect(): (ShipmentBatch | null)[] {
+    return [
+      ...new Set(
+        this.originalData
+          .map((item) => item.batch)
+          .filter((mapped) => mapped !== null)
+      ),
+    ]
   }
 
   get unselectedIds() {
     return this.data
-      .filter((item) => !this.selectedRowKeys.includes(item.orderId))
-      .map((filtered) => filtered.orderId)
+      .filter((item) => !this.selectedRowKeys.includes(item.id))
+      .map((filtered) => filtered.id)
   }
 
   get getModalDescription() {
@@ -328,7 +374,7 @@ export default class OverviewTable extends Vue {
       .filter((item) => {
         return this.handleCondition(item.status)
       })
-      .map((filtered) => filtered.orderId)
+      .map((filtered) => filtered.id)
     this.selectedRowKeys = this.originalSelectedRowKeys
   }
 
@@ -369,10 +415,10 @@ export default class OverviewTable extends Vue {
     })
   }
 
-  filterFields(key: string, row: IOrder): boolean {
+  filterFields(key: string, row: ShipmentLine): boolean {
     if (key === 'orderedDate') {
       return (
-        moment(row.orderedDate).format('YYYY-MM-DD') ===
+        moment(row.created_date).format('YYYY-MM-DD') ===
         this.filterForm.orderedDate
       )
     }
@@ -381,11 +427,13 @@ export default class OverviewTable extends Vue {
         .filter((column) => column.dataIndex)
         .map((column) => column.dataIndex)
       const searchedArray = columsDataIndex.map((col) =>
-        String(row[col as keyof IOrder]).includes(this.filterForm.searchRecord)
+        String(row[col as keyof ShipmentLine]).includes(
+          this.filterForm.searchRecord
+        )
       )
       return searchedArray.some(Boolean)
     }
-    return row[key as keyof IOrder] === this.filterForm[key]
+    return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
   handleUpdatePrint() {
@@ -439,11 +487,11 @@ export default class OverviewTable extends Vue {
     this.selectedRowKeys = selectedRowKeys
   }
 
-  customRow(record: IOrder) {
+  customRow(record: ShipmentLine) {
     return {
       on: {
         click: () => {
-          this.$router.push(`/order-overview/${record.orderId}`)
+          this.$router.push(`/order-overview/${record.id}`)
         },
       },
     }

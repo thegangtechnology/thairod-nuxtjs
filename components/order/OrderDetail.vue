@@ -98,16 +98,15 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-
-import { IOrder } from "~/types/order.type";
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import { ShipmentDetail } from '~/types/shipment.type'
 
 @Component
 export default class OrderDetail extends Vue {
-  @Prop({ required: true }) detail!: IOrder;
+  @Prop({ required: true }) detail!: ShipmentDetail
 
   goBack() {
-    this.$router.go(-1);
+    this.$router.go(-1)
   }
 }
 </script>

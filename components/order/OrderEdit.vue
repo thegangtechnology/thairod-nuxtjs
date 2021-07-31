@@ -203,9 +203,8 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
-import { ShipmentModule } from '~/store'
-
-import { IOrder, IOrderDetail } from '~/types/order.type'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentDetail } from '~/types/shipment.type'
 
 export interface IAddress {
   district: string
@@ -219,9 +218,9 @@ export interface IAddress {
 
 @Component
 export default class OrderEdit extends Vue {
-  @Prop({ required: true }) detail!: IOrderDetail
+  @Prop({ required: true }) detail!: ShipmentDetail
 
-  form: IOrderDetail = JSON.parse(JSON.stringify(this.detail))
+  form: ShipmentDetail = JSON.parse(JSON.stringify(this.detail))
 
   location: IAddress[] = []
 
@@ -262,7 +261,8 @@ export default class OrderEdit extends Vue {
     return !Object.keys(this.detail)
       .map((key) => {
         return (
-          this.form[key as keyof IOrder] === this.detail[key as keyof IOrder]
+          this.form[key as keyof ShipmentDetail] ===
+          this.detail[key as keyof ShipmentDetail]
         )
       })
       .every(Boolean)
@@ -286,7 +286,7 @@ export default class OrderEdit extends Vue {
   }
 
   onSave() {
-    ShipmentModule.updateOrder(this.form)
+    ShipmentModule.updateShipment(this.form)
     this.onEditChange()
   }
 }

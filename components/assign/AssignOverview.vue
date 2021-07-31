@@ -1,74 +1,88 @@
 <template>
-  <div class="overview-container">
+  <div class="assign-tab__container">
     <div>
-      <client-only>
-        <a-tabs
-          default-active-key="All"
-          :animated="false"
-          @change="onTabChange"
-        >
-          <a-tab-pane key="All">
-            <span slot="tab"> All ({{ totalAmount }})</span>
-            <AssignTable :original-data="data" :tab-key="tabKey" />
-          </a-tab-pane>
-          <a-tab-pane key="Today">
-            <span slot="tab"> Today ({{ todayAmount }})</span>
-            <AssignTable :original-data="todayTabContent" :tab-key="tabKey" />
-          </a-tab-pane>
-          <a-tab-pane key="Yesterday">
-            <span slot="tab"> Yesterday ({{ yesterdayAmount }}) </span>
-            <AssignTable
-              :original-data="yesterdayTabContent"
-              :tab-key="tabKey"
-            />
-          </a-tab-pane>
-        </a-tabs>
-      </client-only>
+      <a-tabs
+        :default-active-key="tabKey"
+        :animated="false"
+        @change="onTabChange"
+      >
+        <a-tab-pane key="all">
+          <span slot="tab"> ทั้งหมด ({{ allData.length }})</span>
+          <AssignTable
+            :original-data="allData"
+            :search="search"
+            :tab-key="tabKey"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="unassign">
+          <span slot="tab"> ที่ต้องจัดการ ({{ getUnassignLength }})</span>
+          <AssignTable
+            :original-data="getUnassign"
+            :search="search"
+            :tab-key="tabKey"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="assign">
+          <span slot="tab"> จัดการแล้ว ({{ getAssignLength }}) </span>
+          <AssignTable
+            :original-data="getAssign"
+            :search="search"
+            :tab-key="tabKey"
+          />
+        </a-tab-pane>
+        <div slot="tabBarExtraContent" class="assign-tab__buttons">
+          <a-button class="assign-button__cta">แก้ไขล็อตการจัดส่ง</a-button>
+          <a-button class="assign-button__cta primary" @click="toCreateBatch">
+            สร้างล็อตการจัดส่งใหม่
+          </a-button>
+        </div>
+      </a-tabs>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import moment from 'moment'
-import { Vue, Component } from 'vue-property-decorator'
-import { ShipmentModule } from '~/store'
-
-import { IOrder } from '~/types/order.type'
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentLine } from '~/types/shipment.type'
 
 @Component
 export default class AssignOverview extends Vue {
-  tabKey: string = 'All'
+  @Prop({ required: true }) search!: string
 
-  data: IOrder[] = []
+  tabKey: string = 'all'
+  originalData: ShipmentLine[] = []
 
-  mounted() {
-    this.data = ShipmentModule.getOrderList.filter(
-      (item) => item.exportBatch === null
-    )
+  get allData() {
+    return ShipmentModule.getShipmentList
   }
 
-  get todayTabContent(): IOrder[] {
-    return this.data.filter((item) => {
-      return moment(item.orderedDate).isSame(moment(), 'day')
+  get getUnassign() {
+    return this.allData.filter((item) => {
+      return item.batch === null
     })
   }
 
-  get yesterdayTabContent(): IOrder[] {
-    return this.data.filter((item) => {
-      return moment(item.orderedDate).isSame(moment().subtract(1, 'day'), 'day')
+  get getAssign() {
+    return this.allData.filter((item) => {
+      return item.batch !== null
     })
   }
 
-  get totalAmount() {
-    return this.data.length
+  get getUnassignLength() {
+    return this.allData.filter((item) => {
+      return item.batch === null
+    }).length
   }
 
-  get todayAmount() {
-    return this.todayTabContent.length
+  get getAssignLength() {
+    return this.allData.filter((item) => {
+      return item.batch !== null
+    }).length
   }
 
-  get yesterdayAmount() {
-    return this.yesterdayTabContent.length
+  toCreateBatch() {
+    this.$router.push(`/assign/create-batch`)
   }
 
   onTabChange(key: string) {

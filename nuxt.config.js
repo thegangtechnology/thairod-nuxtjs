@@ -23,6 +23,7 @@ export default {
     '@/assets/styles/order-overview/main.less',
     '@/assets/styles/print/main.less',
     '@/assets/styles/delivery/main.less',
+    '@/assets/styles/assign/main.less',
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins

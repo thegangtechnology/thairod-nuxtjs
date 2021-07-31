@@ -64,7 +64,6 @@
         class="overview-tab__buttons"
       >
         <a-select v-model="updateOption" class="overview-button__cta">
-          <!-- @change="handleChange" -->
           <a-select-option value="default">
             อัปเดตข้อมูลรายการจัดส่ง
           </a-select-option>
@@ -88,8 +87,8 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { ShipmentModule } from '~/store'
-import { IOrder } from '~/types/order.type'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentLine } from '~/types/shipment.type'
 
 @Component
 export default class OrderOverview extends Vue {
@@ -98,15 +97,8 @@ export default class OrderOverview extends Vue {
   tabKey: string = 'wait'
   updateOption: string = 'default'
 
-  originalData: IOrder[] = []
-
-  onTabChange(key: string) {
-    this.tabKey = key
-    this.updateOption = 'default'
-  }
-
   get allData() {
-    return ShipmentModule.getOrderList
+    return ShipmentModule.getShipmentList
   }
 
   get canUpdatePrint() {
@@ -121,7 +113,7 @@ export default class OrderOverview extends Vue {
     return this.tabKey !== 'wait' && this.tabKey !== 'print'
   }
 
-  getTabContent(tabKey: string): IOrder[] {
+  getTabContent(tabKey: string): ShipmentLine[] {
     return this.allData.filter((item) => {
       return item.status === tabKey
     })
@@ -129,6 +121,11 @@ export default class OrderOverview extends Vue {
 
   getTabContentAmount(tabKey: string): number {
     return this.getTabContent(tabKey).length
+  }
+
+  onTabChange(key: string) {
+    this.tabKey = key
+    this.updateOption = 'default'
   }
 }
 </script>

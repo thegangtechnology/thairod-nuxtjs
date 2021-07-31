@@ -1,12 +1,10 @@
 export type Status = 'wait' | 'print' | 'out' | 'received'
-
 export interface ShipmentResponse {
   count: number
   next: null
   previous: null
   results: ShipmentResult[]
 }
-
 export interface ShipmentResult {
   id: number
   order: ShipmentOrder[]
@@ -25,7 +23,6 @@ export interface ShipmentResult {
   status: string
   warehouse: number
 }
-
 export interface ShipmentOrder {
   id: number
   product_variation: ShipmentProductVariation
@@ -35,7 +32,6 @@ export interface ShipmentOrder {
   total_price: string
   shipment: number
 }
-
 export interface ShipmentProductVariation {
   id: number
   created_date: Date
@@ -45,8 +41,8 @@ export interface ShipmentProductVariation {
   description: string
   unit: string
   product: number
+  quantity?: number
 }
-
 export interface ShipmentBatch {
   id: number
   created_date: Date
@@ -54,11 +50,11 @@ export interface ShipmentBatch {
   name: string
 }
 export interface ShipmentLine {
-  orderId: number // Result id
-  orderedItem: ShipmentProductVariation[]
-  orderedDate: Date // created_date
-  exportBatch: ShipmentBatch | null // batch
-  trackingNo: string // tracking_code
+  id: number // Result id
+  shipmentItem: ShipmentProductVariation[]
+  created_date: Date // created_date
+  batch: ShipmentBatch | null // batch
+  tracking_code: string // tracking_code
   deliver: boolean
   label_printed: boolean
   status: Status
@@ -66,7 +62,6 @@ export interface ShipmentLine {
   cid: string // Patient CID ?
   patientName: string
 }
-
 export interface ShipmentDetail extends ShipmentLine {
   phoneNumber: string
   warehouse: string

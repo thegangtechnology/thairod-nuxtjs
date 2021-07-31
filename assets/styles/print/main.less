@@ -26,16 +26,16 @@
       .print-filter__form {
         display: grid;
         grid-template-columns: auto;
-        grid-template-areas: "left middle right";
+        grid-template-areas: 'left middle right';
         column-gap: 0.75rem;
         .date {
-          grid-area: "left";
+          grid-area: 'left';
         }
         .batch {
-          grid-area: "middle";
+          grid-area: 'middle';
         }
         .package {
-          grid-area: "right";
+          grid-area: 'right';
         }
         .date,
         .batch,
@@ -78,6 +78,7 @@
       text-align: center;
       color: #001740;
       min-width: 8.125rem;
+      width: fit-content;
       &.cancel {
         background: #eeeff6;
       }

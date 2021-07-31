@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { ShipmentModule } from '~/store'
+import ShipmentModule from '~/store/shipment.module'
 
 @Component
 export default class Main extends Vue {
@@ -26,7 +26,7 @@ export default class Main extends Vue {
 
   created() {
     if (ShipmentModule.getShipmentLength < 1) {
-      ShipmentModule.initialiseOrder()
+      ShipmentModule.initialiseShipment()
     }
   }
 }

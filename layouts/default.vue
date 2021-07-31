@@ -62,10 +62,7 @@
           <a-icon type="profile" />
           <span>ภาพรวมรายการจัดส่ง</span>
         </a-menu-item>
-        <a-menu-item
-          key="order-overview-delivery"
-          @click="goToPage('/order-overview/delivery')"
-        >
+        <a-menu-item key="order-overview-delivery" @click="goToPage('/assign')">
           <a-icon type="file-search" />
           <span>จัดการล็อตรายการจัดส่ง</span>
         </a-menu-item>

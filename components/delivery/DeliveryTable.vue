@@ -105,8 +105,8 @@
 import moment from 'moment'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import BoxSvg from '~/assets/images/delivery/box.svg'
-import { ShipmentModule } from '~/store'
-import { Batch, IOrder } from '~/types/order.type'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentBatch, ShipmentLine } from '~/types/shipment.type'
 
 interface IMain {
   [key: string]: string
@@ -159,8 +159,8 @@ export default class PrintTable extends Vue {
     },
   ]
 
-  data: IOrder[] = []
-  originalData: IOrder[] = []
+  data: ShipmentLine[] = []
+  originalData: ShipmentLine[] = []
 
   filterForm: IFilter = {
     orderedDate: '',
@@ -192,11 +192,11 @@ export default class PrintTable extends Vue {
     return this.data.length
   }
 
-  get exportBatchSelect(): (Batch | null)[] {
+  get exportBatchSelect(): (ShipmentBatch | null)[] {
     return [
       ...new Set(
         this.originalData
-          .map((item) => item.exportBatch)
+          .map((item) => item.batch)
           .filter((mapped) => mapped !== null)
       ),
     ]
@@ -221,7 +221,7 @@ export default class PrintTable extends Vue {
   }
 
   importData() {
-    this.originalData = ShipmentModule.getOrderList
+    this.originalData = ShipmentModule.getShipmentList
     this.data = this.originalData
   }
 
@@ -249,10 +249,10 @@ export default class PrintTable extends Vue {
     })
   }
 
-  filterFields(key: string, row: IOrder): boolean {
+  filterFields(key: string, row: ShipmentLine): boolean {
     if (key === 'orderedDate') {
       return (
-        moment(row.orderedDate).format('YYYY-MM-DD') ===
+        moment(row.created_date).format('YYYY-MM-DD') ===
         this.filterForm.orderedDate
       )
     }
@@ -261,11 +261,13 @@ export default class PrintTable extends Vue {
         .filter((column) => column.dataIndex)
         .map((column) => column.dataIndex)
       const searchedArray = columsDataIndex.map((col) =>
-        String(row[col as keyof IOrder]).includes(this.filterForm.searchRecord)
+        String(row[col as keyof ShipmentLine]).includes(
+          this.filterForm.searchRecord
+        )
       )
       return searchedArray.some(Boolean)
     }
-    return row[key as keyof IOrder] === this.filterForm[key]
+    return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
   goBack() {

@@ -115,17 +115,17 @@ import moment from 'moment'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import BoxSvg from '~/assets/images/print/box.svg'
 import CorrectSvg from '~/assets/icons/correct.svg'
-import { ShipmentModule } from '~/store'
-import { Batch, IOrder } from '~/types/order.type'
+import ShipmentModule from '~/store/shipment.module'
+import {
+  ShipmentBatch,
+  ShipmentLine,
+  ShipmentProductVariation,
+} from '~/types/shipment.type'
 
-interface IMain {
-  [key: string]: string
-}
-
-interface IFilter extends IMain {
-  orderedDate: string
-  orderedItem: string
-  searchRecord: string
+interface IFilter {
+  created_date: string
+  shipmentBatch: string
+  shipmentItem: string
 }
 
 @Component
@@ -158,7 +158,7 @@ export default class PrintTable extends Vue {
     },
     {
       title: 'ล็อตการจัดส่ง',
-      dataIndex: 'exportBatch',
+      dataIndex: 'exportShipmentBatch',
     },
     {
       title: 'สถานะการจัดส่ง',
@@ -170,14 +170,13 @@ export default class PrintTable extends Vue {
     },
   ]
 
-  data: IOrder[] = []
-  originalData: IOrder[] = []
+  data: ShipmentLine[] = []
+  originalData: ShipmentLine[] = []
 
   filterForm: IFilter = {
-    orderedDate: '',
-    exportBatch: '',
-    orderedItem: '',
-    searchRecord: '',
+    created_date: '',
+    shipmentBatch: '',
+    shipmentItem: '',
   }
 
   selectedRowKeys: number[] = []
@@ -186,7 +185,7 @@ export default class PrintTable extends Vue {
 
   @Watch('search', { immediate: true, deep: true })
   onSearchChange() {
-    this.filterForm.searchRecord = this.search
+    this.filterForm.shipmentItem = this.search
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
@@ -203,11 +202,11 @@ export default class PrintTable extends Vue {
     return this.data.length
   }
 
-  get exportBatchSelect(): (Batch | null)[] {
+  get exportShipmentBatchSelect(): (ShipmentBatch | null)[] {
     return [
       ...new Set(
         this.originalData
-          .map((item) => item.exportBatch)
+          .map((item) => item.batch)
           .filter((mapped) => mapped !== null)
       ),
     ]
@@ -216,12 +215,12 @@ export default class PrintTable extends Vue {
   get updateAmount(): number {
     return this.data.filter((item) => {
       const orignalItem = this.originalData.find(
-        (original) => original.orderId === item.orderId
+        (original) => original.id === item.id
       )
       if (orignalItem) {
         return orignalItem.label_printed
-          ? !this.selectedRowKeys.includes(orignalItem.orderId)
-          : this.selectedRowKeys.includes(orignalItem.orderId)
+          ? !this.selectedRowKeys.includes(orignalItem.id)
+          : this.selectedRowKeys.includes(orignalItem.id)
       }
       return false
     }).length
@@ -232,23 +231,19 @@ export default class PrintTable extends Vue {
   }
 
   importData() {
-    this.originalData = ShipmentModule.getOrderList
+    this.originalData = ShipmentModule.getShipmentList
     this.selectedRowKeys = this.originalData
       .filter((item) => item.label_printed)
-      .map((filtered) => filtered.orderId)
+      .map((filtered) => filtered.id)
     this.data = this.originalData
   }
 
   onDateFilterChange(_date: object, dateString: string) {
-    this.filterForm.orderedDate = dateString
+    this.filterForm.created_date = dateString
   }
 
-  handleBatchFilterChange(value: { key: string; value: string }) {
-    this.filterForm.exportBatch = value.key
-  }
-
-  handleOrderedItemFilterChange(value: { key: string; value: string }) {
-    this.filterForm.orderedItem = value.key
+  handleShipmentBatchFilterChange(value: { key: string; value: string }) {
+    this.filterForm.shipmentBatch = value.key
   }
 
   filterData() {
@@ -256,18 +251,20 @@ export default class PrintTable extends Vue {
       const result: boolean[] = []
       Object.keys(this.filterForm).forEach((key) => {
         result.push(
-          this.filterForm[key] !== '' ? this.filterFields(key, row) : true
+          this.filterForm[key as keyof IFilter] !== ''
+            ? this.filterFields(key, row)
+            : true
         )
       })
       return result.every(Boolean)
     })
   }
 
-  filterFields(key: string, row: IOrder): boolean {
+  filterFields(key: string, row: ShipmentLine): boolean {
     if (key === 'orderedDate') {
       return (
-        moment(row.orderedDate).format('YYYY-MM-DD') ===
-        this.filterForm.orderedDate
+        moment(row.created_date).format('YYYY-MM-DD') ===
+        this.filterForm.created_date
       )
     }
     if (key === 'searchRecord') {
@@ -275,11 +272,14 @@ export default class PrintTable extends Vue {
         .filter((column) => column.dataIndex)
         .map((column) => column.dataIndex)
       const searchedArray = columsDataIndex.map((col) =>
-        String(row[col as keyof IOrder]).includes(this.filterForm.searchRecord)
+        String(row[col as keyof ShipmentLine]).includes(
+          this.filterForm.shipmentItem
+        )
       )
       return searchedArray.some(Boolean)
     }
-    return row[key as keyof IOrder] === this.filterForm[key]
+    return false
+    // return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
   onSelectChange(selectedRowKeys: number[]) {

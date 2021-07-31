@@ -1,28 +1,40 @@
 <template>
-  <div class="order-container">
-    <h1>Assign Batch</h1>
-    <AssignForm :original-data="data" />
+  <div class="page__container">
+    <div class="page-card__container">
+      <div class="page-card__header">
+        <div class="page-header__title">สร้างล็อตการจัดส่งใหม่</div>
+        <a-input
+          class="page-header__search"
+          v-model="search"
+          placeholder="ค้นหา"
+        >
+          <a-icon slot="prefix" type="search" />
+        </a-input>
+      </div>
+      <AssignForm :original-data="data" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import { ShipmentModule } from '~/store'
-import { IOrder } from '~/types/order.type'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentLine } from '~/types/shipment.type'
 
 @Component
 export default class Main extends Vue {
-  data: IOrder[] = []
+  data: ShipmentLine[] = []
+  search: string = ''
 
-  created() {
-    if (ShipmentModule.getOrderListLength < 1) {
-      ShipmentModule.initialiseOrder()
+  async created() {
+    if (ShipmentModule.getShipmentLength < 1) {
+      ShipmentModule.initialiseShipment()
     }
   }
 
   mounted() {
-    this.data = ShipmentModule.getOrderList.filter(
-      (item) => item.exportBatch !== null
+    this.data = ShipmentModule.getShipmentList.filter(
+      (item) => item.batch === null
     )
   }
 }

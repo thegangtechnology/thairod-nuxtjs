@@ -21,32 +21,6 @@
       line-height: 24px;
       color: #000000;
     }
-    .overview-button__container {
-      padding: 0.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-    }
-    .overview-button__cta {
-      border: 1.5px solid #001740;
-      box-sizing: border-box;
-      box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
-      border-radius: 25px;
-      font-weight: 700;
-      font-size: 18px;
-      color: #001740;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      &:not(:last-child) {
-        margin-right: 1rem;
-      }
-      img {
-        margin-right: 0.6rem;
-      }
-    }
-
     .page-header__search {
       width: 30%;
 
@@ -61,7 +35,7 @@
   }
 }
 
-.overview-tab__container {
+.assign-tab__container {
   .ant-tabs-nav {
     height: 3.5rem;
     .ant-tabs-tab-active {
@@ -80,15 +54,14 @@
   }
   .ant-tabs-extra-content {
     height: 3.5rem;
-    .overview-tab__buttons {
+    .assign-tab__buttons {
       padding: 0.5rem;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100%;
     }
-    .overview-button__cta > .ant-select-selection {
-      min-width: 14rem;
+    .assign-button__cta {
       border: 1.5px solid #001740;
       box-sizing: border-box;
       box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
@@ -99,6 +72,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      &.primary {
+        color: #fff;
+        background-color: #001740;
+      }
       &:not(:last-child) {
         margin-right: 1rem;
       }
@@ -109,14 +86,26 @@
   }
 }
 
-.overview-body__container {
+.assign-body__container {
   padding: 1.25rem;
-  .overview-filter__container {
+  .assign-body__header {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 24px;
+    color: #000000;
+    opacity: 0.4;
+    margin-bottom: 1rem;
+    span {
+      font-weight: 700;
+    }
+  }
+  .assign-filter__container {
     padding: 0.75rem;
     background: rgba(0, 23, 64, 0.05);
     border-radius: 12px;
     margin-bottom: 1.25rem;
-    .overview-filter__header {
+    .assign-filter__header {
       font-style: normal;
       font-weight: bold;
       font-size: 18px;
@@ -129,7 +118,7 @@
         margin-right: 0.5rem;
       }
     }
-    .overview-filter__form {
+    .assign-filter__form {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-areas: 'left middle right';
@@ -192,11 +181,11 @@
       }
     }
   }
-  .overview-status-container {
+  .assign-status-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    .overview-row__status {
+    .assign-row__status {
       border-radius: 20px;
       padding: 5px 12px;
       font-style: normal;
@@ -222,13 +211,13 @@
     }
   }
 }
-.overview-button__container {
+.assign-button__container {
   border-top: 1px solid #e8eaee;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   padding: 1.25rem;
-  .overview-button__cta {
+  .assign-button__cta {
     border: 0 solid #001740;
     box-sizing: border-box;
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
@@ -240,6 +229,7 @@
     text-align: center;
     color: #001740;
     min-width: 8.125rem;
+    width: fit-content;
     &.cancel {
       background: #eeeff6;
     }
@@ -252,7 +242,7 @@
   }
 }
 
-.overview-modal__container {
+.assign-modal__container {
   .ant-modal-content {
     background: #ffffff;
     border-radius: 13px;
@@ -262,10 +252,10 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      .overview-modal__img {
+      .assign-modal__img {
         margin-bottom: 1.5rem;
       }
-      .overview-modal__title {
+      .assign-modal__title {
         font-style: normal;
         font-weight: bold;
         font-size: 20px;
@@ -274,7 +264,7 @@
         color: #001740;
         margin-bottom: 0.6rem;
       }
-      .overview-modal__subtitle {
+      .assign-modal__subtitle {
         font-style: normal;
         font-weight: normal;
         font-size: 18px;
@@ -289,11 +279,11 @@
     .ant-modal-footer {
       border-top: 0 solid #001740;
       padding: 1.25rem;
-      .overview-modal__footer {
+      .assign-modal__footer {
         display: flex;
         justify-content: space-around;
         align-items: center;
-        .overview-button__cta {
+        .assign-button__cta {
           border: 0 solid #001740;
           box-sizing: border-box;
           border-radius: 25px;
@@ -305,6 +295,7 @@
           color: #001740;
           min-width: 13.25rem;
           height: 2.5rem;
+          width: fit-content;
           &.cancel {
             background: #eeeff6;
           }

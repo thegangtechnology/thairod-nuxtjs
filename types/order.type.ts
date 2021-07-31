@@ -13,19 +13,16 @@ export interface Address {
   zipcode: string
   optional: string
 }
-
 export interface OrderLine {
   id: number
   name: string
   total: number
 }
-
 export interface Order {
   id: number
   orderLines: OrderLine[]
   address: Address
 }
-
 /**
  * BACKEND Interface
  */
@@ -36,7 +33,6 @@ export interface OrderLineJson {
   price: string
   total_price: string
 }
-
 export interface OrderJson {
   id: number
   order_number: string
