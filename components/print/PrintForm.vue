@@ -203,7 +203,7 @@ interface IFilter {
 }
 
 @Component
-export default class PrintTable extends Vue {
+export default class PrintForm extends Vue {
   @Prop({ required: true }) search!: string
   @Prop({ required: true }) originalData!: ShipmentLine[]
 
@@ -251,7 +251,7 @@ export default class PrintTable extends Vue {
     },
   ]
 
-  data: ShipmentLine[] = this.originalData ? this.originalData : []
+  data: ShipmentLine[] = []
 
   filterForm: IFilter = {
     created_date: '',
@@ -273,8 +273,8 @@ export default class PrintTable extends Vue {
     this.filterData()
   }
 
-  @Watch('tabKey', { immediate: true, deep: true })
-  onTabChange() {
+  @Watch('originalData', { immediate: true, deep: true })
+  onOriginalChange() {
     this.importData()
   }
 
@@ -306,14 +306,7 @@ export default class PrintTable extends Vue {
     }).length
   }
 
-  mounted() {
-    this.importData()
-  }
-
   importData() {
-    this.selectedRowKeys = this.originalData
-      .filter((item) => item.label_printed)
-      .map((filtered) => filtered.id)
     this.data = this.originalData
   }
 
@@ -375,8 +368,8 @@ export default class PrintTable extends Vue {
 
   onSave() {
     this.visibleSubmitDialog = true
-    // ShipmentModule.setPrintStatus(this.selectedRowKeys);
-    this.$router.push(`/order-overview`)
+    ShipmentModule.printLabel(this.selectedRowKeys)
+    // this.$router.push(`/order-overview`)
   }
 }
 </script>

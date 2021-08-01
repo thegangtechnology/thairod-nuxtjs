@@ -191,6 +191,15 @@ class ShipmentModule extends VuexModule {
       selectedRows: payload.selectedRows,
     })
   }
+
+  @Action({ rawError: true })
+  public printLabel(selectedRowKeys: number[]) {
+    const printURL = new URL($axios.defaults.baseURL! + '/api/printlabel/')
+    selectedRowKeys.forEach((rowKey) => {
+      printURL.searchParams.append('shipments', `${rowKey}`)
+    })
+    console.log('printURL :>> ', printURL)
+  }
 }
 
 export default getModule(ShipmentModule)
