@@ -1,5 +1,5 @@
 <template>
-  <div class="assign-tab__container">
+  <div class="print-tab__container">
     <div>
       <a-tabs
         :default-active-key="tabKey"
@@ -8,32 +8,32 @@
       >
         <a-tab-pane key="all">
           <span slot="tab"> ทั้งหมด ({{ allData.length }})</span>
-          <AssignTable
+          <PrintTable
             :original-data="allData"
             :search="search"
             :tab-key="tabKey"
           />
         </a-tab-pane>
-        <a-tab-pane key="unassign">
-          <span slot="tab"> ที่ต้องจัดการ ({{ getUnassignLength }})</span>
-          <AssignTable
-            :original-data="getUnassign"
+        <a-tab-pane key="unprinted">
+          <span slot="tab"> ที่ต้องพิมพ์ ({{ getUnprintedLength }})</span>
+          <PrintTable
+            :original-data="getUnprinted"
             :search="search"
             :tab-key="tabKey"
           />
         </a-tab-pane>
-        <a-tab-pane key="assign">
-          <span slot="tab"> จัดการแล้ว ({{ getAssignLength }}) </span>
-          <AssignTable
-            :original-data="getAssign"
+        <a-tab-pane key="printed">
+          <span slot="tab"> ดำเนินการพิมพ์แล้ว ({{ getPrintedLength }}) </span>
+          <PrintTable
+            :original-data="getPrinted"
             :search="search"
             :tab-key="tabKey"
           />
         </a-tab-pane>
-        <div slot="tabBarExtraContent" class="assign-tab__buttons">
-          <a-button class="assign-button__cta">แก้ไขล็อตการจัดส่ง</a-button>
-          <a-button class="assign-button__cta primary" @click="toCreateBatch">
-            สร้างล็อตการจัดส่งใหม่
+        <div slot="tabBarExtraContent" class="print-tab__buttons">
+          <a-button class="print-button__cta">อัปเดตการพิมพ์ใบจัดส่ง</a-button>
+          <a-button class="print-button__cta primary" @click="toCreatePrint">
+            พิมพ์ใบจัดส่งสินค้า
           </a-button>
         </div>
       </a-tabs>
@@ -47,7 +47,7 @@ import ShipmentModule from '~/store/shipment.module'
 import { ShipmentLine } from '~/types/shipment.type'
 
 @Component
-export default class AssignOverview extends Vue {
+export default class PrintOverview extends Vue {
   @Prop({ required: true }) search!: string
 
   tabKey: string = 'all'
@@ -57,28 +57,28 @@ export default class AssignOverview extends Vue {
     return ShipmentModule.getShipmentList
   }
 
-  get getUnassign() {
+  get getUnprinted() {
     return this.allData.filter((item) => {
-      return item.batch === null
+      return !item.label_printed
     })
   }
 
-  get getAssign() {
+  get getPrinted() {
     return this.allData.filter((item) => {
-      return item.batch !== null
+      return item.label_printed
     })
   }
 
-  get getUnassignLength() {
-    return this.getUnassign.length
+  get getUnprintedLength() {
+    return this.getUnprinted.length
   }
 
-  get getAssignLength() {
-    return this.getAssign.length
+  get getPrintedLength() {
+    return this.getPrinted.length
   }
 
-  toCreateBatch() {
-    this.$router.push(`/assign/create-batch`)
+  toCreatePrint() {
+    this.$router.push(`/print/create-print`)
   }
 
   onTabChange(key: string) {

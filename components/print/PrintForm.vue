@@ -56,7 +56,15 @@
         </a-form>
       </div>
       <div class="print-table__container">
-        <a-table row-key="id" :columns="columns" :data-source="data">
+        <a-table
+          row-key="id"
+          :row-selection="{
+            selectedRowKeys: selectedRowKeys,
+            onChange: onSelectChange,
+          }"
+          :columns="columns"
+          :data-source="data"
+        >
           <div slot="id" slot-scope="text, record" class="table-form__input">
             <div>
               {{ record.id }}
@@ -123,12 +131,54 @@
               </div>
             </div>
           </div>
-          <div slot="operation" class="table-form__input">
-            <img :src="RightIcon" alt="RightIcon" />
-          </div>
         </a-table>
       </div>
     </div>
+    <div class="print-button__container">
+      <a-button class="print-button__cta cancel" @click="goBack">
+        <span> ยกเลิก </span>
+      </a-button>
+      <a-button
+        class="print-button__cta submit"
+        @click="visibleSubmitDialog = true"
+      >
+        <span> อัปเดตข้อมูล ({{ updateAmount }}) </span>
+      </a-button>
+    </div>
+    <a-modal
+      class="print-modal__container"
+      v-model="visibleSubmitDialog"
+      centered
+      :closable="false"
+      :width="480"
+    >
+      <div class="print-modal__img">
+        <img :src="BoxImg" alt="BoxImg" />
+      </div>
+      <div class="print-modal__title">ยืนยันการพิมพ์ใบจัดส่ง</div>
+      <div class="print-modal__subtitle">
+        รายการสั่งซื้อจำนวน {{ updateAmount }} รายการกำลังจะถูกพิมพ์
+      </div>
+      <template slot="footer">
+        <div class="print-modal__footer">
+          <a-button
+            class="print-button__cta cancel"
+            key="back"
+            @click="visibleSubmitDialog = false"
+          >
+            ยกเลิก
+          </a-button>
+          <a-button
+            class="print-button__cta submit"
+            key="submit"
+            type="primary"
+            @click="onSave"
+          >
+            ยืนยัน
+          </a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
@@ -137,8 +187,8 @@ import moment from 'moment'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
-import RightSvg from '~/assets/icons/right-table.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
+import CorrectSvg from '~/assets/icons/correct.svg'
 import ShipmentModule from '~/store/shipment.module'
 import {
   ShipmentBatch,
@@ -157,10 +207,10 @@ export default class PrintTable extends Vue {
   @Prop({ required: true }) search!: string
   @Prop({ required: true }) originalData!: ShipmentLine[]
 
+  private BoxImg = BoxSvg
   private CalendarIcon = CalendarSvg
   private FilterIcon = FilterSvg
-  private RightIcon = RightSvg
-  private BoxImg = BoxSvg
+  private CorrectIcon = CorrectSvg
 
   columns = [
     {
@@ -209,6 +259,10 @@ export default class PrintTable extends Vue {
     shipmentItem: '',
   }
 
+  selectedRowKeys: number[] = []
+
+  visibleSubmitDialog: boolean = false
+
   @Watch('search', { immediate: true, deep: true })
   onSearchChange() {
     this.filterForm.shipmentItem = this.search
@@ -238,11 +292,28 @@ export default class PrintTable extends Vue {
     ]
   }
 
+  get updateAmount(): number {
+    return this.data.filter((item) => {
+      const orignalItem = this.originalData.find(
+        (original) => original.id === item.id
+      )
+      if (orignalItem) {
+        return orignalItem.label_printed
+          ? !this.selectedRowKeys.includes(orignalItem.id)
+          : this.selectedRowKeys.includes(orignalItem.id)
+      }
+      return false
+    }).length
+  }
+
   mounted() {
     this.importData()
   }
 
   importData() {
+    this.selectedRowKeys = this.originalData
+      .filter((item) => item.label_printed)
+      .map((filtered) => filtered.id)
     this.data = this.originalData
   }
 
@@ -294,8 +365,18 @@ export default class PrintTable extends Vue {
     // return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
+  onSelectChange(selectedRowKeys: number[]) {
+    this.selectedRowKeys = selectedRowKeys
+  }
+
   goBack() {
     this.$router.go(-1)
+  }
+
+  onSave() {
+    this.visibleSubmitDialog = true
+    // ShipmentModule.setPrintStatus(this.selectedRowKeys);
+    this.$router.push(`/order-overview`)
   }
 }
 </script>
