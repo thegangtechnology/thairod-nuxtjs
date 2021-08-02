@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ProcurementHeader :title="'ยอดใช้ในคลังสินค้า'" :on-back-button-click="onBackButtonClick"/>
-    <InventoryDetail
+    <procurement-header :title="'ยอดรวมในคลังสินค้า'" :on-back-button-click="onBackButtonClick"/>
+    <inventory-detail
       :warehouse-stocks="warehouseStocks"
       :left-card="leftCard"
       :right-card="rightCard"
@@ -11,10 +11,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import ProcurementHeader from '~/components/procurement/ProcurementHeader.vue'
+import ProcurementHeader from '~/components/procurement/headers/ProcurementHeader.vue'
 import InventoryDetail from '~/components/procurement/InventoryDetail.vue'
 export default Vue.extend({
   components: { InventoryDetail, ProcurementHeader },
+  layout: 'empty',
   data () {
     return {
       warehouseStocks: [
@@ -24,14 +25,14 @@ export default Vue.extend({
         { warehouse: 'Warehouse D', amount: 25, unit: 'กล่อง' }
       ],
       leftCard: {
-        backgroundColor: '#92959A',
-        title: 'จำนวนที่ใช้วันนี้',
+        backgroundColor: '#001740',
+        title: 'จำนวนในคลัง',
         amount: 100,
         unit: 'กล่อง'
       },
       rightCard: {
-        backgroundColor: '#B7B8B9',
-        title: 'ยอดใช้สะสม',
+        backgroundColor: '#133571',
+        title: 'ยอดรวมสะสม',
         amount: 10000,
         unit: 'กล่อง'
       }
@@ -39,7 +40,7 @@ export default Vue.extend({
   },
   methods: {
     onBackButtonClick () : void {
-      console.log('back')
+      this.$router.push('/procurement/item-detail')
     }
   }
 })

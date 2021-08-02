@@ -24,8 +24,8 @@
               v-for="(item, i) in data.itemSets"
               :key="i"
               :xs="24"
-              :sm="12"
-              :md="8"
+              :sm="24"
+              :md="12"
               :lg="8"
               :xl="8"
               class="product-card__item-container"
@@ -62,7 +62,7 @@
           จำนวนสินค้าในคลัง
         </div>
         <div class="product-detail__description">
-          {{ data.amount }} กระปุก
+          100 กระปุก
         </div>
       </a-col>
     </a-row>
@@ -160,7 +160,7 @@ export default Vue.extend({
 })
 </script>
 
-<style>
+<style scoped lang="less">
 .product-detail{
   margin-bottom: 60px;
 }
@@ -215,7 +215,7 @@ export default Vue.extend({
   align-items: center;
   margin: auto;
 }
-.product-card__button-container .ant-input-number-input-wrap input {
+.product-card__button-container .ant-input-number-input-wrap input{
   text-align: center;
 }
 .product-card__button-container .input-amount {
@@ -259,5 +259,11 @@ export default Vue.extend({
   .product-detail__name {
     margin-top: 1rem;
   }
+}
+</style>
+
+<style lang="less">
+.input-amount > .ant-input-number-input-wrap input{
+  text-align: center;
 }
 </style>

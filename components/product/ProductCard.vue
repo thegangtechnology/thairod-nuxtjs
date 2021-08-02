@@ -6,14 +6,24 @@
       :src="item.image"
       class="img-responsive"
       @click="goToProduct"
+    />
+    <a-card-meta
+      :title="item.name"
+      class="product-card__info"
+      @click="goToProduct"
     >
-    <a-card-meta :title="item.name" class="product-card__info" @click="goToProduct">
       <template slot="description">
         {{ item.description }}
       </template>
     </a-card-meta>
     <template slot="actions" class="ant-card-actions product-card__button">
-      <primary-button class="update-button" :text="'เพิ่มใส่ตะกร้า'" block :on-click="addToCart" :size="'large'" />
+      <primary-button
+        class="update-button"
+        :text="'เพิ่มใส่ตะกร้า'"
+        block
+        :on-click="addToCart"
+        :size="'large'"
+      />
     </template>
   </a-card>
 </template>
@@ -30,32 +40,34 @@ export default Vue.extend({
       default: () => {}
     }
   },
-  data () {
-    return {
-
-    }
+  data() {
+    return {}
   },
 
   methods: {
-    goToProduct (): void {
+    goToProduct(): void {
       this.$router.push('/product/1')
     },
-    addToCart (): void {
+    addToCart(): void {
       console.log('addtocart')
     }
   }
 })
 </script>
 
-<style>
-.product-card {
-  min-width: 160px;
+<style lang="less">
+.product-card.ant-card {
+  //min-width: 160px;
   max-width: 350px;
   width: 100%;
-  background-color: #ffffff;
-  border-radius:10px;
+  background-color: #ffffff!important;;
+  border-radius: 10px!important;
+  border-color: #e9ecf2!important;;
   overflow: hidden;
-  border-color: #E9ECF2;
+}
+.product-card .ant-card-cover img {
+  border-radius: 6px;
+  max-height: 205px;
 }
 .product-card .ant-card-body,
 .product-card .ant-card-cover,
@@ -66,13 +78,13 @@ export default Vue.extend({
   border-top: none;
   background-color: #ffffff;
 }
-.product-card .ant-card-meta-title ,
-.product-card .ant-card-meta-detail > div:not(:last-child){
+.product-card .ant-card-meta-title,
+.product-card .ant-card-meta-detail > div:not(:last-child) {
   margin-bottom: 0;
   line-height: normal;
   font-size: 18px;
 }
-.product-card .ant-card-meta-description{
+.product-card .ant-card-meta-description {
   font-size: 16px;
 }
 .btn-add-cart {
@@ -80,12 +92,12 @@ export default Vue.extend({
   color: #ffffff;
 }
 .product-card .update-button {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 @media only screen and (max-width: 375px) {
   .product-card {
-    min-width: 130px;
+    min-width: 120px;
     max-width: 100%;
   }
   .product-card .ant-card-actions {
@@ -93,6 +105,10 @@ export default Vue.extend({
   }
   .btn-add-cart {
     padding: 0 8px;
+  }
+  .product-card .ant-card-cover img {
+    border-radius: 6px;
+    max-height: 100px;
   }
 }
 </style>
