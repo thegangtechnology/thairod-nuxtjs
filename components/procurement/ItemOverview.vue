@@ -12,7 +12,7 @@
       <div class="label">
         จำนวนในคลัง
       </div>
-      <div><b>{{ item.stock ? item.stock : '-' }} {{ item.unit }}</b></div>
+      <div><strong>{{ item.stock ? item.stock : '-' }} {{ item.unit }}</strong></div>
       <div class="label last-update-label">
         อัพปเดตเมื่อ
       </div>
@@ -28,6 +28,7 @@
 import Vue, { PropType } from 'vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
 import { ItemOverviewInfo } from '~/types/procurement.type'
+import { productImageMap } from '~/data/image-map'
 
 export default Vue.extend({
   components: { SecondaryButton },
@@ -39,15 +40,12 @@ export default Vue.extend({
   },
   data () {
     return {
-      imageMap: {
-        1: require('@/assets/images/default/set-g.svg'),
-        2: require('@/assets/images/default/set-y.svg')
-      }
+      imageMap: productImageMap
     }
   },
   methods: {
     toItemDetail () : void {
-      this.$router.push('/procurement/item-detail')
+      this.$router.push({ path: '/procurement/item-detail', query: { id: this.item.id } })
     },
     formatDate (date: string) : string {
       return new Date(date).toLocaleString()

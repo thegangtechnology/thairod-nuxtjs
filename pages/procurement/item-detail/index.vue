@@ -13,23 +13,29 @@
 import Vue from 'vue'
 import ProcurementHeader from '~/components/procurement/headers/ProcurementHeader.vue'
 import ItemDetail from '~/components/procurement/ItemDetail.vue'
-import { getInventoryRecord, getItemDescription } from '~/services/procurement'
+import ProcurementModule from '~/store/procurement.module'
+import { InventoryRecord } from '~/types/procurement.type'
 
 export default Vue.extend({
   components: { ProcurementHeader, ItemDetail },
   layout: 'empty',
-  props: {
-    headerTitle: { type: String, default: 'กล่องสีเขียว' }
-  },
   data () {
     return {
-      inventoryRecord: { currentAmount: 0, accumulativeAmount: 0, usedAmount: 0, accumulativeUsed: 0, unit: '' },
-      itemDescription: '-'
+    }
+  },
+  computed: {
+    headerTitle () : string {
+      return ProcurementModule.itemDetailPageInfo.itemDetail.name
+    },
+    inventoryRecord () : InventoryRecord {
+      return ProcurementModule.itemDetailPageInfo.inventoryRecord
+    },
+    itemDescription () : string {
+      return ProcurementModule.itemDetailPageInfo.itemDetail.description
     }
   },
   async mounted () {
-    this.itemDescription = await getItemDescription()
-    this.inventoryRecord = await getInventoryRecord()
+    await ProcurementModule.getItemDetailPageInfo(this.$route.query.id)
   },
   methods: {
     onBackButtonClick () : void {

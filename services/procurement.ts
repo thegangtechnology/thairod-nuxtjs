@@ -1,31 +1,35 @@
-import camelcaseKeys from 'camelcase-keys'
-import { InventoryRecord, ItemOverviewInfo } from '~/types/procurement.type'
+import { ItemDetail, ItemOverviewInfo } from '~/types/procurement.type'
 import { $axios } from '~/utils/api'
 import apiPath from '~/data/api_path'
+import {
+  ProductVariationsParam,
+  ProductVariationsReturn
+} from '~/types/procurementService.type'
+import { defaultItemDetail } from '~/types/procurement.default'
 
-export async function getProductVariations () : Promise<Array<ItemOverviewInfo>> {
+export async function getProductVariations (params: ProductVariationsParam) : Promise<ProductVariationsReturn> {
   return await $axios
     .get(apiPath.productVariation, {
-      transformResponse: [
-        (data) => {
-          return camelcaseKeys(JSON.parse(data), { deep: true })
-        }
-      ]
+      params
     })
     .then((res) => {
-      const results = res.data.results
+      const results : ItemOverviewInfo[] = res.data.results
       results.forEach((result : ItemOverviewInfo) => { result.stock = 0 })
-      return Promise.resolve(results)
+      return Promise.resolve({ itemOverviewInfo: results, totalItems: res.data.count })
     })
     .catch(() => {
-      return Promise.resolve([])
+      return Promise.resolve({ itemOverviewInfo: [] as ItemOverviewInfo[], totalItems: 0 })
     })
 }
 
-export async function getItemDescription () : Promise<String> {
-  return await Promise.resolve('-')
-}
-
-export async function getInventoryRecord () : Promise<InventoryRecord> {
-  return await Promise.resolve({ currentAmount: 0, accumulativeAmount: 0, usedAmount: 0, accumulativeUsed: 0, unit: '' })
+export async function getItemDetail (id: number) : Promise<ItemDetail> {
+  return await $axios
+    .get(`${apiPath.productVariation}/${id}`)
+    .then((res) => {
+      const data : ItemDetail = res.data
+      return data
+    })
+    .catch(() => {
+      return defaultItemDetail
+    })
 }

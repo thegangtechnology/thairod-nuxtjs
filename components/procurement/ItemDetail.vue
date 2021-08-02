@@ -8,10 +8,10 @@
       <a-col :flex="10">
         <div class="card left-card">
           <div> จำนวนในคลัง </div>
-          <b>{{ inventoryRecord.currentAmount > 0 ? inventoryRecord.currentAmount : '-' }} {{ inventoryRecord.unit }}</b>
+          <strong>{{ inventoryRecord.currentAmount > 0 ? inventoryRecord.currentAmount : '-' }} {{ inventoryRecord.unit }}</strong>
           <a-divider />
           <div> ยอดรวมสะสม </div>
-          <b class="acc-amount">{{ inventoryRecord.accumulativeAmount > 0 ? inventoryRecord.accumulativeAmount : '-' }} {{ inventoryRecord.unit }}</b>
+          <strong class="acc-amount">{{ inventoryRecord.accumulativeAmount > 0 ? inventoryRecord.accumulativeAmount : '-' }} {{ inventoryRecord.unit }}</strong>
         </div>
         <a-button
           block
@@ -26,10 +26,10 @@
       <a-col :flex="10">
         <div class="card right-card">
           <div> จำนวนที่ใช้วันนี้ </div>
-          <b>{{ inventoryRecord.usedAmount > 0 ? inventoryRecord.usedAmount : '-' }} {{ inventoryRecord.unit }}</b>
+          <strong>{{ inventoryRecord.usedAmount > 0 ? inventoryRecord.usedAmount : '-' }} {{ inventoryRecord.unit }}</strong>
           <a-divider />
           <div> ยอดใช้สะสม </div>
-          <b class="acc-amount">{{ inventoryRecord.accumulativeUsed > 0 ? inventoryRecord.accumulativeUsed : '-' }} {{ inventoryRecord.unit }}</b>
+          <strong class="acc-amount">{{ inventoryRecord.accumulativeUsed > 0 ? inventoryRecord.accumulativeUsed : '-' }} {{ inventoryRecord.unit }}</strong>
         </div>
         <a-button
           block
@@ -43,7 +43,7 @@
     </a-row>
     <a-divider class="main-divider" />
     <div>
-      <b class="list-title"> รายละเอียดสินค้า </b>
+      <strong class="list-title"> รายละเอียดสินค้า </strong>
       <p> {{ itemDescription }} </p>
 <!--      Not supported yet-->
 <!--      <a-list :data-source="itemList" class="list-items">-->

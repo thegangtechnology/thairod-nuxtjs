@@ -22,6 +22,7 @@
               <span slot="title" class="list-title">{{ firstName }} {{ lastName }}</span>
               <a-avatar
                 slot="avatar"
+                alt="avatar"
                 src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
               />
             </a-list-item-meta>
@@ -46,7 +47,7 @@
           </a-menu-item>
         </a-menu>
         <a-button class="logout-button" @click="onLogout">
-          <img class="icon" src="~/assets/images/procurement/icon/logout-icon.svg">
+          <img alt="logout" class="icon" src="~/assets/images/procurement/icon/logout-icon.svg">
           ออกจากระบบ
         </a-button>
       </a-layout-sider>
@@ -55,9 +56,24 @@
           <main-header :title="'คลังสินค้า'" :on-button-click="triggerSidebar" :sidebar-collapsed="collapsed" />
         </a-layout-header>
         <a-layout-content>
-          <a-input-search v-model="search" placeholder="ค้นหาสินค้าในคลัง" style="width: 97vw" />
+          <a-row class="search-row">
+            <a-input-search v-model="search" placeholder="ค้นหาสินค้าในคลัง" @search="onSearch">
+              <a-button slot="suffix" type="link" class="reset-button" @click="resetSearch">
+                รีเซต
+              </a-button>
+            </a-input-search>
+          </a-row>
           <a-row>
             <item-overview v-for="item in items" :key="item.id" :item="item" />
+          </a-row>
+          <a-row class="pagination-row">
+            <a-pagination
+              v-model="currentPage"
+              show-size-changer
+              show-quick-jumper
+              :total="totalItems"
+              :default-page-size="pageSize"
+            />
           </a-row>
         </a-layout-content>
       </a-layout>
@@ -69,21 +85,32 @@
 import Vue from 'vue'
 import MainHeader from '~/components/procurement/headers/MainHeader.vue'
 import ItemOverview from '~/components/procurement/ItemOverview.vue'
-import { getProductVariations } from '~/services/procurement'
+import ProcurementModule from '~/store/procurement.module'
+import { ItemOverviewInfo } from '~/types/procurement.type'
 
 export default Vue.extend({
   components: { MainHeader, ItemOverview },
   layout: 'empty',
   data () {
     return {
+      currentPage: 1,
+      pageSize: 4,
       search: '',
       collapsed: true,
-      userInfo: [{ firstName: 'เติมศิริ', lastName: 'ธัยยามาตย์', role: 'Admin' }],
-      items: []
+      userInfo: [{ firstName: 'เติมศิริ', lastName: 'ธัยยามาตย์', role: 'Admin' }]
+    }
+  },
+  computed: {
+    items () : ItemOverviewInfo[] {
+      return ProcurementModule.itemOverviewInfo
+    },
+    totalItems () : number {
+      return ProcurementModule.totalItems
     }
   },
   async mounted () {
-    await getProductVariations().then((results) => { this.items = results })
+    await ProcurementModule.getItemOverview(
+      { page: this.currentPage, pageSize: this.pageSize, search: '' })
   },
   methods: {
     triggerSidebar () : void {
@@ -91,6 +118,14 @@ export default Vue.extend({
     },
     onLogout () : void {
       this.$router.push('/')
+    },
+    async onSearch () : void {
+      await ProcurementModule.getItemOverview(
+        { page: this.currentPage, pageSize: this.pageSize, search: this.search })
+    },
+    async resetSearch () : void {
+      this.search = ''
+      await this.onSearch()
     }
   }
 })
@@ -168,4 +203,33 @@ export default Vue.extend({
   padding-left: 24px
 }
 
+.ant-pagination {
+  margin-top: 24px;
+  font-size: 18px;
+}
+
+.pagination-row {
+  text-align: center;
+}
+
+.search-row {
+  margin: 0 4px;
+}
+
+.reset-button {
+  text-decoration: underline;
+  font-size: 18px;
+  padding-top: 3px
+}
+
+</style>
+
+<style>
+.ant-pagination-item {
+  font-size: 14px;
+}
+
+.ant-select, .ant-icon, .ant-pagination-options, .ant-select-selection, .ant-select-dropdown-menu-item, input {
+  font-size: 16px !important;
+}
 </style>

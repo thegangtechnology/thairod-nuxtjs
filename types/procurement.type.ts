@@ -32,3 +32,16 @@ export interface InventoryRecord {
   accumulativeUsed: number,
   unit: String
 }
+
+export interface ItemDetail {
+  id: string,
+  productDescription: string,
+  description: string,
+  name: string,
+  unit: string
+}
+
+export interface ItemDetailPageInfo {
+  itemDetail: ItemDetail,
+  inventoryRecord: InventoryRecord
+}
