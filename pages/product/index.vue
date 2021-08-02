@@ -63,7 +63,7 @@ export default Vue.extend({
   },
   async mounted() {
     await PatientModule.getPatient({ id: 1 })
-    await ProductModule.getProductList()
+    await ProductModule.getProductList({page:1,perPage:-1})
   },
   methods: {
     onSearch(): void {

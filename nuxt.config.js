@@ -33,6 +33,7 @@ export default {
     '~plugins/print-components.ts',
     '~plugins/delivery-components.ts',
     '@/plugins/accessor.ts',
+    '@/plugins/axios.ts',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -52,7 +53,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: process.env.SERVER_URL || 'https://backend.thairod.thegang.tech/',
+    baseURL: process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/',
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

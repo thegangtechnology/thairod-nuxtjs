@@ -1,8 +1,10 @@
 import {
+  Action,
   getModule,
   Module,
+  Mutation,
   MutationAction,
-  VuexModule
+  VuexModule,
 } from 'vuex-module-decorators'
 import { store } from '@/store'
 import { Product } from '@/types/product.type'
@@ -18,60 +20,42 @@ if (store.state[name]) {
 @Module({
   dynamic: true,
   name,
-  store
+  store,
 })
 class ProductModule extends VuexModule {
   productList: Product[] = []
   product: Product = {} as Product
 
-  @MutationAction({ mutate: ['productList'] })
-  public async getProductList() {
-    const path: string = '/products/'
-    await Promise.resolve(path)
+  @Mutation
+  SET_PRODUCT_LIST(productList: Product[]) {
+    this.productList = productList
+  }
 
+  @Action({ commit: 'SET_PRODUCT_LIST' })
+  public async getProductList({
+    page,
+    perPage,
+  }: {
+    page: number
+    perPage: number
+  }) {
+    const path: string = `${apiPath.productVariation}/`
+    const res = await $axios.get(path)
+    console.log(res)
 
-    // const path: string = `${apiPath.product}/`
-    // const res = await $axios.get(path)
-    // console.log(res)
-
-    // delete this later
-    const productList: Product[] = [
-      {
-        id: 1,
-        name: 'Favipiravir',
-        image: require('@/assets/images/default/set-p.svg'),
-        description: '1 ชุด มี 12 เม็ด',
-        sku: 'sku-1',
-        repeatable: true
-      },
-      {
-        id: 2,
-        name: 'กล่องสีเขียว',
-        image: require('@/assets/images/default/set-g.svg'),
-        description: 'มีอุปกรณ์ 3 รายการ',
-        sku: 'sku-1',
-        repeatable: true
-      },
-      {
-        id: 3,
-        name: 'กล่องสีเหลือง',
-        image: require('@/assets/images/default/set-y.svg'),
-        description: 'มีอุปกรณ์ 3 รายการ',
-        sku: 'sku-1',
-        repeatable: true
-      },
-      {
-        id: 4,
-        name: 'ฟ้าทะลายโจร',
-        image: require('@/assets/images/default/set-f.svg'),
-        description: 'มีอุปกรณ์ 3 รายการ',
-        sku: 'sku-1',
-        repeatable: true
+    const mappedProduct = res.data.results.map((value: Product) => {
+      return {
+        id: value.id,
+        product: value.product,
+        price: value.price,
+        name: value.name,
+        description: value.description,
+        unit: value.unit,
       }
-    ]
-
+    })
+    console.log(mappedProduct,'mappedProduct')
     return {
-      productList
+      productList: mappedProduct,
     }
   }
 
@@ -83,14 +67,15 @@ class ProductModule extends VuexModule {
     // delete this later
     const product: Product = {
       id: 1,
+      product: 2,
+      price: 10.0,
       name: 'Favipiravir',
-      image: require('@/assets/images/default/set-p.svg'),
-      description: '1 ชุด มี 12 เม็ด',
-      sku: 'sku-1',
-      repeatable: true
+      description: 'กล่องเหลือง description',
+      unit: 'BOXES',
     }
+
     return {
-      product
+      product,
     }
   }
 }

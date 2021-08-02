@@ -106,7 +106,7 @@ export default Vue.extend({
       this.visible = false
     },
     copyLink(): void {
-      let copyText = document.getElementById('textToCopy')
+      let copyText = document.getElementById('textToCopy') as HTMLInputElement
       copyText.select()
       copyText.setSelectionRange(0, 99999)
       document.execCommand('copy')
