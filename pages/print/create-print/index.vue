@@ -11,7 +11,7 @@
           <a-icon slot="prefix" type="search" />
         </a-input>
       </div>
-      <PrintForm :original-data="data" :search="search" />
+      <PrintForm :original-data="getData" :search="search" />
     </div>
   </div>
 </template>
@@ -23,19 +23,16 @@ import { ShipmentLine } from '~/types/shipment.type'
 
 @Component
 export default class Main extends Vue {
-  data: ShipmentLine[] = []
   search: string = ''
 
   async created() {
     if (ShipmentModule.getShipmentLength < 1) {
-      ShipmentModule.initialiseShipment()
+      await ShipmentModule.initialiseShipment()
     }
   }
 
-  mounted() {
-    this.data = ShipmentModule.getShipmentList.filter(
-      (item) => !item.label_printed
-    )
+  get getData() {
+    return ShipmentModule.getShipmentList.filter((item) => !item.label_printed)
   }
 }
 </script>

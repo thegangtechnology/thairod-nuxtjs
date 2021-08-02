@@ -278,11 +278,11 @@ export default class OrderEdit extends Vue {
 
   handleProvinceChange() {
     this.form.district = ''
-    this.form.subDistrict = ''
+    this.form.subdistrict = ''
   }
 
   handleDistrictChange() {
-    this.form.subDistrict = ''
+    this.form.subdistrict = ''
   }
 
   onSave() {

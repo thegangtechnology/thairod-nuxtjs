@@ -31,7 +31,9 @@
           />
         </a-tab-pane>
         <div slot="tabBarExtraContent" class="assign-tab__buttons">
-          <a-button class="assign-button__cta">แก้ไขล็อตการจัดส่ง</a-button>
+          <a-button class="assign-button__cta" @click="toAssignBatch"
+            >แก้ไขล็อตการจัดส่ง</a-button
+          >
           <a-button class="assign-button__cta primary" @click="toCreateBatch">
             สร้างล็อตการจัดส่งใหม่
           </a-button>
@@ -79,6 +81,15 @@ export default class AssignOverview extends Vue {
 
   toCreateBatch() {
     this.$router.push(`/assign/create-batch`)
+  }
+
+  toAssignBatch() {
+    this.$router.push({
+      path: `/assign/create-batch`,
+      query: {
+        type: 'assign',
+      },
+    })
   }
 
   onTabChange(key: string) {

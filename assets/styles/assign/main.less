@@ -198,6 +198,11 @@
     }
     &.submit {
       background: #f9b7b7;
+      &[disabled],
+      &[disabled]:hover {
+        background: #bbbbbb;
+        color: #707070;
+      }
     }
     &:not(:last-child) {
       margin-right: 1rem;

@@ -93,7 +93,7 @@
         <div class="assign-table__table">
           <a-table
             row-key="id"
-            :columns="columns"
+            :columns="tableColumns"
             :data-source="data"
             :custom-row="customRow"
           >
@@ -102,7 +102,7 @@
                 {{ record.id }}
               </div>
               <div>
-                {{ record.created_date }}
+                {{ record.created_date | date }}
               </div>
             </div>
             <div
@@ -183,6 +183,7 @@ import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import RightSvg from '~/assets/icons/right-table.svg'
 import moment from 'moment'
+import { IColumns, columnsWithOperation } from '~/static/ShipmentColumns'
 import { ShipmentBatch, ShipmentLine } from '~/types/shipment.type'
 
 interface IMain {
@@ -206,45 +207,6 @@ export default class AssignOverview extends Vue {
   tabKey: string = 'All'
 
   data: ShipmentLine[] = this.originalData ? this.originalData : []
-
-  columns = [
-    {
-      title: 'เลขที่รายการสั่งซื้อ',
-      scopedSlots: { customRender: 'id' },
-    },
-    {
-      title: 'รายการสินค้า',
-      scopedSlots: { customRender: 'shipmentItem' },
-    },
-    {
-      title: 'จำนวน',
-      scopedSlots: { customRender: 'quantity' },
-    },
-    {
-      title: 'ผู้รับการรักษา',
-      dataIndex: 'patientName',
-      scopedSlots: { customRender: 'patientName' },
-    },
-    {
-      title: 'ล็อตการจัดส่ง',
-      dataIndex: 'batch',
-      scopedSlots: { customRender: 'batch' },
-    },
-    {
-      title: 'สถานะการจัดส่ง',
-      dataIndex: 'status',
-      scopedSlots: { customRender: 'status' },
-      align: 'center',
-    },
-    {
-      title: 'หมายเลขติดตาม',
-      dataIndex: 'tracking_code',
-    },
-    {
-      key: 'operation',
-      scopedSlots: { customRender: 'operation' },
-    },
-  ]
 
   filterForm: IFilter = {
     orderedDate: '',
@@ -274,6 +236,10 @@ export default class AssignOverview extends Vue {
           .filter((mapped) => mapped !== null)
       ),
     ]
+  }
+
+  get tableColumns(): IColumns[] {
+    return columnsWithOperation
   }
 
   onTabChange(key: string) {
@@ -316,7 +282,7 @@ export default class AssignOverview extends Vue {
       )
     }
     if (key === 'searchRecord') {
-      const columsDataIndex = this.columns
+      const columsDataIndex = this.tableColumns
         .filter((column) => column.dataIndex)
         .map((column) => column.dataIndex)
       const searchedArray = columsDataIndex.map((col) =>

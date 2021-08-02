@@ -34,6 +34,7 @@
           :search="search"
           :tab-key="tabKey"
           :option="updateOption"
+          @update="handleCancelUpdate"
         />
       </a-tab-pane>
       <a-tab-pane key="out">
@@ -45,6 +46,7 @@
           :search="search"
           :tab-key="tabKey"
           :option="updateOption"
+          @update="handleCancelUpdate"
         />
       </a-tab-pane>
       <a-tab-pane key="received">
@@ -56,6 +58,7 @@
           :search="search"
           :tab-key="tabKey"
           :option="updateOption"
+          @update="handleCancelUpdate"
         />
       </a-tab-pane>
       <div
@@ -63,7 +66,14 @@
         slot="tabBarExtraContent"
         class="overview-tab__buttons"
       >
-        <a-select v-model="updateOption" class="overview-button__cta">
+        <a-button
+          v-if="tabKey === 'wait'"
+          class="overview-button__cta"
+          @click="toPrint"
+        >
+          อัปเดตการพิมพ์ใบจัดส่ง
+        </a-button>
+        <a-select v-else v-model="updateOption" class="overview-select__cta">
           <a-select-option value="default">
             อัปเดตข้อมูลรายการจัดส่ง
           </a-select-option>
@@ -76,9 +86,9 @@
           >
             อัปเดตการจัดส่ง
           </a-select-option>
-          <a-select-option v-if="canUpdateReceived" value="updateReceived">
+          <!-- <a-select-option v-if="canUpdateReceived" value="updateReceived">
             อัปเดตการส่งมอบ
-          </a-select-option>
+          </a-select-option> -->
         </a-select>
       </div>
     </a-tabs>
@@ -113,6 +123,10 @@ export default class OrderOverview extends Vue {
     return this.tabKey !== 'wait' && this.tabKey !== 'print'
   }
 
+  handleCancelUpdate() {
+    this.updateOption = 'default'
+  }
+
   getTabContent(tabKey: string): ShipmentLine[] {
     return this.allData.filter((item) => {
       return item.status === tabKey
@@ -126,6 +140,10 @@ export default class OrderOverview extends Vue {
   onTabChange(key: string) {
     this.tabKey = key
     this.updateOption = 'default'
+  }
+
+  toPrint() {
+    this.$router.push('/print')
   }
 }
 </script>

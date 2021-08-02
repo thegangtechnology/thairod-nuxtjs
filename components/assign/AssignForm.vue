@@ -40,7 +40,7 @@
               {{ record.id }}
             </div>
             <div>
-              {{ record.created_date }}
+              {{ record.created_date | date }}
             </div>
           </div>
           <div
@@ -110,56 +110,12 @@
       </a-button>
       <a-button
         class="assign-button__cta submit"
+        :disabled="selectedRowKeys.length === 0"
         @click="visibleSubmitDialog = true"
       >
         <span> สร้าง ({{ selectedRowKeys.length }}) </span>
       </a-button>
     </div>
-    <!-- <a-form layout="vertical">
-      <a-row>
-        <a-col :span="4">
-          <a-form-item label="Export Batch No.">
-            <a-input
-              v-model="batchNo"
-              placeholder="Batch No."
-              style="width: 200px"
-            @search="onSearchRecords"
-            />
-          </a-form-item>
-        </a-col>
-        <a-col :span="4">
-          <a-form-item label="Select Date Range">
-            <a-range-picker @change="onDateFilterChange" />
-          </a-form-item>
-        </a-col>
-      </a-row>
-    </a-form>
-    <div class="assign-table__container">
-      <div class="assign-table__table">
-        <a-table
-          row-key="orderId"
-          :row-selection="rowSelection"
-          :columns="columns"
-          :data-source="data"
-        >
-          <div slot="operation" class="table-form__input">
-            <a-icon type="right-circle" />
-          </div>
-        </a-table>
-      </div>
-    </div> -->
-
-    <!-- <div class="button-container">
-      <div class="button-right">
-        <a-button @click="goBack">Cancel</a-button>
-        <a-button
-          :disabled="!canSave"
-          type="primary"
-          @click="visibleSubmitDialog = true"
-          >Save</a-button
-        >
-      </div>
-    </div> -->
     <!-- visibleSubmitDialog -->
     <a-modal
       v-model="visibleSubmitDialog"
@@ -293,8 +249,7 @@ export default class AssignForm extends Vue {
   }
 
   async created() {
-    const res = await ShipmentModule.getNextBatchName
-    this.batchNo = res.data.name
+    this.batchNo = await ShipmentModule.getNextBatchNo()
   }
 
   onTabChange(key: string) {

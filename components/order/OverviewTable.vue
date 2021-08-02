@@ -27,10 +27,10 @@
                   <a-select-option value=""> All </a-select-option>
                   <a-select-option
                     v-for="batch in exportBatchSelect"
-                    :key="batch.id"
-                    :value="batch.name"
+                    :key="batch"
+                    :value="batch"
                   >
-                    {{ batch.name }}
+                    {{ batch }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -43,11 +43,12 @@
                   @change="handleOrderedItemFilterChange"
                 >
                   <a-select-option value=""> All </a-select-option>
-                  <a-select-option value="Green Package">
-                    Green Package
-                  </a-select-option>
-                  <a-select-option value="Yellow Package">
-                    Yellow Package
+                  <a-select-option
+                    v-for="item in shipmentItemSelect"
+                    :key="item"
+                    :value="item"
+                  >
+                    {{ item }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -67,16 +68,16 @@
                     onChange: onSelectChange,
                   }
             "
-            :columns="columns"
+            :columns="tableColumns"
             :data-source="data"
-            :custom-row="customRow"
+            :custom-row="option === 'default' ? customRow : null"
           >
             <div slot="id" slot-scope="text, record" class="table-form__input">
               <div>
                 {{ record.id }}
               </div>
               <div>
-                {{ record.created_date }}
+                {{ record.created_date | date }}
               </div>
             </div>
             <div
@@ -152,16 +153,14 @@
       </div>
     </div>
     <div v-if="option !== 'default'" class="overview-button__container">
-      <a-button class="overview-button__cta cancel">
-        <!-- @click="goBack" -->
+      <a-button class="overview-button__cta cancel" @click="cancelUpdate">
         <span> ยกเลิก </span>
       </a-button>
       <a-button
         class="overview-button__cta submit"
         @click="visibleSubmitDialog = true"
       >
-        <span> อัปเดตข้อมูล </span>
-        <!-- ({{ updateAmount }})  -->
+        <span> อัปเดตข้อมูล ({{ updateIdList.length }}) </span>
       </a-button>
     </div>
     <a-modal
@@ -176,7 +175,8 @@
       </div>
       <div class="overview-modal__title">ยืนยันการอัปเดตข้อมูล</div>
       <div class="overview-modal__subtitle">
-        รายการสั่งซื้อจำนวน 3 รายการกำลังจะถูกอัปเดตข้อมูลการพิมพ์ใบจัดส่งจาก
+        รายการสั่งซื้อจำนวน ({{ updateIdList.length }})
+        รายการกำลังจะถูกอัปเดตข้อมูลการพิมพ์ใบจัดส่งจาก
         {{ getModalDescription.from }} เป็น
         <span>{{ getModalDescription.to }} </span>
       </div>
@@ -187,7 +187,7 @@
             class="overview-button__cta cancel"
             @click="visibleSubmitDialog = false"
           >
-            Cancel
+            ยกเลิก
           </a-button>
           <a-button
             key="submit"
@@ -195,7 +195,7 @@
             type="primary"
             @click="onSave"
           >
-            Confirm
+            ยืนยัน
           </a-button>
         </div>
       </template>
@@ -204,7 +204,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import moment from 'moment'
 import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
@@ -212,7 +212,12 @@ import CorrectSvg from '~/assets/icons/correct.svg'
 import RightSvg from '~/assets/icons/right-table.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
 import ShipmentModule from '~/store/shipment.module'
-import { ShipmentBatch, ShipmentLine } from '~/types/shipment.type'
+import {
+  IColumns,
+  columns,
+  columnsWithOperation,
+} from '~/static/ShipmentColumns'
+import { ShipmentLine } from '~/types/shipment.type'
 
 type Status = 'wait' | 'print' | 'out' | 'received'
 
@@ -240,45 +245,6 @@ export default class OverviewTable extends Vue {
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
 
-  columns = [
-    {
-      title: 'เลขที่รายการสั่งซื้อ',
-      scopedSlots: { customRender: 'id' },
-    },
-    {
-      title: 'รายการสินค้า',
-      scopedSlots: { customRender: 'shipmentItem' },
-    },
-    {
-      title: 'จำนวน',
-      scopedSlots: { customRender: 'quantity' },
-    },
-    {
-      title: 'ผู้รับการรักษา',
-      dataIndex: 'patientName',
-      scopedSlots: { customRender: 'patientName' },
-    },
-    {
-      title: 'ล็อตการจัดส่ง',
-      dataIndex: 'batch',
-      scopedSlots: { customRender: 'batch' },
-    },
-    {
-      title: 'สถานะการจัดส่ง',
-      dataIndex: 'status',
-      scopedSlots: { customRender: 'status' },
-      align: 'center',
-    },
-    {
-      title: 'หมายเลขติดตาม',
-      dataIndex: 'tracking_code',
-    },
-    {
-      key: 'operation',
-      scopedSlots: { customRender: 'operation' },
-    },
-  ]
-
   data: ShipmentLine[] = []
   selectedRowKeys: number[] = []
   originalSelectedRowKeys: number[] = []
@@ -289,6 +255,11 @@ export default class OverviewTable extends Vue {
     exportBatch: '',
     orderedItem: '',
     searchRecord: '',
+  }
+
+  @Emit('update')
+  cancelUpdate() {
+    return false
   }
 
   @Watch('search', { immediate: true, deep: true })
@@ -320,14 +291,29 @@ export default class OverviewTable extends Vue {
     return this.data.length
   }
 
-  get exportBatchSelect(): (ShipmentBatch | null)[] {
+  get exportBatchSelect(): string[] {
     return [
       ...new Set(
         this.originalData
-          .map((item) => item.batch)
-          .filter((mapped) => mapped !== null)
+          .filter((item) => item.batch !== null)
+          .map((item) => item.batch!.name)
       ),
     ]
+  }
+
+  get shipmentItemSelect() {
+    return this.originalData
+      .map((item) => item.shipmentItem)
+      .reduce<string[]>((accum, shipmentItem) => {
+        if (shipmentItem.length > 0) {
+          shipmentItem.forEach((item) => {
+            if (!accum.includes(item.name)) {
+              accum.push(item.name)
+            }
+          })
+        }
+        return accum
+      }, [])
   }
 
   get unselectedIds() {
@@ -359,6 +345,32 @@ export default class OverviewTable extends Vue {
       }
     }
     return { from: '', to: '' }
+  }
+
+  get updateIdList(): number[] {
+    if (this.option === 'updatePrint') {
+      return this.unselectedIds
+    }
+    if (this.option === 'updateDelivery') {
+      if (this.tabKey === 'print') {
+        return this.selectedRowKeys
+      } else {
+        return this.unselectedIds
+      }
+    }
+    if (this.option === 'updateReceived') {
+      if (this.tabKey === 'out') {
+        return this.selectedRowKeys
+      } else {
+        return this.unselectedIds
+      }
+    }
+    return []
+  }
+
+  get tableColumns(): IColumns[] {
+    if (this.option !== 'default') return columns
+    return columnsWithOperation
   }
 
   mounted() {
@@ -423,7 +435,7 @@ export default class OverviewTable extends Vue {
       )
     }
     if (key === 'searchRecord') {
-      const columsDataIndex = this.columns
+      const columsDataIndex = this.tableColumns
         .filter((column) => column.dataIndex)
         .map((column) => column.dataIndex)
       const searchedArray = columsDataIndex.map((col) =>
@@ -437,15 +449,10 @@ export default class OverviewTable extends Vue {
   }
 
   handleUpdatePrint() {
-    /**
-     * If tab === 'wait' => change selected to 'print' status
-     * If tab === 'print' => change unselected to 'wait' status
-     */
-    if (this.tabKey === 'wait') {
-      this.saveToStore(this.selectedRowKeys, 'print')
-    } else {
-      this.saveToStore(this.unselectedIds, 'wait')
-    }
+    ShipmentModule.setPrintStatus({
+      selectedRowKeys: this.unselectedIds,
+      printStatus: false,
+    })
   }
 
   handleUpdateDelievery() {
@@ -454,23 +461,29 @@ export default class OverviewTable extends Vue {
      * If tab === 'out' => change unselected to 'print' status
      */
     if (this.tabKey === 'print') {
-      this.saveToStore(this.selectedRowKeys, 'out')
+      ShipmentModule.setDeliverStatus({
+        selectedRowKeys: this.selectedRowKeys,
+        deliverStatus: true,
+      })
     } else {
-      this.saveToStore(this.unselectedIds, 'print')
+      ShipmentModule.setDeliverStatus({
+        selectedRowKeys: this.unselectedIds,
+        deliverStatus: false,
+      })
     }
   }
 
-  handleUpdateReceived() {
-    /**
-     * If tab === 'out' => change selected to 'received' status
-     * If tab === 'received' => change unselected to 'out' status
-     */
-    if (this.tabKey === 'out') {
-      this.saveToStore(this.selectedRowKeys, 'received')
-    } else {
-      this.saveToStore(this.unselectedIds, 'out')
-    }
-  }
+  // handleUpdateReceived() {
+  //   /**
+  //    * If tab === 'out' => change selected to 'received' status
+  //    * If tab === 'received' => change unselected to 'out' status
+  //    */
+  //   if (this.tabKey === 'out') {
+  //     this.saveToStore(this.selectedRowKeys, 'received')
+  //   } else {
+  //     this.saveToStore(this.unselectedIds, 'out')
+  //   }
+  // }
 
   saveToStore(ids: number[], status: Status) {
     ShipmentModule.updateStatus({ status, selectedRows: ids })
@@ -479,7 +492,7 @@ export default class OverviewTable extends Vue {
   onSave() {
     if (this.option === 'updatePrint') this.handleUpdatePrint()
     if (this.option === 'updateDelivery') this.handleUpdateDelievery()
-    if (this.option === 'updateReceived') this.handleUpdateReceived()
+    // if (this.option === 'updateReceived') this.handleUpdateReceived()
     this.visibleSubmitDialog = false
   }
 

@@ -22,7 +22,6 @@ export default {
     '@/assets/styles/antd.less',
     '@/assets/styles/order-overview/main.less',
     '@/assets/styles/print/main.less',
-    '@/assets/styles/delivery/main.less',
     '@/assets/styles/assign/main.less',
   ],
 
@@ -32,7 +31,7 @@ export default {
     '~plugins/order-components.ts',
     '~plugins/assign-components.ts',
     '~plugins/print-components.ts',
-    '~plugins/delivery-components.ts',
+    '~plugins/date.ts',
     '@/plugins/accessor.ts',
   ],
 
@@ -53,7 +52,14 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: process.env.SERVER_URL || 'https://backend.thairod.thegang.tech/',
+    proxy: true,
+  },
+
+  proxy: {
+    '/api/': {
+      target: process.env.SERVER_URL,
+      changeOrigin: true,
+    },
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

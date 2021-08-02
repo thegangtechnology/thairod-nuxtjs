@@ -62,7 +62,7 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          :columns="columns"
+          :columns="tableColumns"
           :data-source="data"
         >
           <div slot="id" slot-scope="text, record" class="table-form__input">
@@ -70,7 +70,7 @@
               {{ record.id }}
             </div>
             <div>
-              {{ record.created_date }}
+              {{ record.created_date | date }}
             </div>
           </div>
           <div
@@ -140,9 +140,10 @@
       </a-button>
       <a-button
         class="print-button__cta submit"
+        :disabled="updateAmount === 0"
         @click="visibleSubmitDialog = true"
       >
-        <span> อัปเดตข้อมูล ({{ updateAmount }}) </span>
+        <span> พิมพ์ ({{ updateAmount }}) </span>
       </a-button>
     </div>
     <a-modal
@@ -189,12 +190,9 @@ import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
 import CorrectSvg from '~/assets/icons/correct.svg'
+import { IColumns, columns } from '~/static/ShipmentColumns'
 import ShipmentModule from '~/store/shipment.module'
-import {
-  ShipmentBatch,
-  ShipmentLine,
-  ShipmentProductVariation,
-} from '~/types/shipment.type'
+import { ShipmentBatch, ShipmentLine } from '~/types/shipment.type'
 
 interface IFilter {
   created_date: string
@@ -211,45 +209,6 @@ export default class PrintForm extends Vue {
   private CalendarIcon = CalendarSvg
   private FilterIcon = FilterSvg
   private CorrectIcon = CorrectSvg
-
-  columns = [
-    {
-      title: 'เลขที่รายการสั่งซื้อ',
-      scopedSlots: { customRender: 'id' },
-    },
-    {
-      title: 'รายการสินค้า',
-      scopedSlots: { customRender: 'shipmentItem' },
-    },
-    {
-      title: 'จำนวน',
-      scopedSlots: { customRender: 'quantity' },
-    },
-    {
-      title: 'ผู้รับการรักษา',
-      dataIndex: 'patientName',
-      scopedSlots: { customRender: 'patientName' },
-    },
-    {
-      title: 'ล็อตการจัดส่ง',
-      dataIndex: 'batch',
-      scopedSlots: { customRender: 'batch' },
-    },
-    {
-      title: 'สถานะการจัดส่ง',
-      dataIndex: 'status',
-      scopedSlots: { customRender: 'status' },
-      align: 'center',
-    },
-    {
-      title: 'หมายเลขติดตาม',
-      dataIndex: 'tracking_code',
-    },
-    {
-      key: 'operation',
-      scopedSlots: { customRender: 'operation' },
-    },
-  ]
 
   data: ShipmentLine[] = []
 
@@ -306,6 +265,10 @@ export default class PrintForm extends Vue {
     }).length
   }
 
+  get tableColumns(): IColumns[] {
+    return columns
+  }
+
   importData() {
     this.data = this.originalData
   }
@@ -344,7 +307,7 @@ export default class PrintForm extends Vue {
       )
     }
     if (key === 'searchRecord') {
-      const columsDataIndex = this.columns
+      const columsDataIndex = this.tableColumns
         .filter((column) => column.dataIndex)
         .map((column) => column.dataIndex)
       const searchedArray = columsDataIndex.map((col) =>
@@ -367,9 +330,9 @@ export default class PrintForm extends Vue {
   }
 
   onSave() {
-    this.visibleSubmitDialog = true
     ShipmentModule.printLabel(this.selectedRowKeys)
-    // this.$router.push(`/order-overview`)
+    this.visibleSubmitDialog = false
+    this.$router.push(`/order-overview`)
   }
 }
 </script>

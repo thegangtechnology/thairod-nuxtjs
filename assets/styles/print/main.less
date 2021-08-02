@@ -81,7 +81,7 @@
       }
       .print-filter__form {
         display: grid;
-        grid-template-columns: auto;
+        grid-template-columns: repeat(3, 1fr);
         grid-template-areas: 'left middle right';
         column-gap: 0.75rem;
         .date {
@@ -197,6 +197,11 @@
       }
       &.submit {
         background: #f9b7b7;
+        &[disabled],
+        &[disabled]:hover {
+          background: #bbbbbb;
+          color: #707070;
+        }
       }
       &:not(:last-child) {
         margin-right: 1rem;

@@ -27,10 +27,10 @@
                   <a-select-option value=""> All </a-select-option>
                   <a-select-option
                     v-for="batch in exportBatchSelect"
-                    :key="batch.id"
-                    :value="batch.name"
+                    :key="batch"
+                    :value="batch"
                   >
-                    {{ batch.name }}
+                    {{ batch }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -43,11 +43,12 @@
                   @change="handleOrderedItemFilterChange"
                 >
                   <a-select-option value=""> All </a-select-option>
-                  <a-select-option value="Green Package">
-                    Green Package
-                  </a-select-option>
-                  <a-select-option value="Yellow Package">
-                    Yellow Package
+                  <a-select-option
+                    v-for="item in shipmentItemSelect"
+                    :key="item"
+                    :value="item"
+                  >
+                    {{ item }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -56,13 +57,27 @@
         </a-form>
       </div>
       <div class="print-table__container">
-        <a-table row-key="id" :columns="columns" :data-source="data">
+        <a-table
+          row-key="id"
+          :row-selection="
+            update
+              ? {
+                  selectedRowKeys: selectedRowKeys,
+                  onChange: onSelectChange,
+                  onSelect: handleSelectChange,
+                  onSelectAll: handleSelectAllChange,
+                }
+              : null
+          "
+          :columns="tableColumns"
+          :data-source="data"
+        >
           <div slot="id" slot-scope="text, record" class="table-form__input">
             <div>
               {{ record.id }}
             </div>
             <div>
-              {{ record.created_date }}
+              {{ record.created_date | date }}
             </div>
           </div>
           <div
@@ -129,31 +144,79 @@
         </a-table>
       </div>
     </div>
+    <div v-if="update" class="print-button__container">
+      <a-button class="print-button__cta cancel" @click="onCancelUpdate">
+        <span> ยกเลิก </span>
+      </a-button>
+      <a-button
+        class="print-button__cta submit"
+        @click="visibleSubmitDialog = true"
+      >
+        <span> อัปเดตข้อมูล ({{ changedRows.length }}) </span>
+      </a-button>
+    </div>
+    <a-modal
+      class="print-modal__container"
+      v-model="visibleSubmitDialog"
+      centered
+      :closable="false"
+      :width="480"
+    >
+      <div class="print-modal__img">
+        <img :src="BoxImg" alt="BoxImg" />
+      </div>
+      <div class="print-modal__title">ยืนยันการอัปเดตข้อมูล</div>
+      <div class="print-modal__subtitle">
+        รายการสั่งซื้อจำนวน ({{ changedRows.length }}) รายการ
+        กำลังจะถูกอัปเดตข้อมูลการพิมพ์ใบจัดส่ง
+      </div>
+      <template slot="footer">
+        <div class="print-modal__footer">
+          <a-button
+            class="print-button__cta cancel"
+            key="back"
+            @click="visibleSubmitDialog = false"
+          >
+            ยกเลิก
+          </a-button>
+          <a-button
+            class="print-button__cta submit"
+            key="submit"
+            type="primary"
+            @click="onSave"
+          >
+            ยืนยัน
+          </a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
 <script lang="ts">
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import moment from 'moment'
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import RightSvg from '~/assets/icons/right-table.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
-import ShipmentModule from '~/store/shipment.module'
 import {
-  ShipmentBatch,
-  ShipmentLine,
-  ShipmentProductVariation,
-} from '~/types/shipment.type'
+  IColumns,
+  columns,
+  columnsWithOperation,
+} from '~/static/ShipmentColumns'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentLine } from '~/types/shipment.type'
 
 interface IFilter {
   created_date: string
-  shipmentBatch: string
+  batchName: string
   shipmentItem: string
 }
 
 @Component
 export default class PrintTable extends Vue {
+  @Prop({ required: true }) update!: boolean
   @Prop({ required: true }) search!: string
   @Prop({ required: true }) originalData!: ShipmentLine[]
 
@@ -162,50 +225,14 @@ export default class PrintTable extends Vue {
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
 
-  columns = [
-    {
-      title: 'เลขที่รายการสั่งซื้อ',
-      scopedSlots: { customRender: 'id' },
-    },
-    {
-      title: 'รายการสินค้า',
-      scopedSlots: { customRender: 'shipmentItem' },
-    },
-    {
-      title: 'จำนวน',
-      scopedSlots: { customRender: 'quantity' },
-    },
-    {
-      title: 'ผู้รับการรักษา',
-      dataIndex: 'patientName',
-      scopedSlots: { customRender: 'patientName' },
-    },
-    {
-      title: 'ล็อตการจัดส่ง',
-      dataIndex: 'batch',
-      scopedSlots: { customRender: 'batch' },
-    },
-    {
-      title: 'สถานะการจัดส่ง',
-      dataIndex: 'status',
-      scopedSlots: { customRender: 'status' },
-      align: 'center',
-    },
-    {
-      title: 'หมายเลขติดตาม',
-      dataIndex: 'tracking_code',
-    },
-    {
-      key: 'operation',
-      scopedSlots: { customRender: 'operation' },
-    },
-  ]
-
   data: ShipmentLine[] = this.originalData ? this.originalData : []
+  selectedRowKeys: number[] = []
+  changedRows: { id: number; status: boolean }[] = []
+  visibleSubmitDialog: boolean = false
 
   filterForm: IFilter = {
     created_date: '',
-    shipmentBatch: '',
+    batchName: '',
     shipmentItem: '',
   }
 
@@ -224,18 +251,49 @@ export default class PrintTable extends Vue {
     this.importData()
   }
 
+  @Watch('originalData', { immediate: true, deep: true })
+  onOriginalChange() {
+    this.importData()
+  }
+
+  @Emit('cancel')
+  onCancelUpdate() {
+    this.importData()
+    return false
+  }
+
   get recordsLength(): number {
     return this.data.length
   }
 
-  get exportBatchSelect(): (ShipmentBatch | null)[] {
+  get exportBatchSelect(): string[] {
     return [
       ...new Set(
         this.originalData
-          .map((item) => item.batch)
-          .filter((mapped) => mapped !== null)
+          .filter((item) => item.batch !== null)
+          .map((item) => item.batch!.name)
       ),
     ]
+  }
+
+  get shipmentItemSelect() {
+    return this.originalData
+      .map((item) => item.shipmentItem)
+      .reduce<string[]>((accum, shipmentItem) => {
+        if (shipmentItem.length > 0) {
+          shipmentItem.forEach((item) => {
+            if (!accum.includes(item.name)) {
+              accum.push(item.name)
+            }
+          })
+        }
+        return accum
+      }, [])
+  }
+
+  get tableColumns(): IColumns[] {
+    if (this.update) return columns
+    return columnsWithOperation
   }
 
   mounted() {
@@ -244,6 +302,10 @@ export default class PrintTable extends Vue {
 
   importData() {
     this.data = this.originalData
+    this.selectedRowKeys = this.originalData
+      .filter((line) => line.label_printed)
+      .map((line) => line.id)
+    this.changedRows = []
   }
 
   onDateFilterChange(_date: object, dateString: string) {
@@ -251,7 +313,7 @@ export default class PrintTable extends Vue {
   }
 
   handleBatchFilterChange(value: { key: string; value: string }) {
-    this.filterForm.shipmentBatch = value.key
+    this.filterForm.batchName = value.key
   }
 
   handleOrderedItemFilterChange(value: { key: string; value: string }) {
@@ -273,14 +335,25 @@ export default class PrintTable extends Vue {
   }
 
   filterFields(key: string, row: ShipmentLine): boolean {
-    if (key === 'orderedDate') {
+    if (key === 'created_date') {
       return (
         moment(row.created_date).format('YYYY-MM-DD') ===
         this.filterForm.created_date
       )
     }
+    if (key === 'batchName') {
+      if (row.batch !== null) {
+        return row.batch.name === this.filterForm.batchName
+      }
+      return false
+    }
+    if (key === 'shipmentItem') {
+      return row.shipmentItem
+        .map((item) => item.name)
+        .includes(this.filterForm.shipmentItem)
+    }
     if (key === 'searchRecord') {
-      const columsDataIndex = this.columns
+      const columsDataIndex = this.tableColumns
         .filter((column) => column.dataIndex)
         .map((column) => column.dataIndex)
       const searchedArray = columsDataIndex.map((col) =>
@@ -294,8 +367,60 @@ export default class PrintTable extends Vue {
     // return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
+  onSelectChange(selectedRowKeys: number[]) {
+    this.selectedRowKeys = selectedRowKeys
+  }
+
+  handleSelectAllChange(
+    selected: boolean,
+    _selectedRows: ShipmentLine[],
+    changedRows: ShipmentLine[]
+  ) {
+    changedRows.forEach((row) => {
+      this.handleSelectChange(row, selected)
+    })
+  }
+
+  handleSelectChange(record: ShipmentLine, selected: boolean) {
+    const allChangeId: number[] = this.changedRows.map((item) => item.id)
+    const newSelect = {
+      id: record.id,
+      status: selected,
+    }
+    if (allChangeId.includes(record.id)) {
+      this.changedRows = this.changedRows
+        .map((item) => (item.id === record.id ? newSelect : item))
+        .filter((mapped) => {
+          const originalRow = this.originalData.find(
+            (item) => item.id === mapped.id
+          )
+          return originalRow && originalRow.label_printed !== mapped.status
+        })
+    } else {
+      this.changedRows.push(newSelect)
+    }
+  }
+
   goBack() {
     this.$router.go(-1)
+  }
+
+  onSave() {
+    ShipmentModule.setPrintStatus({
+      selectedRowKeys: this.filterStatus(true),
+      printStatus: true,
+    })
+    ShipmentModule.setPrintStatus({
+      selectedRowKeys: this.filterStatus(false),
+      printStatus: false,
+    })
+    this.visibleSubmitDialog = false
+  }
+
+  filterStatus(status: boolean) {
+    return this.changedRows
+      .filter((row) => row.status === status)
+      .map((filtered) => filtered.id)
   }
 }
 </script>

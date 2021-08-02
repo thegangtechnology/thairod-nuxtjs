@@ -63,15 +63,20 @@ export interface ShipmentLine {
   patientName: string
 }
 export interface ShipmentDetail extends ShipmentLine {
-  phoneNumber: string
+  telno: string
   warehouse: string
-  orderedBy: string
-  updatedBy: string
-  updatedDate: string
-  address: string
+  orderer_name: string
+  orderer_license: string
+  updated_name: string
+  updated_date: string
+  house_number: string
   province: string
   district: string
-  subDistrict: string
-  zipCode: string
-  remark: string
+  subdistrict: string
+  postal_code: string
+  note: string
+}
+
+export interface ShipmentAddress extends ShipmentDetail {
+  name: string
 }

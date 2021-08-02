@@ -33,9 +33,14 @@ export default class Main extends Vue {
   }
 
   mounted() {
-    this.data = ShipmentModule.getShipmentList.filter(
-      (item) => item.batch === null
-    )
+    const type = this.$route.query.type
+    if (type && type === 'assign') {
+      this.data = ShipmentModule.getShipmentList
+    } else {
+      this.data = ShipmentModule.getShipmentList.filter(
+        (item) => item.batch === null
+      )
+    }
   }
 }
 </script>

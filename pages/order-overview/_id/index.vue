@@ -1,14 +1,26 @@
 <template>
-  <div class="order-container">
-    <div class="detail-header">
-      <h1>Order Detail</h1>
-      <a-button v-if="!isEdit" icon="edit" @click="isEdit = true">
-        Edit Record
-      </a-button>
-    </div>
-    <div v-if="detail !== null" class="detail-body">
-      <OrderDetail v-if="!isEdit" :detail="detail" />
-      <OrderEdit v-else :detail="detail" @onEdit="fromEdit" />
+  <div class="page__container">
+    <div class="page-card__container">
+      <div class="page-card__header">
+        <div class="page-header__title has-subtitle">
+          <div>รายละเอียดคำสั่งซื้อ</div>
+          <div class="page-header__subtitle">
+            ภาพรวมรายการจัดส่ง /
+            <span v-if="detail !== null">รายการสั่งซื้อ {{ detail.id }}</span>
+          </div>
+        </div>
+        <a-input
+          class="page-header__search"
+          v-model="search"
+          placeholder="ค้นหา"
+        >
+          <a-icon slot="prefix" type="search" />
+        </a-input>
+      </div>
+      <div v-if="detail !== null">
+        <OrderDetail v-if="!isEdit" :detail="detail" />
+        <OrderEdit v-else :detail="detail" @onEdit="fromEdit" />
+      </div>
     </div>
   </div>
 </template>
@@ -21,11 +33,11 @@ import { ShipmentDetail } from '~/types/shipment.type'
 @Component
 export default class DetailPage extends Vue {
   detail: ShipmentDetail | null = null
-
   isEdit: boolean = false
+  search: string = ''
 
-  created() {
-    this.importDetail()
+  async created() {
+    await this.importDetail()
   }
 
   fromEdit() {

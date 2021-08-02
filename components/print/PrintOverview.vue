@@ -12,6 +12,8 @@
             :original-data="allData"
             :search="search"
             :tab-key="tabKey"
+            :update="isUpdate"
+            @cancel="handleCancelUpdate"
           />
         </a-tab-pane>
         <a-tab-pane key="unprinted">
@@ -20,6 +22,7 @@
             :original-data="getUnprinted"
             :search="search"
             :tab-key="tabKey"
+            :update="false"
           />
         </a-tab-pane>
         <a-tab-pane key="printed">
@@ -28,11 +31,27 @@
             :original-data="getPrinted"
             :search="search"
             :tab-key="tabKey"
+            :update="isUpdate"
+            @cancel="handleCancelUpdate"
           />
         </a-tab-pane>
-        <div slot="tabBarExtraContent" class="print-tab__buttons">
-          <a-button class="print-button__cta">อัปเดตการพิมพ์ใบจัดส่ง</a-button>
-          <a-button class="print-button__cta primary" @click="toCreatePrint">
+        <div
+          v-if="!isUpdate"
+          slot="tabBarExtraContent"
+          class="print-tab__buttons"
+        >
+          <a-button
+            v-if="tabKey !== 'unprinted'"
+            class="print-button__cta"
+            @click="isUpdate = true"
+          >
+            อัปเดตการพิมพ์ใบจัดส่ง
+          </a-button>
+          <a-button
+            v-if="tabKey !== 'printed'"
+            class="print-button__cta primary"
+            @click="toCreatePrint"
+          >
             พิมพ์ใบจัดส่งสินค้า
           </a-button>
         </div>
@@ -51,6 +70,7 @@ export default class PrintOverview extends Vue {
   @Prop({ required: true }) search!: string
 
   tabKey: string = 'all'
+  isUpdate: boolean = false
   originalData: ShipmentLine[] = []
 
   get allData() {
@@ -77,12 +97,17 @@ export default class PrintOverview extends Vue {
     return this.getPrinted.length
   }
 
+  handleCancelUpdate() {
+    this.isUpdate = false
+  }
+
   toCreatePrint() {
     this.$router.push(`/print/create-print`)
   }
 
   onTabChange(key: string) {
     this.tabKey = key
+    this.isUpdate = false
   }
 }
 </script>
