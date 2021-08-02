@@ -4,11 +4,11 @@
  */
 export interface Product {
   id: number
+  sku:string
   image:string
   name:string
   description:string
-  detail:string
-  amount:number
+  repeatable:boolean
 }
 
 /**
@@ -16,9 +16,9 @@ export interface Product {
  */
 export interface ProductJson {
   id: number
+  sku:string
   image:string
   name:string
   description:string
-  detail:string
-  amount:number
+  repeatable:boolean
 }

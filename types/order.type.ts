@@ -2,73 +2,63 @@
 /**
  * FRONTEND Interface
  */
-type Status = "wait" | "print" | "out" | "received";
+type Status = 'wait' | 'print' | 'out' | 'received'
+
 export interface Main {
-  [key: string]: string | boolean;
+  [key: string]: string | boolean
 }
 
-export interface Address {
-  firstName: string;
-  lastName: string;
-  telephone: string;
-  address: string;
-  province: number | string;
-  district: number | string;
-  subDistrict: number | string;
-  zipcode: string;
-  optional: string;
+export interface IProduct {
+  id: number
+  createdDate: string
+  description: string
+  name: string
+  price: string
+  product: number
+  unit: string
+  updatedDate: string
 }
 
-export interface OrderLine {
-  id: number;
-  name: string;
-  total: number;
+export interface PatientInfo {
+  name: string
+  phoneNumber: string
+  street: string
+  province: string
+  district: string
+  subDistrict: string
+  zipcode: string
+  note: string
 }
 
-export interface Order {
-  id: number;
-  orderLines: OrderLine[];
-  address: Address;
+export interface OrderItem {
+  id: number
+  name: string
+  price: string
+  unit: string
+  quantity: number
+  description: string
 }
 
-/**
- * BACKEND Interface
- */
-export interface OrderLineJson {
-  id: number;
-  created_date: string;
-  quantity: string;
-  price: string;
-  total_price: string;
-}
-
-export interface OrderJson {
-  id: number;
-  order_number: string;
-  status: string;
-  order_lines: OrderLineJson[];
-  grand_total_price: string;
-}
 export interface IOrder extends Main {
-  orderId: string;
-  cid: string;
-  patientName: string;
-  phoneNumber: string;
-  orderedItem: string;
-  orderedDate: string;
-  exportBatch: string;
-  trackingNo: string;
-  warehouse: string;
-  orderedBy: string;
-  updatedBy: string;
-  updatedDate: string;
-  address: string;
-  province: string;
-  district: string;
-  subDistrict: string;
-  zipCode: string;
-  remark: string;
-  deliveryStatus: boolean;
-  printStatus: boolean;
-  status: Status;
+  orderId: string
+  cid: string
+  patientName: string
+  phoneNumber: string
+  orderedItem: string
+  orderedDate: string
+  exportBatch: string
+  trackingNo: string
+  warehouse: string
+  orderedBy: string
+  updatedBy: string
+  updatedDate: string
+  address: string
+  province: string
+  district: string
+  subDistrict: string
+  zipCode: string
+  remark: string
+  deliveryStatus: boolean
+  printStatus: boolean
+  status: Status
 }

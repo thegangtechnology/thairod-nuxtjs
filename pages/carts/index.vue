@@ -4,7 +4,7 @@
     <a-divider class="my-3" />
     <div class="carts-card__container">
       <a-row class="mb-6">
-        <a-col v-for="(item,i) in 3" :key="i" class="carts-item-list">
+        <a-col v-for="(item, i) in 3" :key="i" class="carts-item-list">
           <CartsListItem />
         </a-col>
       </a-row>
@@ -13,7 +13,13 @@
     <div class="carts-card__button-container">
       <a-row>
         <a-col :span="24">
-          <primary-button class="update-button" :text="'ยืนยันการสั่งจ่าย'" block :on-click="showModal" :size="'large'" />
+          <primary-button
+            class="update-button"
+            :text="'ยืนยันการสั่งจ่าย'"
+            block
+            :on-click="showModal"
+            :size="'large'"
+          />
         </a-col>
       </a-row>
     </div>
@@ -25,7 +31,12 @@
       :footer="null"
     >
       <div class="text-center">
-        <a-icon size="large" type="check-circle" theme="twoTone" two-tone-color="#52c41a" />
+        <a-icon
+          size="large"
+          type="check-circle"
+          theme="twoTone"
+          two-tone-color="#52c41a"
+        />
       </div>
       <div class="text-center">
         ยืนยันการสั่งจ่ายเรียบร้อย
@@ -35,7 +46,6 @@
         ref="textToCopy"
         v-model="url"
         placeholder="Link URL"
-        disabled
         class="mb-4 input-round"
       />
       <a-button
@@ -43,7 +53,11 @@
         block
         shape="round"
         size="large"
-        :style="{backgroundColor: '#F9B7B7', color: '#000000', borderColor: '#ffc1c1'}"
+        :style="{
+          backgroundColor: '#F9B7B7',
+          color: '#000000',
+          borderColor: '#ffc1c1'
+        }"
         @click="copyLink"
       >
         คัดลอก URL
@@ -68,7 +82,7 @@ export default Vue.extend({
     PrimaryButton
   },
   layout: 'product-layout',
-  data () {
+  data() {
     return {
       visible: false,
       amount: 1,
@@ -76,54 +90,43 @@ export default Vue.extend({
     }
   },
   computed: {
-    patient (): Patient {
+    patient(): Patient {
       return PatientModule.patient
     }
   },
-  async mounted () {
+  async mounted() {
     await PatientModule.getPatient({ id: 1 })
   },
   methods: {
-    showModal (): void {
+    showModal(): void {
       this.visible = true
     },
 
-    closeModal (): void {
+    closeModal(): void {
       this.visible = false
     },
-    copyLink (): void {
-      // const txt = document.createElement('textarea')
-      // document.body.appendChild(txt)
-      // const value = this.$refs.textToCopy?.value
-      // txt.value = value // chrome uses this
-      // txt.textContent = this.$refs.textToCopy.value // FF uses this
-      // const sel = getSelection()
-      // const range = document.createRange()
-      // range.selectNode(txt)
-      // sel.removeAllRanges()
-      // sel.addRange(range)
+    copyLink(): void {
+      // let copyText = document.getElementById('textToCopy')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      // document.execCommand('copy')
       // if (document.execCommand('copy')) {
       //   this.success()
       //   setTimeout(() => this.closeModal(), 1000)
       // }
-      // document.body.removeChild(txt)
     },
-    success (): void {
-      this.$message.success(
-        'Cpoied',
-        1
-      )
+    success(): void {
+      this.$message.success('Cpoied', 1)
     }
   }
-
 })
 </script>
 
 <style>
-.input-round{
+.input-round {
   border-radius: 40px;
 }
-.carts-card__container{
+.carts-card__container {
   margin-bottom: 60px;
 }
 .carts-card__title {
@@ -136,10 +139,10 @@ export default Vue.extend({
   color: #000000;
   margin-bottom: 12px;
 }
-.carts-item-list{
-  margin-bottom:18px;
+.carts-item-list {
+  margin-bottom: 18px;
 }
-.carts-card__button-container{
+.carts-card__button-container {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -150,11 +153,11 @@ export default Vue.extend({
 .carts-card__button-container .update-button {
   font-size: 18px;
 }
-.checkout__button{
+.checkout__button {
   color: #ffffff;
   background-color: #666666;
-  border:1px solid #666666;
-  border-radius:0;
-  height:48px;
+  border: 1px solid #666666;
+  border-radius: 0;
+  height: 48px;
 }
 </style>

@@ -6,7 +6,8 @@ const apiPath = {
   orderFlow: {
     create: 'api/order-flows/create-flow',
     hash: 'api/order-flows/hash',
-    doctorCheckout: 'api/order-flows/doctor-checkout'
+    doctorCheckout: 'api/order-flows/doctor-checkout',
+    patientCheckout: 'api/order-flows/patient-checkout',
   },
   printLabel: 'api/printlabel',
   product: 'api/products',
