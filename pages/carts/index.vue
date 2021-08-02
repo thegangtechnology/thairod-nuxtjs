@@ -56,7 +56,7 @@
         :style="{
           backgroundColor: '#F9B7B7',
           color: '#000000',
-          borderColor: '#ffc1c1'
+          borderColor: '#ffc1c1',
         }"
         @click="copyLink"
       >
@@ -82,7 +82,7 @@ export default Vue.extend({
     PrimaryButton
   },
   layout: 'product-layout',
-  data() {
+  data () {
     return {
       visible: false,
       amount: 1,
@@ -90,23 +90,23 @@ export default Vue.extend({
     }
   },
   computed: {
-    patient(): Patient {
+    patient (): Patient {
       return PatientModule.patient
     }
   },
-  async mounted() {
+  async mounted () {
     await PatientModule.getPatient({ id: 1 })
   },
   methods: {
-    showModal(): void {
+    showModal (): void {
       this.visible = true
     },
 
-    closeModal(): void {
+    closeModal (): void {
       this.visible = false
     },
-    copyLink(): void {
-      let copyText = document.getElementById('textToCopy') as HTMLInputElement
+    copyLink (): void {
+      const copyText = document.getElementById('textToCopy') as HTMLInputElement
       copyText.select()
       copyText.setSelectionRange(0, 99999)
       document.execCommand('copy')
@@ -115,7 +115,7 @@ export default Vue.extend({
         setTimeout(() => this.closeModal(), 1000)
       }
     },
-    success(): void {
+    success (): void {
       this.$message.success('Cpoied', 1)
     }
   }
