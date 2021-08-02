@@ -4,11 +4,11 @@
  */
 export interface Product {
   id: number
-  image:string
-  name:string
-  description:string
-  detail:string
-  amount:number
+  image: string
+  name: string
+  description: string
+  detail: string
+  amount: number
 }
 
 /**
@@ -16,9 +16,9 @@ export interface Product {
  */
 export interface ProductJson {
   id: number
-  image:string
-  name:string
-  description:string
-  detail:string
-  amount:number
+  image: string
+  name: string
+  description: string
+  detail: string
+  amount: number
 }
