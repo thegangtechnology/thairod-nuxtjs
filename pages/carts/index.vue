@@ -106,14 +106,14 @@ export default Vue.extend({
       this.visible = false
     },
     copyLink(): void {
-      let copyText = document.getElementById('textToCopy')
-      copyText.select()
-      copyText.setSelectionRange(0, 99999)
-      document.execCommand('copy')
-      if (document.execCommand('copy')) {
-        this.success()
-        setTimeout(() => this.closeModal(), 1000)
-      }
+      // let copyText = document.getElementById('textToCopy')
+      // copyText.select()
+      // copyText.setSelectionRange(0, 99999)
+      // document.execCommand('copy')
+      // if (document.execCommand('copy')) {
+      //   this.success()
+      //   setTimeout(() => this.closeModal(), 1000)
+      // }
     },
     success(): void {
       this.$message.success('Cpoied', 1)
