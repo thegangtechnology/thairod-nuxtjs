@@ -46,7 +46,7 @@
           </a-menu-item>
         </a-menu>
         <a-button class="logout-button" @click="onLogout">
-          <img class="icon" src="~/assets/images/procurement/icon/logout-icon.svg" />
+          <img class="icon" src="~/assets/images/procurement/icon/logout-icon.svg">
           ออกจากระบบ
         </a-button>
       </a-layout-sider>
@@ -57,7 +57,7 @@
         <a-layout-content>
           <a-input-search v-model="search" placeholder="ค้นหาสินค้าในคลัง" style="width: 97vw" />
           <a-row>
-            <item-overview v-for="item in filteredItems" :key="item.id" :item="item" />
+            <item-overview v-for="item in items" :key="item.id" :item="item" />
           </a-row>
         </a-layout-content>
       </a-layout>
@@ -69,7 +69,7 @@
 import Vue from 'vue'
 import MainHeader from '~/components/procurement/headers/MainHeader.vue'
 import ItemOverview from '~/components/procurement/ItemOverview.vue'
-import { ItemOverViewInfo } from '~/types/procurement.type'
+import { getProductVariations } from '~/services/procurement'
 
 export default Vue.extend({
   components: { MainHeader, ItemOverview },
@@ -79,20 +79,11 @@ export default Vue.extend({
       search: '',
       collapsed: true,
       userInfo: [{ firstName: 'เติมศิริ', lastName: 'ธัยยามาตย์', role: 'Admin' }],
-      items: [
-        { id: '0', name: 'กล่องสีเขียว', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' },
-        { id: '1', name: 'กล่องสีเหลือง', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' },
-        { id: '2', name: 'ยาฟาวิพิราเวียร์', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' },
-        { id: '3', name: 'ฟ้าทะลายโจร', stock: 100, unit: 'กล่อง', lastUpdate: '12 AUG 2021 | 12:46 P.M.' }
-      ]
+      items: []
     }
   },
-  computed: {
-    filteredItems () : Array<ItemOverViewInfo> {
-      return this.items.filter(item =>
-        item.name.toLowerCase().includes(this.search.toLowerCase())
-      )
-    }
+  async mounted () {
+    await getProductVariations().then((results) => { this.items = results })
   },
   methods: {
     triggerSidebar () : void {

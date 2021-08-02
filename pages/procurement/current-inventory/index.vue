@@ -19,21 +19,21 @@ export default Vue.extend({
   data () {
     return {
       warehouseStocks: [
-        { warehouse: 'Warehouse A', amount: 30, unit: 'กล่อง' },
-        { warehouse: 'Warehouse B', amount: 20, unit: 'กล่อง' },
-        { warehouse: 'Warehouse C', amount: 25, unit: 'กล่อง' },
-        { warehouse: 'Warehouse D', amount: 25, unit: 'กล่อง' }
+        // { warehouse: 'Warehouse A', amount: 30, unit: 'กล่อง' },
+        // { warehouse: 'Warehouse B', amount: 20, unit: 'กล่อง' },
+        // { warehouse: 'Warehouse C', amount: 25, unit: 'กล่อง' },
+        // { warehouse: 'Warehouse D', amount: 25, unit: 'กล่อง' }
       ],
       leftCard: {
         backgroundColor: '#001740',
         title: 'จำนวนในคลัง',
-        amount: 100,
+        amount: '-',
         unit: 'กล่อง'
       },
       rightCard: {
         backgroundColor: '#133571',
         title: 'ยอดรวมสะสม',
-        amount: 10000,
+        amount: '-',
         unit: 'กล่อง'
       }
     }

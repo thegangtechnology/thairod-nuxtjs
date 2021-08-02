@@ -8,10 +8,10 @@
       <a-col :flex="10">
         <div class="card left-card">
           <div> จำนวนในคลัง </div>
-          <b>{{ inventoryRecord.currentAmount }} {{ inventoryRecord.unit }}</b>
+          <b>{{ inventoryRecord.currentAmount > 0 ? inventoryRecord.currentAmount : '-' }} {{ inventoryRecord.unit }}</b>
           <a-divider />
           <div> ยอดรวมสะสม </div>
-          <b class="acc-amount">{{ inventoryRecord.accumulativeAmount }} {{ inventoryRecord.unit }}</b>
+          <b class="acc-amount">{{ inventoryRecord.accumulativeAmount > 0 ? inventoryRecord.accumulativeAmount : '-' }} {{ inventoryRecord.unit }}</b>
         </div>
         <a-button
           block
@@ -26,10 +26,10 @@
       <a-col :flex="10">
         <div class="card right-card">
           <div> จำนวนที่ใช้วันนี้ </div>
-          <b>{{ inventoryRecord.usedAmount }} {{ inventoryRecord.unit }}</b>
+          <b>{{ inventoryRecord.usedAmount > 0 ? inventoryRecord.usedAmount : '-' }} {{ inventoryRecord.unit }}</b>
           <a-divider />
           <div> ยอดใช้สะสม </div>
-          <b class="acc-amount">{{ inventoryRecord.accumulativeUsed }} {{ inventoryRecord.unit }}</b>
+          <b class="acc-amount">{{ inventoryRecord.accumulativeUsed > 0 ? inventoryRecord.accumulativeUsed : '-' }} {{ inventoryRecord.unit }}</b>
         </div>
         <a-button
           block
@@ -44,39 +44,50 @@
     <a-divider class="main-divider" />
     <div>
       <b class="list-title"> รายละเอียดสินค้า </b>
-      <a-list :data-source="itemList" class="list-items">
-        <a-list-item slot="renderItem" slot-scope="{name, quantity, unit}">
-          <a-list-item-meta
-            :description="quantity + ' ' + unit"
-          >
-            <span slot="title">{{ name }}</span>
-            <a-avatar
-              slot="avatar"
-              src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-            />
-          </a-list-item-meta>
-        </a-list-item>
-      </a-list>
+      <p> {{ itemDescription }} </p>
+<!--      Not supported yet-->
+<!--      <a-list :data-source="itemList" class="list-items">-->
+<!--        <a-list-item slot="renderItem" slot-scope="{name, quantity, unit}">-->
+<!--          <a-list-item-meta-->
+<!--            :description="quantity + ' ' + unit"-->
+<!--          >-->
+<!--            <span slot="title">{{ name }}</span>-->
+<!--            <a-avatar-->
+<!--              slot="avatar"-->
+<!--              src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"-->
+<!--            />-->
+<!--          </a-list-item-meta>-->
+<!--        </a-list-item>-->
+<!--      </a-list>-->
     </div>
     <primary-button class="update-button" :text="'อัปเดตคลังสินค้า'" :on-click="updateInventory" />
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { PropType } from 'vue'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
+import { InventoryRecord } from '~/types/procurement.type'
 
 export default Vue.extend({
   components: { PrimaryButton },
-  props: {},
+  props: {
+    inventoryRecord: {
+      type: Object as PropType<InventoryRecord>,
+      default: () => ({ currentAmount: 0, accumulativeAmount: 0, usedAmount: 0, accumulativeUsed: 0, unit: '' })
+    },
+    itemDescription: {
+      type: String,
+      default: '-'
+    }
+  },
   data () {
     return {
-      inventoryRecord: { currentAmount: 100, accumulativeAmount: 800, usedAmount: 100, accumulativeUsed: 800, unit: 'กล่อง' },
-      itemList: [
-        { name: 'ยา Favipiravir', quantity: 1, unit: 'กล่อง' },
-        { name: 'อาหาร', quantity: 1, unit: 'กล่อง' },
-        { name: 'เครื่องวัดค่าออกซิเจน', quantity: 1, unit: 'เครื่อง' }
-      ]
+      // itemList: [
+      //   { name: 'ยา Favipiravir', quantity: 1, unit: 'กล่อง' },
+      //   { name: 'อาหาร', quantity: 1, unit: 'กล่อง' },
+      //   { name: 'เครื่องวัดค่าออกซิเจน', quantity: 1, unit: 'เครื่อง' }
+      // ]
     }
   },
   computed: {},
@@ -108,7 +119,8 @@ export default Vue.extend({
 img {
   display: block;
   width: 100%;
-  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-radius: 8px;
 }
 
 .update-button {

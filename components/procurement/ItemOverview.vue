@@ -4,7 +4,7 @@
       <img
         slot="cover"
         alt="item-image"
-        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+        :src="imageMap[item.id]"
       >
       <div class="title">
         {{ item.name }}
@@ -12,12 +12,12 @@
       <div class="label">
         จำนวนในคลัง
       </div>
-      <div><b>{{ item.stock }} {{ item.unit }}</b></div>
+      <div><b>{{ item.stock ? item.stock : '-' }} {{ item.unit }}</b></div>
       <div class="label last-update-label">
         อัพปเดตเมื่อ
       </div>
       <div class="last-update">
-        {{ item.lastUpdate }}
+        {{ formatDate(item.updatedDate) }}
       </div>
       <secondary-button :text="'ดูรายละเอียด'" :on-click="toItemDetail" />
     </a-card>
@@ -27,22 +27,30 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
-import { ItemOverViewInfo } from '~/types/procurement.type'
+import { ItemOverviewInfo } from '~/types/procurement.type'
 
 export default Vue.extend({
   components: { SecondaryButton },
   props: {
     item: {
-      type: Object as PropType<ItemOverViewInfo>,
+      type: Object as PropType<ItemOverviewInfo>,
       default: () => ({})
     }
   },
   data () {
-    return {}
+    return {
+      imageMap: {
+        1: require('@/assets/images/default/set-g.svg'),
+        2: require('@/assets/images/default/set-y.svg')
+      }
+    }
   },
   methods: {
-    toItemDetail () {
+    toItemDetail () : void {
       this.$router.push('/procurement/item-detail')
+    },
+    formatDate (date: string) : string {
+      return new Date(date).toLocaleString()
     }
   }
 })
