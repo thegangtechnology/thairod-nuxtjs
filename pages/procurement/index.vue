@@ -119,11 +119,11 @@ export default Vue.extend({
     onLogout () : void {
       this.$router.push('/')
     },
-    async onSearch () : void {
+    async onSearch () : Promise<void> {
       await ProcurementModule.getItemOverview(
         { page: this.currentPage, pageSize: this.pageSize, search: this.search })
     },
-    async resetSearch () : void {
+    async resetSearch () : Promise<void> {
       this.search = ''
       await this.onSearch()
     }

@@ -29,13 +29,14 @@ import Vue, { PropType } from 'vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
 import { ItemOverviewInfo } from '~/types/procurement.type'
 import { productImageMap } from '~/data/image-map'
+import { defaultItemOverviewInfo } from '~/types/procurement.default'
 
 export default Vue.extend({
   components: { SecondaryButton },
   props: {
     item: {
       type: Object as PropType<ItemOverviewInfo>,
-      default: () => ({})
+      default: () => (defaultItemOverviewInfo)
     }
   },
   data () {

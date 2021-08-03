@@ -76,7 +76,9 @@ export default Vue.extend({
   props: {
     submitForm: {
       type: Function,
-      default: () => {}
+      default: () => {
+        return () => {}
+      }
     }
   },
   data () {
@@ -86,7 +88,7 @@ export default Vue.extend({
         visible: false,
         confirmLoading: false
       },
-      warehouses: ['Warehouse A', 'Warehouse B', 'คลังสินค้า C']
+      warehouses: ['Default']
     }
   },
   methods: {
@@ -106,11 +108,11 @@ export default Vue.extend({
       this.modal.confirmLoading = false
       this.closeModal()
       this.form.resetFields()
-      this.$router.push('/procurement/item-detail')
+      this.$router.push({ path: '/procurement/item-detail/', query: { id: this.$route.query.id } })
     },
     onCancel (): void {
       this.form.resetFields()
-      this.$router.push('/procurement/item-detail')
+      this.$router.push({ path: '/procurement/item-detail/', query: { id: this.$route.query.id } })
     }
   }
 }
@@ -122,6 +124,7 @@ export default Vue.extend({
   border-radius: 25px;
   height: 38px;
   padding-top: 4px;
+  font-size: 20px !important;
 }
 
 .ant-input-number-handler-wrap {
@@ -134,6 +137,8 @@ export default Vue.extend({
 
 #cost.ant-input-number-input, #quantity.ant-input-number-input {
   height: 38px;
+  font-size: 20px !important;
+  padding-bottom: 2px;
 }
 </style>
 
@@ -174,10 +179,6 @@ button {
 
 .button-group {
   margin-top: 5vh;
-}
-
-#cost.ant-input-number-input, #quantity.ant-input-number-input {
-  height: 38px;
 }
 
 </style>

@@ -33,7 +33,7 @@ class ProcurementModule extends VuexModule {
   }
 
   @MutationAction({ mutate: ['itemDetailPageInfo'] })
-  public async getItemDetailPageInfo (id: number) {
+  public async getItemDetailPageInfo (id: string | (string | null)[]) {
     const itemDetail : ItemDetail = await getItemDetail(id)
     const inventoryRecord: InventoryRecord = defaultInventoryRecord
     const itemDetailPageInfo: ItemDetailPageInfo = { itemDetail, inventoryRecord }

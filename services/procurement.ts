@@ -22,7 +22,7 @@ export async function getProductVariations (params: ProductVariationsParam) : Pr
     })
 }
 
-export async function getItemDetail (id: number) : Promise<ItemDetail> {
+export async function getItemDetail (id: string | (string | null)[]) : Promise<ItemDetail> {
   return await $axios
     .get(`${apiPath.productVariation}/${id}`)
     .then((res) => {

@@ -6,13 +6,13 @@
           <a-col :span="12">
             <div class="card left-card" :style="lessVars">
               <div> {{ leftCard.title }}</div>
-              <b>{{ leftCard.amount.toLocaleString() }} {{ leftCard.unit }}</b>
+              <strong>{{ leftCard.amount > 0 ? leftCard.amount.toLocaleString() : '-' }} {{ leftCard.unit }}</strong>
             </div>
           </a-col>
           <a-col :span="12">
             <div class="card right-card" :style="lessVars">
               <div>{{ rightCard.title }}</div>
-              <b>{{ rightCard.amount.toLocaleString() }} {{ rightCard.unit }}</b>
+              <strong>{{ rightCard.amount > 0 ? rightCard.amount.toLocaleString() : '-' }} {{ rightCard.unit }}</strong>
             </div>
           </a-col>
         </a-row>

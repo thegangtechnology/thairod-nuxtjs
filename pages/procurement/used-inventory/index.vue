@@ -27,20 +27,20 @@ export default Vue.extend({
       leftCard: {
         backgroundColor: '#92959A',
         title: 'จำนวนที่ใช้วันนี้',
-        amount: '-',
+        amount: 0,
         unit: 'กล่อง'
       },
       rightCard: {
         backgroundColor: '#B7B8B9',
         title: 'ยอดใช้สะสม',
-        amount: '-',
+        amount: 0,
         unit: 'กล่อง'
       }
     }
   },
   methods: {
     onBackButtonClick () : void {
-      this.$router.push('/procurement/item-detail')
+      this.$router.push({ path: '/procurement/item-detail', query: { id: this.$route.query.id } })
     }
   }
 })

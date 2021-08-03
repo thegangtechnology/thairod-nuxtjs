@@ -25,7 +25,7 @@ export default Vue.extend(
     },
     methods: {
       onBackButtonClick () : void {
-        this.$router.push('/procurement/item-detail')
+        this.$router.push({ path: '/procurement/item-detail/', query: { id: this.$route.query.id } })
       },
       submitForm (formData: UpdateInventoryFormData) : void {
         console.log(formData)
