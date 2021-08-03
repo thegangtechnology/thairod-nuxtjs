@@ -29,10 +29,10 @@
                   </a-select-option>
                   <a-select-option
                     v-for="batch in exportBatchSelect"
-                    :key="batch"
-                    :value="batch"
+                    :key="batch.id"
+                    :value="batch.name"
                   >
-                    {{ batch }}
+                    {{ batch.name }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -47,12 +47,11 @@
                   <a-select-option value="">
                     All
                   </a-select-option>
-                  <a-select-option
-                    v-for="item in shipmentItemSelect"
-                    :key="item"
-                    :value="item"
-                  >
-                    {{ item }}
+                  <a-select-option value="Green Package">
+                    Green Package
+                  </a-select-option>
+                  <a-select-option value="Yellow Package">
+                    Yellow Package
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -63,16 +62,10 @@
       <div class="print-table__container">
         <a-table
           row-key="id"
-          :row-selection="
-            update
-              ? {
-                selectedRowKeys: selectedRowKeys,
-                onChange: onSelectChange,
-                onSelect: handleSelectChange,
-                onSelectAll: handleSelectAllChange,
-              }
-              : null
-          "
+          :row-selection="{
+            selectedRowKeys: selectedRowKeys,
+            onChange: onSelectChange,
+          }"
           :pagination="{
             total: amount,
           }"
@@ -149,21 +142,19 @@
               </div>
             </div>
           </div>
-          <div slot="operation" class="table-form__input">
-            <img :src="RightIcon" alt="RightIcon">
-          </div>
         </a-table>
       </div>
     </div>
-    <div v-if="update" class="print-button__container">
-      <a-button class="print-button__cta cancel" @click="onCancelUpdate">
+    <div class="print-button__container">
+      <a-button class="print-button__cta cancel" @click="goBack">
         <span> ยกเลิก </span>
       </a-button>
       <a-button
         class="print-button__cta submit"
+        :disabled="updateAmount === 0"
         @click="visibleSubmitDialog = true"
       >
-        <span> อัปเดตข้อมูล ({{ changedRows.length }}) </span>
+        <span> พิมพ์ ({{ updateAmount }}) </span>
       </a-button>
     </div>
     <a-modal
@@ -177,11 +168,10 @@
         <img :src="BoxImg" alt="BoxImg">
       </div>
       <div class="print-modal__title">
-        ยืนยันการอัปเดตข้อมูล
+        ยืนยันการพิมพ์ใบจัดส่ง
       </div>
       <div class="print-modal__subtitle">
-        รายการสั่งซื้อจำนวน ({{ changedRows.length }}) รายการ
-        กำลังจะถูกอัปเดตข้อมูลการพิมพ์ใบจัดส่ง
+        รายการสั่งซื้อจำนวน {{ updateAmount }} รายการกำลังจะถูกพิมพ์
       </div>
       <template slot="footer">
         <div class="print-modal__footer">
@@ -207,56 +197,45 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable camelcase */
-import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import moment from 'moment'
-import ShipmentModule from '~/store/shipment.module'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
-import RightSvg from '~/assets/icons/right-table.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
-import {
-  IColumns,
-  columns,
-  columnsWithOperation
-} from '~/static/ShipmentColumns'
-import { ShipmentLine } from '~/types/shipment.type'
+import CorrectSvg from '~/assets/icons/correct.svg'
+import { IColumns, columns } from '~/static/ShipmentColumns'
+import ShipmentModule from '~/store/shipment.module'
+import { Batch, ShipmentLine } from '~/types/shipment.type'
 
 interface IFilter {
   created_date: string
-  batchName: string
+  shipmentBatch: string
   shipmentItem: string
 }
 
 @Component
-export default class PrintTable extends Vue {
-  @Prop({ required: true }) update!: boolean
+export default class PrintForm extends Vue {
   @Prop({ required: true }) search!: string
-  @Prop({ required: true }) loading!: boolean
+    @Prop({ required: true }) loading!: boolean
   @Prop({ required: true }) amount!: number
   @Prop({ required: true }) originalData!: ShipmentLine[]
 
+  private BoxImg = BoxSvg
   private CalendarIcon = CalendarSvg
   private FilterIcon = FilterSvg
-  private RightIcon = RightSvg
-  private BoxImg = BoxSvg
+  private CorrectIcon = CorrectSvg
 
-  data: ShipmentLine[] = this.originalData ? this.originalData : []
-  selectedRowKeys: number[] = []
-  changedRows: { id: number; status: boolean }[] = []
-  visibleSubmitDialog: boolean = false
+  data: ShipmentLine[] = []
 
   filterForm: IFilter = {
     created_date: '',
-    batchName: '',
+    shipmentBatch: '',
     shipmentItem: ''
   }
 
-  @Emit('cancel')
-  onCancelUpdate () {
-    this.importData()
-    return false
-  }
+  selectedRowKeys: number[] = []
+
+  visibleSubmitDialog: boolean = false
 
   @Emit('pageChange')
   handlePageChange (page: number) {
@@ -273,11 +252,6 @@ export default class PrintTable extends Vue {
     this.filterData()
   }
 
-  @Watch('tabKey', { immediate: true, deep: true })
-  onTabChange () {
-    this.importData()
-  }
-
   @Watch('originalData', { immediate: true, deep: true })
   onOriginalChange () {
     this.importData()
@@ -287,46 +261,36 @@ export default class PrintTable extends Vue {
     return this.data.length
   }
 
-  get exportBatchSelect (): string[] {
+  get exportBatchSelect (): (Batch | null)[] {
     return [
       ...new Set(
         this.originalData
-          .filter(item => item.batch !== null)
-          .map(item => item.batch!.name)
+          .map(item => item.batch)
+          .filter(mapped => mapped !== null)
       )
     ]
   }
 
-  get shipmentItemSelect () {
-    return this.originalData
-      .map(item => item.shipmentItem)
-      .reduce<string[]>((accum, shipmentItem) => {
-        if (shipmentItem.length > 0) {
-          shipmentItem.forEach((item) => {
-            if (!accum.includes(item.name)) {
-              accum.push(item.name)
-            }
-          })
-        }
-        return accum
-      }, [])
+  get updateAmount (): number {
+    return this.data.filter((item) => {
+      const orignalItem = this.originalData.find(
+        original => original.id === item.id
+      )
+      if (orignalItem) {
+        return orignalItem.label_printed
+          ? !this.selectedRowKeys.includes(orignalItem.id)
+          : this.selectedRowKeys.includes(orignalItem.id)
+      }
+      return false
+    }).length
   }
 
   get tableColumns (): IColumns[] {
-    if (this.update) { return columns }
-    return columnsWithOperation
-  }
-
-  mounted () {
-    this.importData()
+    return columns
   }
 
   importData () {
     this.data = this.originalData
-    this.selectedRowKeys = this.originalData
-      .filter(line => line.label_printed)
-      .map(line => line.id)
-    this.changedRows = []
   }
 
   onDateFilterChange (_date: object, dateString: string) {
@@ -334,7 +298,7 @@ export default class PrintTable extends Vue {
   }
 
   handleBatchFilterChange (value: { key: string; value: string }) {
-    this.filterForm.batchName = value.key
+    this.filterForm.shipmentBatch = value.key
   }
 
   handleOrderedItemFilterChange (value: { key: string; value: string }) {
@@ -356,22 +320,11 @@ export default class PrintTable extends Vue {
   }
 
   filterFields (key: string, row: ShipmentLine): boolean {
-    if (key === 'created_date') {
+    if (key === 'orderedDate') {
       return (
         moment(row.created_date).format('YYYY-MM-DD') ===
         this.filterForm.created_date
       )
-    }
-    if (key === 'batchName') {
-      if (row.batch !== null) {
-        return row.batch.name === this.filterForm.batchName
-      }
-      return false
-    }
-    if (key === 'shipmentItem') {
-      return row.shipmentItem
-        .map(item => item.name)
-        .includes(this.filterForm.shipmentItem)
     }
     if (key === 'searchRecord') {
       const columsDataIndex = this.tableColumns
@@ -392,62 +345,18 @@ export default class PrintTable extends Vue {
     this.selectedRowKeys = selectedRowKeys
   }
 
-  handleSelectAllChange (
-    selected: boolean,
-    _selectedRows: ShipmentLine[],
-    changedRows: ShipmentLine[]
-  ) {
-    changedRows.forEach((row) => {
-      this.handleSelectChange(row, selected)
-    })
-  }
-
-  handleSelectChange (record: ShipmentLine, selected: boolean) {
-    const allChangeId: number[] = this.changedRows.map(item => item.id)
-    const newSelect = {
-      id: record.id,
-      status: selected
-    }
-    if (allChangeId.includes(record.id)) {
-      this.changedRows = this.changedRows
-        .map(item => (item.id === record.id ? newSelect : item))
-        .filter((mapped) => {
-          const originalRow = this.originalData.find(
-            item => item.id === mapped.id
-          )
-          return originalRow && originalRow.label_printed !== mapped.status
-        })
-    } else {
-      this.changedRows.push(newSelect)
-    }
-  }
-
   goBack () {
     this.$router.go(-1)
   }
 
   onSave () {
-    ShipmentModule.setPrintStatus({
-      selectedRowKeys: this.filterStatus(true),
-      printStatus: true
-    })
-    ShipmentModule.setPrintStatus({
-      selectedRowKeys: this.filterStatus(false),
-      printStatus: false
-    })
+    ShipmentModule.printLabel(this.selectedRowKeys)
     this.visibleSubmitDialog = false
-    this.onPageChange({ current: 1 })
-    this.onCancelUpdate()
+    this.$router.push('/print')
   }
 
   onPageChange (page: {current: number}) {
     this.handlePageChange(page.current)
-  }
-
-  filterStatus (status: boolean) {
-    return this.changedRows
-      .filter(row => row.status === status)
-      .map(filtered => filtered.id)
   }
 }
 </script>

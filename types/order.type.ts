@@ -2,12 +2,6 @@
 /**
  * FRONTEND Interface
  */
-type Status = 'wait' | 'print' | 'out' | 'received'
-
-export interface Main {
-  [key: string]: string | boolean
-}
-
 export interface IProduct {
   id: number
   createdDate: string
@@ -37,28 +31,4 @@ export interface OrderItem {
   unit: string
   quantity: number
   description: string
-}
-
-export interface IOrder extends Main {
-  orderId: string
-  cid: string
-  patientName: string
-  phoneNumber: string
-  orderedItem: string
-  orderedDate: string
-  exportBatch: string
-  trackingNo: string
-  warehouse: string
-  orderedBy: string
-  updatedBy: string
-  updatedDate: string
-  address: string
-  province: string
-  district: string
-  subDistrict: string
-  zipCode: string
-  remark: string
-  deliveryStatus: boolean
-  printStatus: boolean
-  status: Status
 }
