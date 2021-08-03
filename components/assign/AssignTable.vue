@@ -3,7 +3,7 @@
     <div class="assign-body__container">
       <div class="assign-filter__container">
         <div class="assign-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon" />
+          <img :src="FilterIcon" alt="FilterIcon">
           <span> ตัวกรองข้อมูล </span>
         </div>
         <a-form layout="vertical">
@@ -12,7 +12,7 @@
               <a-form-item label="วันและเวลาที่สั่ง">
                 <a-date-picker @change="onDateFilterChange">
                   <div slot="suffixIcon">
-                    <img :src="CalendarIcon" alt="CalendarIcon" />
+                    <img :src="CalendarIcon" alt="CalendarIcon">
                   </div>
                 </a-date-picker>
               </a-form-item>
@@ -24,7 +24,9 @@
                   :default-value="{ key: '' }"
                   @change="handleBatchFilterChange"
                 >
-                  <a-select-option value=""> All </a-select-option>
+                  <a-select-option value="">
+                    All
+                  </a-select-option>
                   <a-select-option
                     v-for="batch in exportBatchSelect"
                     :key="batch.id"
@@ -42,7 +44,9 @@
                   :default-value="{ key: '' }"
                   @change="handleOrderedItemFilterChange"
                 >
-                  <a-select-option value=""> All </a-select-option>
+                  <a-select-option value="">
+                    All
+                  </a-select-option>
                   <a-select-option value="Green Package">
                     Green Package
                   </a-select-option>
@@ -53,40 +57,6 @@
               </a-form-item>
             </div>
           </div>
-          <!-- <a-row>
-            <a-col :span="6">
-              <a-form-item label="Ordered Date">
-                <a-date-picker @change="onDateFilterChange" />
-              </a-form-item>
-            </a-col>
-            <a-col :span="6">
-              <a-form-item label="Ordered Item">
-                <a-select
-                  label-in-value
-                  :default-value="{ key: '' }"
-                  style="width: 200px"
-                  @change="handleOrderedItemFilterChange"
-                >
-                  <a-select-option value="">All</a-select-option>
-                  <a-select-option value="Green Package">
-                    Green Package
-                  </a-select-option>
-                  <a-select-option value="Yellow Package">
-                    Yellow Package
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :span="12">
-              <a-form-item label="Search Record">
-                <a-input-search
-                  placeholder="input search text"
-                  style="width: 200px"
-                  @search="onSearchRecords"
-                />
-              </a-form-item>
-            </a-col>
-          </a-row> -->
         </a-form>
       </div>
       <div class="assign-table__container">
@@ -95,7 +65,12 @@
             row-key="id"
             :columns="tableColumns"
             :data-source="data"
+            :pagination="{
+              total: amount,
+            }"
             :custom-row="customRow"
+            :loading="loading"
+            @change="onPageChange"
           >
             <div slot="id" slot-scope="text, record" class="table-form__input">
               <div>
@@ -140,7 +115,9 @@
               slot-scope="text, record"
               class="table-form__input"
             >
-              <div v-if="record.batch === null">N/A</div>
+              <div v-if="record.batch === null">
+                N/A
+              </div>
               <div v-else>
                 {{ record.batch.name }}
               </div>
@@ -168,7 +145,7 @@
               </div>
             </div>
             <div slot="operation" class="table-form__input">
-              <img :src="RightIcon" alt="RightIcon" />
+              <img :src="RightIcon" alt="RightIcon">
             </div>
           </a-table>
         </div>
@@ -178,13 +155,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
+import moment from 'moment'
 import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import RightSvg from '~/assets/icons/right-table.svg'
-import moment from 'moment'
 import { IColumns, columnsWithOperation } from '~/static/ShipmentColumns'
-import { ShipmentBatch, ShipmentLine } from '~/types/shipment.type'
+import { Batch, ShipmentLine } from '~/types/shipment.type'
 
 interface IMain {
   [key: string]: string
@@ -199,6 +176,8 @@ interface IFilter extends IMain {
 @Component
 export default class AssignOverview extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
+  @Prop({ required: true }) loading!: boolean
+  @Prop({ required: true }) amount!: number
 
   private CalendarIcon = CalendarSvg
   private FilterIcon = FilterSvg
@@ -211,58 +190,63 @@ export default class AssignOverview extends Vue {
   filterForm: IFilter = {
     orderedDate: '',
     orderedItem: '',
-    searchRecord: '',
+    searchRecord: ''
+  }
+
+  @Emit('pageChange')
+  handlePageChange (page: number) {
+    return page
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
-  onFilterChange() {
+  onFilterChange () {
     this.filterData()
   }
 
   @Watch('originalData', { immediate: true, deep: true })
-  onOriginalChange() {
+  onOriginalChange () {
     this.data = this.originalData
   }
 
-  get recordsLength(): number {
+  get recordsLength (): number {
     return this.data.length
   }
 
-  get exportBatchSelect(): (ShipmentBatch | null)[] {
+  get exportBatchSelect (): (Batch | null)[] {
     return [
       ...new Set(
         this.originalData
-          .map((item) => item.batch)
-          .filter((mapped) => mapped !== null)
-      ),
+          .map(item => item.batch)
+          .filter(mapped => mapped !== null)
+      )
     ]
   }
 
-  get tableColumns(): IColumns[] {
+  get tableColumns (): IColumns[] {
     return columnsWithOperation
   }
 
-  onTabChange(key: string) {
+  onTabChange (key: string) {
     this.tabKey = key
   }
 
-  onDateFilterChange(_date: object, dateString: string) {
+  onDateFilterChange (_date: object, dateString: string) {
     this.filterForm.orderedDate = dateString
   }
 
-  handleBatchFilterChange(value: { key: string; value: string }) {
+  handleBatchFilterChange (value: { key: string; value: string }) {
     this.filterForm.exportBatch = value.key
   }
 
-  handleOrderedItemFilterChange(value: { key: string; value: string }) {
+  handleOrderedItemFilterChange (value: { key: string; value: string }) {
     this.filterForm.orderedItem = value.key
   }
 
-  onSearchRecords(value: string) {
+  onSearchRecords (value: string) {
     this.filterForm.searchRecord = value
   }
 
-  filterData() {
+  filterData () {
     this.data = this.originalData.filter((row) => {
       const result: boolean[] = []
       Object.keys(this.filterForm).forEach((key) => {
@@ -274,7 +258,7 @@ export default class AssignOverview extends Vue {
     })
   }
 
-  filterFields(key: string, row: ShipmentLine): boolean {
+  filterFields (key: string, row: ShipmentLine): boolean {
     if (key === 'orderedDate') {
       return (
         moment(row.created_date).format('YYYY-MM-DD') ===
@@ -283,9 +267,9 @@ export default class AssignOverview extends Vue {
     }
     if (key === 'searchRecord') {
       const columsDataIndex = this.tableColumns
-        .filter((column) => column.dataIndex)
-        .map((column) => column.dataIndex)
-      const searchedArray = columsDataIndex.map((col) =>
+        .filter(column => column.dataIndex)
+        .map(column => column.dataIndex)
+      const searchedArray = columsDataIndex.map(col =>
         String(row[col as keyof ShipmentLine]).includes(
           this.filterForm.searchRecord
         )
@@ -295,13 +279,17 @@ export default class AssignOverview extends Vue {
     return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
-  customRow(record: ShipmentLine) {
+  onPageChange (page: {current: number}) {
+    this.handlePageChange(page.current)
+  }
+
+  customRow (record: ShipmentLine) {
     return {
       on: {
         click: () => {
-          this.$router.push(`/${record.id}`)
-        },
-      },
+          this.$router.push(`/order-overview/${record.id}`)
+        }
+      }
     }
   }
 }

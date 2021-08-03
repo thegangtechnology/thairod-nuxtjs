@@ -2,16 +2,24 @@
   <div class="page__container">
     <div class="page-card__container">
       <div class="page-card__header">
-        <div class="page-header__title">พิมพ์ใบจัดส่งสินค้า</div>
+        <div class="page-header__title">
+          พิมพ์ใบจัดส่งสินค้า
+        </div>
         <a-input
-          class="page-header__search"
           v-model="search"
+          class="page-header__search"
           placeholder="ค้นหา"
         >
           <a-icon slot="prefix" type="search" />
         </a-input>
       </div>
-      <PrintForm :original-data="getData" :search="search" />
+      <PrintForm
+        :original-data="originalData"
+        :loading="isLoading"
+        :amount="unprintedAmount"
+        :search="search"
+        @pageChange="handlePageChange"
+      />
     </div>
   </div>
 </template>
@@ -19,20 +27,37 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import ShipmentModule from '~/store/shipment.module'
-import { ShipmentLine } from '~/types/shipment.type'
 
 @Component
 export default class Main extends Vue {
   search: string = ''
 
-  async created() {
-    if (ShipmentModule.getShipmentLength < 1) {
-      await ShipmentModule.initialiseShipment()
-    }
+  get isLoading () {
+    return ShipmentModule.loading
   }
 
-  get getData() {
-    return ShipmentModule.getShipmentList.filter((item) => !item.label_printed)
+  get originalData () {
+    return ShipmentModule.getShipmentList
+  }
+
+  get unprintedAmount () {
+    return ShipmentModule.waitShipment
+  }
+
+  mounted () {
+    this.onQueryChange(1)
+  }
+
+  handlePageChange (page: number) {
+    this.onQueryChange(page)
+  }
+
+  onQueryChange (page: number = 1) {
+    ShipmentModule.initialiseShipment({
+      label_printed: false,
+      deliver: false,
+      page
+    })
   }
 }
 </script>

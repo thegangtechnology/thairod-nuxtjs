@@ -7,7 +7,7 @@
       </div>
       <div class="assign-filter__container">
         <div class="assign-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon" />
+          <img :src="FilterIcon" alt="FilterIcon">
           <span> ตัวกรองข้อมูล </span>
         </div>
         <a-form layout="vertical">
@@ -32,8 +32,13 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          :columns="columns"
+          :pagination="{
+            total: amount,
+          }"
+          :loading="loading"
+          :columns="tableColumns"
           :data-source="data"
+          @change="onPageChange"
         >
           <div slot="id" slot-scope="text, record" class="table-form__input">
             <div>
@@ -74,7 +79,9 @@
             </div>
           </div>
           <div slot="batch" slot-scope="text, record" class="table-form__input">
-            <div v-if="record.batch === null">N/A</div>
+            <div v-if="record.batch === null">
+              N/A
+            </div>
             <div v-else>
               {{ record.batch.name }}
             </div>
@@ -113,7 +120,8 @@
         :disabled="selectedRowKeys.length === 0"
         @click="visibleSubmitDialog = true"
       >
-        <span> สร้าง ({{ selectedRowKeys.length }}) </span>
+        <span v-if="queryType"> อัปเดต ({{ selectedRowKeys.length }}) </span>
+        <span v-else> สร้าง ({{ selectedRowKeys.length }}) </span>
       </a-button>
     </div>
     <!-- visibleSubmitDialog -->
@@ -125,9 +133,11 @@
       :width="480"
     >
       <div class="assign-modal__img">
-        <img :src="BoxImg" alt="BoxImg" />
+        <img :src="BoxImg" alt="BoxImg">
       </div>
-      <div class="assign-modal__title">ยืนยันการสร้างล็อตการจัดส่ง</div>
+      <div class="assign-modal__title">
+        ยืนยันการสร้างล็อตการจัดส่ง
+      </div>
       <div class="assign-modal__subtitle">
         รายการสั่งซื้อจำนวน
         {{ selectedRowKeys.length }} รายการกำลังจะถูกเพิ่มลงในล็อตการจัดส่ง
@@ -157,12 +167,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import moment from 'moment'
 import FilterSvg from '~/assets/icons/filter.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
 import ShipmentModule from '~/store/shipment.module'
 import { ShipmentLine } from '~/types/shipment.type'
+import { IColumns, columns } from '~/static/ShipmentColumns'
+import { getBatchNumber } from '~/services/shipment'
 
 interface IMain {
   [key: string]: string
@@ -176,92 +188,69 @@ interface IFilter extends IMain {
 @Component
 export default class AssignForm extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
+  @Prop({ required: true }) loading!: boolean
+  @Prop({ required: true }) amount!: number
 
   private FilterIcon = FilterSvg
   private BoxImg = BoxSvg
 
   tabKey: string = 'All'
-
   batchNo: string = ''
-
   data: ShipmentLine[] = this.originalData ? this.originalData : []
-
   visibleSubmitDialog: boolean = false
-
-  columns = [
-    {
-      title: 'เลขที่รายการสั่งซื้อ',
-      scopedSlots: { customRender: 'id' },
-    },
-    {
-      title: 'รายการสินค้า',
-      scopedSlots: { customRender: 'shipmentItem' },
-    },
-    {
-      title: 'จำนวน',
-      scopedSlots: { customRender: 'quantity' },
-    },
-    {
-      title: 'ผู้รับการรักษา',
-      dataIndex: 'patientName',
-      scopedSlots: { customRender: 'patientName' },
-    },
-    {
-      title: 'หมายเลขติดตาม',
-      dataIndex: 'tracking_code',
-    },
-    {
-      title: 'สถานะการจัดส่ง',
-      dataIndex: 'status',
-      scopedSlots: { customRender: 'status' },
-      align: 'center',
-    },
-    {
-      title: 'ล็อตการจัดส่ง',
-      dataIndex: 'batch',
-      scopedSlots: { customRender: 'batch' },
-    },
-  ]
 
   filterForm: IFilter = {
     orderedDateStart: '',
-    orderedDateEnd: '',
+    orderedDateEnd: ''
   }
 
   selectedRowKeys: number[] = []
 
-  @Watch('filterForm', { immediate: true, deep: true })
-  onFilterChange() {
-    this.filterData()
+    @Emit('pageChange')
+  handlePageChange (page: number) {
+    return page
   }
 
+  @Watch('filterForm', { immediate: true, deep: true })
+    onFilterChange () {
+      this.filterData()
+    }
+
   @Watch('originalData', { immediate: true, deep: true })
-  onOriginalChange() {
+  onOriginalChange () {
     this.data = this.originalData
   }
 
-  get recordsLength(): number {
+  get recordsLength (): number {
     return this.data.length
   }
 
-  get canSave() {
+  get canSave () {
     return this.batchNo !== '' && this.selectedRowKeys.length > 0
   }
 
-  async created() {
-    this.batchNo = await ShipmentModule.getNextBatchNo()
+  get tableColumns (): IColumns[] {
+    return columns
   }
 
-  onTabChange(key: string) {
+  get queryType () {
+    return this.$route.query.type
+  }
+
+  async created () {
+    this.batchNo = await getBatchNumber()
+  }
+
+  onTabChange (key: string) {
     this.tabKey = key
   }
 
-  onDateFilterChange(_date: moment.Moment[], dateString: string[]) {
+  onDateFilterChange (_date: moment.Moment[], dateString: string[]) {
     this.filterForm.orderedDateStart = dateString[0]
     this.filterForm.orderedDateEnd = dateString[1]
   }
 
-  filterData() {
+  filterData () {
     this.data = this.originalData.filter((row) => {
       return moment(row.created_date).isBetween(
         this.filterForm.orderedDateStart,
@@ -272,20 +261,24 @@ export default class AssignForm extends Vue {
     })
   }
 
-  onSelectChange(selectedRowKeys: number[]) {
+  onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
   }
 
-  goBack() {
+  onPageChange (page: {current: number}) {
+    this.handlePageChange(page.current)
+  }
+
+  goBack () {
     this.$router.go(-1)
   }
 
-  async onSave() {
+  async onSave () {
     await ShipmentModule.updateBatch({
       batchNo: this.batchNo,
-      selectedRowKeys: this.selectedRowKeys,
+      selectedRowKeys: this.selectedRowKeys
     })
-    this.$router.push(`/order-overview`)
+    this.$router.push('/assign')
   }
 }
 </script>

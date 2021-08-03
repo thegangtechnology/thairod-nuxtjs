@@ -3,7 +3,7 @@
     <div class="print-body__container">
       <div class="print-filter__container">
         <div class="print-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon" />
+          <img :src="FilterIcon" alt="FilterIcon">
           <span> ตัวกรองข้อมูล </span>
         </div>
         <a-form layout="vertical">
@@ -12,7 +12,7 @@
               <a-form-item label="วันและเวลาที่สั่ง">
                 <a-date-picker @change="onDateFilterChange">
                   <div slot="suffixIcon">
-                    <img :src="CalendarIcon" alt="CalendarIcon" />
+                    <img :src="CalendarIcon" alt="CalendarIcon">
                   </div>
                 </a-date-picker>
               </a-form-item>
@@ -24,7 +24,9 @@
                   :default-value="{ key: '' }"
                   @change="handleBatchFilterChange"
                 >
-                  <a-select-option value=""> All </a-select-option>
+                  <a-select-option value="">
+                    All
+                  </a-select-option>
                   <a-select-option
                     v-for="batch in exportBatchSelect"
                     :key="batch.id"
@@ -42,7 +44,9 @@
                   :default-value="{ key: '' }"
                   @change="handleOrderedItemFilterChange"
                 >
-                  <a-select-option value=""> All </a-select-option>
+                  <a-select-option value="">
+                    All
+                  </a-select-option>
                   <a-select-option value="Green Package">
                     Green Package
                   </a-select-option>
@@ -62,8 +66,13 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
+          :pagination="{
+            total: amount,
+          }"
+          :loading="loading"
           :columns="tableColumns"
           :data-source="data"
+          @change="onPageChange"
         >
           <div slot="id" slot-scope="text, record" class="table-form__input">
             <div>
@@ -104,7 +113,9 @@
             </div>
           </div>
           <div slot="batch" slot-scope="text, record" class="table-form__input">
-            <div v-if="record.batch === null">N/A</div>
+            <div v-if="record.batch === null">
+              N/A
+            </div>
             <div v-else>
               {{ record.batch.name }}
             </div>
@@ -147,31 +158,33 @@
       </a-button>
     </div>
     <a-modal
-      class="print-modal__container"
       v-model="visibleSubmitDialog"
+      class="print-modal__container"
       centered
       :closable="false"
       :width="480"
     >
       <div class="print-modal__img">
-        <img :src="BoxImg" alt="BoxImg" />
+        <img :src="BoxImg" alt="BoxImg">
       </div>
-      <div class="print-modal__title">ยืนยันการพิมพ์ใบจัดส่ง</div>
+      <div class="print-modal__title">
+        ยืนยันการพิมพ์ใบจัดส่ง
+      </div>
       <div class="print-modal__subtitle">
         รายการสั่งซื้อจำนวน {{ updateAmount }} รายการกำลังจะถูกพิมพ์
       </div>
       <template slot="footer">
         <div class="print-modal__footer">
           <a-button
-            class="print-button__cta cancel"
             key="back"
+            class="print-button__cta cancel"
             @click="visibleSubmitDialog = false"
           >
             ยกเลิก
           </a-button>
           <a-button
-            class="print-button__cta submit"
             key="submit"
+            class="print-button__cta submit"
             type="primary"
             @click="onSave"
           >
@@ -185,14 +198,14 @@
 
 <script lang="ts">
 import moment from 'moment'
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
 import CorrectSvg from '~/assets/icons/correct.svg'
 import { IColumns, columns } from '~/static/ShipmentColumns'
 import ShipmentModule from '~/store/shipment.module'
-import { ShipmentBatch, ShipmentLine } from '~/types/shipment.type'
+import { Batch, ShipmentLine } from '~/types/shipment.type'
 
 interface IFilter {
   created_date: string
@@ -203,6 +216,8 @@ interface IFilter {
 @Component
 export default class PrintForm extends Vue {
   @Prop({ required: true }) search!: string
+    @Prop({ required: true }) loading!: boolean
+  @Prop({ required: true }) amount!: number
   @Prop({ required: true }) originalData!: ShipmentLine[]
 
   private BoxImg = BoxSvg
@@ -215,46 +230,51 @@ export default class PrintForm extends Vue {
   filterForm: IFilter = {
     created_date: '',
     shipmentBatch: '',
-    shipmentItem: '',
+    shipmentItem: ''
   }
 
   selectedRowKeys: number[] = []
 
   visibleSubmitDialog: boolean = false
 
+  @Emit('pageChange')
+  handlePageChange (page: number) {
+    return page
+  }
+
   @Watch('search', { immediate: true, deep: true })
-  onSearchChange() {
+  onSearchChange () {
     this.filterForm.shipmentItem = this.search
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
-  onFilterChange() {
+  onFilterChange () {
     this.filterData()
   }
 
   @Watch('originalData', { immediate: true, deep: true })
-  onOriginalChange() {
+  onOriginalChange () {
     this.importData()
   }
 
-  get recordsLength(): number {
+  get recordsLength (): number {
     return this.data.length
   }
 
-  get exportBatchSelect(): (ShipmentBatch | null)[] {
+  get exportBatchSelect (): (Batch | null)[] {
     return [
       ...new Set(
         this.originalData
-          .map((item) => item.batch)
-          .filter((mapped) => mapped !== null)
-      ),
+          .map(item => item.batch)
+          .filter(mapped => mapped !== null)
+      )
     ]
   }
 
-  get updateAmount(): number {
+  get updateAmount (): number {
     return this.data.filter((item) => {
       const orignalItem = this.originalData.find(
-        (original) => original.id === item.id
+        original => original.id === item.id
       )
       if (orignalItem) {
         return orignalItem.label_printed
@@ -265,27 +285,27 @@ export default class PrintForm extends Vue {
     }).length
   }
 
-  get tableColumns(): IColumns[] {
+  get tableColumns (): IColumns[] {
     return columns
   }
 
-  importData() {
+  importData () {
     this.data = this.originalData
   }
 
-  onDateFilterChange(_date: object, dateString: string) {
+  onDateFilterChange (_date: object, dateString: string) {
     this.filterForm.created_date = dateString
   }
 
-  handleBatchFilterChange(value: { key: string; value: string }) {
+  handleBatchFilterChange (value: { key: string; value: string }) {
     this.filterForm.shipmentBatch = value.key
   }
 
-  handleOrderedItemFilterChange(value: { key: string; value: string }) {
+  handleOrderedItemFilterChange (value: { key: string; value: string }) {
     this.filterForm.shipmentItem = value.key
   }
 
-  filterData() {
+  filterData () {
     this.data = this.originalData.filter((row) => {
       const result: boolean[] = []
       Object.keys(this.filterForm).forEach((key) => {
@@ -299,7 +319,7 @@ export default class PrintForm extends Vue {
     })
   }
 
-  filterFields(key: string, row: ShipmentLine): boolean {
+  filterFields (key: string, row: ShipmentLine): boolean {
     if (key === 'orderedDate') {
       return (
         moment(row.created_date).format('YYYY-MM-DD') ===
@@ -308,9 +328,9 @@ export default class PrintForm extends Vue {
     }
     if (key === 'searchRecord') {
       const columsDataIndex = this.tableColumns
-        .filter((column) => column.dataIndex)
-        .map((column) => column.dataIndex)
-      const searchedArray = columsDataIndex.map((col) =>
+        .filter(column => column.dataIndex)
+        .map(column => column.dataIndex)
+      const searchedArray = columsDataIndex.map(col =>
         String(row[col as keyof ShipmentLine]).includes(
           this.filterForm.shipmentItem
         )
@@ -321,18 +341,22 @@ export default class PrintForm extends Vue {
     // return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
-  onSelectChange(selectedRowKeys: number[]) {
+  onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
   }
 
-  goBack() {
+  goBack () {
     this.$router.go(-1)
   }
 
-  onSave() {
+  onSave () {
     ShipmentModule.printLabel(this.selectedRowKeys)
     this.visibleSubmitDialog = false
-    this.$router.push(`/order-overview`)
+    this.$router.push('/print')
+  }
+
+  onPageChange (page: {current: number}) {
+    this.handlePageChange(page.current)
   }
 }
 </script>

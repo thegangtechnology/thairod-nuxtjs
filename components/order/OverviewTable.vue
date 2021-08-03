@@ -3,7 +3,7 @@
     <div class="overview-body__container">
       <div class="overview-filter__container">
         <div class="overview-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon" />
+          <img :src="FilterIcon" alt="FilterIcon">
           <span> ตัวกรองข้อมูล </span>
         </div>
         <a-form layout="vertical">
@@ -12,7 +12,7 @@
               <a-form-item label="วันและเวลาที่สั่ง">
                 <a-date-picker @change="onDateFilterChange">
                   <div slot="suffixIcon">
-                    <img :src="CalendarIcon" alt="CalendarIcon" />
+                    <img :src="CalendarIcon" alt="CalendarIcon">
                   </div>
                 </a-date-picker>
               </a-form-item>
@@ -24,7 +24,9 @@
                   :default-value="{ key: '' }"
                   @change="handleBatchFilterChange"
                 >
-                  <a-select-option value=""> All </a-select-option>
+                  <a-select-option value="">
+                    All
+                  </a-select-option>
                   <a-select-option
                     v-for="batch in exportBatchSelect"
                     :key="batch"
@@ -42,7 +44,9 @@
                   :default-value="{ key: '' }"
                   @change="handleOrderedItemFilterChange"
                 >
-                  <a-select-option value=""> All </a-select-option>
+                  <a-select-option value="">
+                    All
+                  </a-select-option>
                   <a-select-option
                     v-for="item in shipmentItemSelect"
                     :key="item"
@@ -64,13 +68,18 @@
               option === 'default'
                 ? null
                 : {
-                    selectedRowKeys: selectedRowKeys,
-                    onChange: onSelectChange,
-                  }
+                  selectedRowKeys: selectedRowKeys,
+                  onChange: onSelectChange,
+                }
             "
+            :pagination="{
+              total: amount,
+            }"
+            :loading="loading"
             :columns="tableColumns"
             :data-source="data"
             :custom-row="option === 'default' ? customRow : null"
+            @change="onPageChange"
           >
             <div slot="id" slot-scope="text, record" class="table-form__input">
               <div>
@@ -115,7 +124,9 @@
               slot-scope="text, record"
               class="table-form__input"
             >
-              <div v-if="record.batch === null">N/A</div>
+              <div v-if="record.batch === null">
+                N/A
+              </div>
               <div v-else>
                 {{ record.batch.name }}
               </div>
@@ -146,7 +157,7 @@
               </div>
             </div>
             <div slot="operation" class="table-form__input">
-              <img :src="RightIcon" alt="RightIcon" />
+              <img :src="RightIcon" alt="RightIcon">
             </div>
           </a-table>
         </div>
@@ -171,9 +182,11 @@
       :width="480"
     >
       <div class="overview-modal__img">
-        <img :src="BoxImg" alt="BoxImg" />
+        <img :src="BoxImg" alt="BoxImg">
       </div>
-      <div class="overview-modal__title">ยืนยันการอัปเดตข้อมูล</div>
+      <div class="overview-modal__title">
+        ยืนยันการอัปเดตข้อมูล
+      </div>
       <div class="overview-modal__subtitle">
         รายการสั่งซื้อจำนวน ({{ updateIdList.length }})
         รายการกำลังจะถูกอัปเดตข้อมูลการพิมพ์ใบจัดส่งจาก
@@ -215,7 +228,7 @@ import ShipmentModule from '~/store/shipment.module'
 import {
   IColumns,
   columns,
-  columnsWithOperation,
+  columnsWithOperation
 } from '~/static/ShipmentColumns'
 import { ShipmentLine } from '~/types/shipment.type'
 
@@ -235,8 +248,10 @@ interface IFilter extends IMain {
 @Component
 export default class OverviewTable extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
+  @Prop({ required: true }) loading!: boolean
   @Prop({ required: true }) option!: string
   @Prop({ required: true }) search!: string
+  @Prop({ required: true }) amount!: number
   @Prop({ required: true }) tabKey!: string
 
   private CalendarIcon = CalendarSvg
@@ -254,56 +269,61 @@ export default class OverviewTable extends Vue {
     orderedDate: '',
     exportBatch: '',
     orderedItem: '',
-    searchRecord: '',
+    searchRecord: ''
   }
 
   @Emit('update')
-  cancelUpdate() {
+  cancelUpdate () {
     return false
   }
 
+  @Emit('pageChange')
+  handlePageChange (page: number) {
+    return page
+  }
+
   @Watch('search', { immediate: true, deep: true })
-  onSearchChange() {
+  onSearchChange () {
     this.filterForm.searchRecord = this.search
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
-  onFilterChange() {
+  onFilterChange () {
     this.filterData()
   }
 
   @Watch('tabKey', { immediate: true, deep: true })
-  onTabChange() {
+  onTabChange () {
     this.importData()
   }
 
   @Watch('originalData', { immediate: true, deep: true })
-  onOriginalChange() {
+  onOriginalChange () {
     this.importData()
   }
 
   @Watch('option', { immediate: true, deep: true })
-  onOptionChange() {
+  onOptionChange () {
     this.initSelect()
   }
 
-  get recordsLength(): number {
+  get recordsLength (): number {
     return this.data.length
   }
 
-  get exportBatchSelect(): string[] {
+  get exportBatchSelect (): string[] {
     return [
       ...new Set(
         this.originalData
-          .filter((item) => item.batch !== null)
-          .map((item) => item.batch!.name)
-      ),
+          .filter(item => item.batch !== null)
+          .map(item => item.batch!.name)
+      )
     ]
   }
 
-  get shipmentItemSelect() {
+  get shipmentItemSelect () {
     return this.originalData
-      .map((item) => item.shipmentItem)
+      .map(item => item.shipmentItem)
       .reduce<string[]>((accum, shipmentItem) => {
         if (shipmentItem.length > 0) {
           shipmentItem.forEach((item) => {
@@ -316,13 +336,13 @@ export default class OverviewTable extends Vue {
       }, [])
   }
 
-  get unselectedIds() {
+  get unselectedIds () {
     return this.data
-      .filter((item) => !this.selectedRowKeys.includes(item.id))
-      .map((filtered) => filtered.id)
+      .filter(item => !this.selectedRowKeys.includes(item.id))
+      .map(filtered => filtered.id)
   }
 
-  get getModalDescription() {
+  get getModalDescription () {
     if (this.option === 'updatePrint') {
       if (this.tabKey === 'wait') {
         return { from: 'รอพิมพ์ใบจัดส่ง', to: 'รอจัดส่ง' }
@@ -347,7 +367,7 @@ export default class OverviewTable extends Vue {
     return { from: '', to: '' }
   }
 
-  get updateIdList(): number[] {
+  get updateIdList (): number[] {
     if (this.option === 'updatePrint') {
       return this.unselectedIds
     }
@@ -368,29 +388,29 @@ export default class OverviewTable extends Vue {
     return []
   }
 
-  get tableColumns(): IColumns[] {
-    if (this.option !== 'default') return columns
+  get tableColumns (): IColumns[] {
+    if (this.option !== 'default') { return columns }
     return columnsWithOperation
   }
 
-  mounted() {
+  mounted () {
     this.importData()
   }
 
-  importData() {
+  importData () {
     this.data = this.originalData
   }
 
-  initSelect() {
+  initSelect () {
     this.originalSelectedRowKeys = this.originalData
       .filter((item) => {
         return this.handleCondition(item.status)
       })
-      .map((filtered) => filtered.id)
+      .map(filtered => filtered.id)
     this.selectedRowKeys = this.originalSelectedRowKeys
   }
 
-  handleCondition(status: Status) {
+  handleCondition (status: Status) {
     if (this.option === 'updatePrint') {
       return status === 'print'
     }
@@ -403,19 +423,19 @@ export default class OverviewTable extends Vue {
     return true
   }
 
-  onDateFilterChange(_date: object, dateString: string) {
+  onDateFilterChange (_date: object, dateString: string) {
     this.filterForm.orderedDate = dateString
   }
 
-  handleBatchFilterChange(value: { key: string; value: string }) {
+  handleBatchFilterChange (value: { key: string; value: string }) {
     this.filterForm.exportBatch = value.key
   }
 
-  handleOrderedItemFilterChange(value: { key: string; value: string }) {
+  handleOrderedItemFilterChange (value: { key: string; value: string }) {
     this.filterForm.orderedItem = value.key
   }
 
-  filterData() {
+  filterData () {
     this.data = this.originalData.filter((row) => {
       const result: boolean[] = []
       Object.keys(this.filterForm).forEach((key) => {
@@ -427,7 +447,7 @@ export default class OverviewTable extends Vue {
     })
   }
 
-  filterFields(key: string, row: ShipmentLine): boolean {
+  filterFields (key: string, row: ShipmentLine): boolean {
     if (key === 'orderedDate') {
       return (
         moment(row.created_date).format('YYYY-MM-DD') ===
@@ -436,9 +456,9 @@ export default class OverviewTable extends Vue {
     }
     if (key === 'searchRecord') {
       const columsDataIndex = this.tableColumns
-        .filter((column) => column.dataIndex)
-        .map((column) => column.dataIndex)
-      const searchedArray = columsDataIndex.map((col) =>
+        .filter(column => column.dataIndex)
+        .map(column => column.dataIndex)
+      const searchedArray = columsDataIndex.map(col =>
         String(row[col as keyof ShipmentLine]).includes(
           this.filterForm.searchRecord
         )
@@ -448,14 +468,14 @@ export default class OverviewTable extends Vue {
     return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
-  handleUpdatePrint() {
+  handleUpdatePrint () {
     ShipmentModule.setPrintStatus({
       selectedRowKeys: this.unselectedIds,
-      printStatus: false,
+      printStatus: false
     })
   }
 
-  handleUpdateDelievery() {
+  handleUpdateDelievery () {
     /**
      * If tab === 'print' => change selected to 'out' status
      * If tab === 'out' => change unselected to 'print' status
@@ -463,12 +483,12 @@ export default class OverviewTable extends Vue {
     if (this.tabKey === 'print') {
       ShipmentModule.setDeliverStatus({
         selectedRowKeys: this.selectedRowKeys,
-        deliverStatus: true,
+        deliverStatus: true
       })
     } else {
       ShipmentModule.setDeliverStatus({
         selectedRowKeys: this.unselectedIds,
-        deliverStatus: false,
+        deliverStatus: false
       })
     }
   }
@@ -485,28 +505,29 @@ export default class OverviewTable extends Vue {
   //   }
   // }
 
-  saveToStore(ids: number[], status: Status) {
-    ShipmentModule.updateStatus({ status, selectedRows: ids })
-  }
-
-  onSave() {
-    if (this.option === 'updatePrint') this.handleUpdatePrint()
-    if (this.option === 'updateDelivery') this.handleUpdateDelievery()
+  onSave () {
+    if (this.option === 'updatePrint') { this.handleUpdatePrint() }
+    if (this.option === 'updateDelivery') { this.handleUpdateDelievery() }
     // if (this.option === 'updateReceived') this.handleUpdateReceived()
+    this.onPageChange({ current: 1 })
     this.visibleSubmitDialog = false
   }
 
-  onSelectChange(selectedRowKeys: number[]) {
+  onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
   }
 
-  customRow(record: ShipmentLine) {
+  onPageChange (page: {current: number}) {
+    this.handlePageChange(page.current)
+  }
+
+  customRow (record: ShipmentLine) {
     return {
       on: {
         click: () => {
           this.$router.push(`/order-overview/${record.id}`)
-        },
-      },
+        }
+      }
     }
   }
 }

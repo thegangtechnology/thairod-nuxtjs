@@ -7,31 +7,40 @@
         @change="onTabChange"
       >
         <a-tab-pane key="all">
-          <span slot="tab"> ทั้งหมด ({{ allData.length }})</span>
+          <span slot="tab"> ทั้งหมด ({{ getTotalLength }})</span>
           <PrintTable
-            :original-data="allData"
+            :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
             :update="isUpdate"
+            :loading="isLoading"
+            :amount="getTotalLength"
+            @pageChange="handlePageChange"
             @cancel="handleCancelUpdate"
           />
         </a-tab-pane>
         <a-tab-pane key="unprinted">
           <span slot="tab"> ที่ต้องพิมพ์ ({{ getUnprintedLength }})</span>
           <PrintTable
-            :original-data="getUnprinted"
+            :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
             :update="false"
+            :loading="isLoading"
+            :amount="getUnprintedLength"
+            @pageChange="handlePageChange"
           />
         </a-tab-pane>
         <a-tab-pane key="printed">
           <span slot="tab"> ดำเนินการพิมพ์แล้ว ({{ getPrintedLength }}) </span>
           <PrintTable
-            :original-data="getPrinted"
+            :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
             :update="isUpdate"
+            :loading="isLoading"
+            :amount="getPrintedLength"
+            @pageChange="handlePageChange"
             @cancel="handleCancelUpdate"
           />
         </a-tab-pane>
@@ -63,7 +72,6 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import ShipmentModule from '~/store/shipment.module'
-import { ShipmentLine } from '~/types/shipment.type'
 
 @Component
 export default class PrintOverview extends Vue {
@@ -71,43 +79,66 @@ export default class PrintOverview extends Vue {
 
   tabKey: string = 'all'
   isUpdate: boolean = false
-  originalData: ShipmentLine[] = []
 
-  get allData() {
+  get isLoading () {
+    return ShipmentModule.loading
+  }
+
+  get originalData () {
     return ShipmentModule.getShipmentList
   }
 
-  get getUnprinted() {
-    return this.allData.filter((item) => {
-      return !item.label_printed
-    })
+  get getTotalLength () {
+    return ShipmentModule.totalShipment
   }
 
-  get getPrinted() {
-    return this.allData.filter((item) => {
-      return item.label_printed
-    })
+  get getUnprintedLength () {
+    return ShipmentModule.waitShipment
   }
 
-  get getUnprintedLength() {
-    return this.getUnprinted.length
+  get getPrintedLength () {
+    return ShipmentModule.printShipment
   }
 
-  get getPrintedLength() {
-    return this.getPrinted.length
+  mounted () {
+    ShipmentModule.initialiseShipment({})
   }
 
-  handleCancelUpdate() {
+  handleCancelUpdate () {
     this.isUpdate = false
   }
 
-  toCreatePrint() {
-    this.$router.push(`/print/create-print`)
+  handlePageChange (page: number) {
+    this.onTabChange(this.tabKey, page, true)
+    this.isUpdate = true
   }
 
-  onTabChange(key: string) {
+  toCreatePrint () {
+    this.$router.push('/print/create-print')
+  }
+
+  onTabChange (key: string, page: number = 1, isUpdate: boolean = false) {
+    if (key === 'all') {
+      ShipmentModule.initialiseShipment({
+        page
+      })
+    }
+    if (key === 'unprinted') {
+      ShipmentModule.initialiseShipment({
+        label_printed: false,
+        deliver: false,
+        page
+      })
+    }
+    if (key === 'printed') {
+      ShipmentModule.initialiseShipment({
+        label_printed: true,
+        deliver: false,
+        page
+      })
+    }
     this.tabKey = key
-    this.isUpdate = false
+    this.isUpdate = isUpdate
   }
 }
 </script>
