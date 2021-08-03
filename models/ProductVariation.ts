@@ -6,5 +6,6 @@ export interface ProductVariation {
   price: number
   name: string
   description: string
+  productDescription: string
   unit: string
 }

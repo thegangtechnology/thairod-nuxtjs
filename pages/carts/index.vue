@@ -56,7 +56,7 @@
         :style="{
           backgroundColor: '#F9B7B7',
           color: '#000000',
-          borderColor: '#ffc1c1'
+          borderColor: '#ffc1c1',
         }"
         @click="copyLink"
       >
@@ -83,7 +83,7 @@ export default Vue.extend({
     PrimaryButton
   },
   layout: 'product-layout',
-  data () {
+  data() {
     return {
       visible: false,
       amount: 1,

@@ -53,8 +53,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL:
-      process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/',
+    baseURL: process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/',
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

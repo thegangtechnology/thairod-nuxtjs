@@ -4,66 +4,66 @@
       <a-col :xs="24" :sm="12" :md="9" :lg="8" :xl="8">
         <img
           alt="example"
-          :src="require('@/assets/images/default/set-p.svg')"
+          :src="item.image"
           class="img-responsive product-detail__image"
         >
       </a-col>
       <a-col :xs="24" :sm="12" :md="15" :lg="16" :xl="16">
         <div class="product-detail__name">
-          {{ data.name }}
+          {{ item.name }}
         </div>
 
         <div class="product-detail__description">
-          {{ data.description }}
+          {{ item.description }}
         </div>
 
-<!--    for set-->
-        <div class="product-detail__description">
-          <a-row :gutter="16">
-            <a-col
-              v-for="(item, i) in data.itemSets"
-              :key="i"
-              :xs="24"
-              :sm="24"
-              :md="12"
-              :lg="8"
-              :xl="8"
-              class="product-card__item-container"
-            >
-              <a-row type="flex" class="item">
-                <a-col flex="50px">
-                  <img
-                    alt="example"
-                    :src="item.image"
-                    class="img-responsive"
-                  >
-                </a-col>
-                <a-col flex="auto" class="item__detils">
-                  <div class="item__name">
-                    {{ item.name }}
-                  </div>
-                  <div class="item__amount">
-                    {{ item.amount }}
-                  </div>
-                </a-col>
-              </a-row>
-            </a-col>
-          </a-row>
-        </div>
+        <!--    for set-->
+        <!--        <div class="product-detail__description">-->
+        <!--          <a-row :gutter="16">-->
+        <!--            <a-col-->
+        <!--              v-for="(item, i) in data.itemSets"-->
+        <!--              :key="i"-->
+        <!--              :xs="24"-->
+        <!--              :sm="24"-->
+        <!--              :md="12"-->
+        <!--              :lg="8"-->
+        <!--              :xl="8"-->
+        <!--              class="product-card__item-container"-->
+        <!--            >-->
+        <!--              <a-row type="flex" class="item">-->
+        <!--                <a-col flex="50px">-->
+        <!--                  <img-->
+        <!--                    alt="example"-->
+        <!--                    :src="item.image"-->
+        <!--                    class="img-responsive"-->
+        <!--                  >-->
+        <!--                </a-col>-->
+        <!--                <a-col flex="auto" class="item__detils">-->
+        <!--                  <div class="item__name">-->
+        <!--                    {{ item.name }}-->
+        <!--                  </div>-->
+        <!--                  <div class="item__amount">-->
+        <!--                    {{ item.amount }}-->
+        <!--                  </div>-->
+        <!--                </a-col>-->
+        <!--              </a-row>-->
+        <!--            </a-col>-->
+        <!--          </a-row>-->
+        <!--        </div>-->
 
         <div class="product-detail__title">
           รายละเอียด
         </div>
         <div class="product-detail__description">
-          {{ data.detail }}
+          {{ item.productDescription }}
         </div>
-
-        <div class="product-detail__title">
-          จำนวนสินค้าในคลัง
-        </div>
-        <div class="product-detail__description">
-          100 กระปุก
-        </div>
+        <!--for stock-->
+        <!--        <div class="product-detail__title">-->
+        <!--          จำนวนสินค้าในคลัง-->
+        <!--        </div>-->
+        <!--        <div class="product-detail__description">-->
+        <!--          100 กระปุก-->
+        <!--        </div>-->
       </a-col>
     </a-row>
     <div class="product-card__button-container">

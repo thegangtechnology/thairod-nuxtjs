@@ -1,19 +1,27 @@
 import {
+  Action,
   getModule,
   Module,
-  MutationAction,
+  Mutation,
   VuexModule
 } from 'vuex-module-decorators'
 import { store } from '@/store'
 import { Product } from '@/types/product.type'
-import apiPath from '~/data/api_path'
 import { $axios } from '@/utils/api'
+import apiPath from '~/data/api_path'
 
 // remove duplicate module
 const name: string = 'productModule'
 if (store.state[name]) {
   store.unregisterModule(name)
 }
+
+const imageDefault = [
+  { name: 'กล่องเขียว', image: require('@/assets/images/default/set-g.svg') },
+  { name: 'กล่องเหลือง', image: require('@/assets/images/default/set-y.svg') },
+  { name: 'Favipiravir', image: require('@/assets/images/default/set-p.svg') },
+  { name: 'ฟ้าทะลายโจร', image: require('@/assets/images/default/set-p.svg') }
+]
 
 @Module({
   dynamic: true,
@@ -24,70 +32,78 @@ class ProductModule extends VuexModule {
   productList: Product[] = []
   product: Product = {} as Product
 
-  @MutationAction({ mutate: ['productList'] })
-  public async getProductList() {
-    const path: string = '/products/'
-    await Promise.resolve(path)
+  @Mutation
+  SET_PRODUCT_LIST ({
+    productList
+  }:{
+    productList:Product[]
+  }) {
+    this.productList = productList
+  }
 
+  @Mutation
+  SET_PRODUCT_DETAIL ({
+    product
+  }:{
+    product:Product
+  }) {
+    this.product = product
+  }
 
-    // const path: string = `${apiPath.product}/`
-    // const res = await $axios.get(path)
-    // console.log(res)
-
-    // delete this later
-    const productList: Product[] = [
-      {
-        id: 1,
-        name: 'Favipiravir',
-        image: require('@/assets/images/default/set-p.svg'),
-        description: '1 ชุด มี 12 เม็ด',
-        sku: 'sku-1',
-        repeatable: true
-      },
-      {
-        id: 2,
-        name: 'กล่องสีเขียว',
-        image: require('@/assets/images/default/set-g.svg'),
-        description: 'มีอุปกรณ์ 3 รายการ',
-        sku: 'sku-1',
-        repeatable: true
-      },
-      {
-        id: 3,
-        name: 'กล่องสีเหลือง',
-        image: require('@/assets/images/default/set-y.svg'),
-        description: 'มีอุปกรณ์ 3 รายการ',
-        sku: 'sku-1',
-        repeatable: true
-      },
-      {
-        id: 4,
-        name: 'ฟ้าทะลายโจร',
-        image: require('@/assets/images/default/set-f.svg'),
-        description: 'มีอุปกรณ์ 3 รายการ',
-        sku: 'sku-1',
-        repeatable: true
+  @Action({ commit: 'SET_PRODUCT_LIST' })
+  public async getProductList ({
+    page,
+    perPage,
+    search
+  }: {
+    page: number
+    perPage: number
+    search:string
+  }) {
+    const path: string = `${apiPath.productVariation}?search=page=${page}&page_size=${perPage}&search=${search}`
+    const res = await $axios.get(path)
+    const mappedProduct = res.data.results.map(
+      (item:Product) => {
+        const foundProduct = imageDefault.find(
+          (itemProduct:{ name: string; image: string }) => itemProduct.name === item.name
+        )
+        return {
+          id: item.id,
+          product: item.product,
+          price: item.price,
+          name: item.name,
+          description: item.description,
+          productDescription: item.productDescription,
+          unit: item.unit,
+          image: foundProduct ? foundProduct.image : '',
+          detail: 'sdf'
+        }
       }
-    ]
-
+    )
     return {
-      productList
+      productList: mappedProduct
     }
   }
 
-  @MutationAction({ mutate: ['product'] })
-  public async getProduct({ id }: { id: number }) {
-    const path: string = `/products/${id}`
-    await Promise.resolve(path)
+   @Action({ commit: 'SET_PRODUCT_DETAIL' })
+  public async getProduct ({ id }: { id: number }) {
+    const path: string = `/${apiPath.productVariation}/${id}`
+    const res = await $axios.get(path)
 
-    // delete this later
+    const data = res.data
+    const foundProduct = imageDefault.find(
+      (itemProduct:{ name: string; image: string }) => itemProduct.name === data.name
+    )
+
     const product: Product = {
-      id: 1,
-      name: 'Favipiravir',
-      image: require('@/assets/images/default/set-p.svg'),
-      description: '1 ชุด มี 12 เม็ด',
-      sku: 'sku-1',
-      repeatable: true
+      id: data.id,
+      product: data.product,
+      price: data.price,
+      name: data.name,
+      description: data.description,
+      productDescription: data.productDescription,
+      unit: data.unit,
+      image: foundProduct ? foundProduct.image : ''
     }
     return {
       product

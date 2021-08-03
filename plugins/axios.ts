@@ -1,6 +1,5 @@
 import { Context } from '@nuxt/types'
 import camelcaseKeys from 'camelcase-keys'
-
 export default function ({ $axios }: Context) {
   $axios.defaults.transformResponse = [
     (data, headers) => {

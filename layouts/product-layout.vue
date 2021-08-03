@@ -116,6 +116,12 @@ export default Vue.extend({
   -webkit-box-shadow: 2px 0px 5px 0px rgba(161, 161, 161, 1);
   -moz-box-shadow: 2px 0px 5px 0px rgba(161, 161, 161, 1);
   box-shadow: 2px 0px 5px 0px rgba(161, 161, 161, 1);
+  overflow: hidden;
+}
+.product-layout .ant-menu-item.ant-menu-item-selected {
+  border: 0;
+  border-left: 3px solid #F9B7B7;
+  border-right: none;
 }
 .product-layout .ant-layout-sider-collapsed {
   left: -80px;

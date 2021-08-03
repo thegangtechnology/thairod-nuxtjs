@@ -47,28 +47,30 @@ export default Vue.extend({
     ProductCard
   },
   layout: 'product-layout',
-  data() {
+  data () {
     return {
       isSubmit: false,
       search: ''
     }
   },
   computed: {
-    patient(): Patient {
+    patient (): Patient {
       return PatientModule.patient
     },
-    productList(): Product[] {
+    productList (): Product[] {
       return ProductModule.productList
     }
   },
-  async mounted() {
+  async mounted () {
     await PatientModule.getPatient({ id: 1 })
-    await ProductModule.getProductList()
+    await ProductModule.getProductList({
+      page: 1,
+      perPage: -1,
+      search: ''
+    })
   },
   methods: {
-    onSearch(): void {
-      console.log('onSearch', this.search)
-    }
+    onSearch (): void {}
   }
 })
 </script>

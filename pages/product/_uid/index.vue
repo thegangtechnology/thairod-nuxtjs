@@ -21,20 +21,20 @@ export default Vue.extend({
     ProductHeader
   },
   layout: 'empty',
-  data() {
+  data () {
     return {}
   },
   computed: {
-    product(): Product {
+    product (): Product {
       return ProductModule.product
     }
   },
-  async mounted() {
+  async mounted () {
     await ProductModule.getProduct({ id: 1 })
   },
   methods: {
-    onBackButtonClick(): void {
-      this.$router.push(`/product`)
+    onBackButtonClick (): void {
+      this.$router.push('/product')
     }
   }
 })
