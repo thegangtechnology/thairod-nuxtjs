@@ -49,12 +49,21 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     baseURL:
-      process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/',
+      process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
+  },
+
+  auth: {
+    // options
+  },
+
+  router: {
+    middleware: ['auth']
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
