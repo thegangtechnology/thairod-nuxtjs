@@ -1,73 +1,75 @@
 export type Status = 'wait' | 'print' | 'out' | 'received'
 export interface ReceiverAddress {
     id: number;
-    created_date: Date;
-    updated_date: Date;
+    createdDate: Date;
+    updatedDate: Date;
     name: string;
     lat: null;
     lon: null;
-    house_number: string;
+    houseNumber: string;
     subdistrict: string;
     district: string;
     province: string;
-    postal_code: string;
+    postalCode: string;
     country: string;
     telno: string;
     note: string;
 }
 export interface Order {
     id: number;
-    receiver_address: ReceiverAddress;
-    created_date: Date;
-    updated_date: Date;
+    receiverAddress: ReceiverAddress;
+    createdDate: Date;
+    updatedDate: Date;
     status: string;
     cid: string;
-    orderer_name: string;
-    orderer_license: string;
-    order_time: Date;
+    ordererName: string;
+    ordererLicense: string;
+    orderTime: Date;
 }
 export interface ProductVariation {
     id: number;
-    product_description: string;
-    created_date: Date;
-    updated_date: Date;
+    productDescription: string;
+    createdDate: Date;
+    updatedDate: Date;
     price: string;
     name: string;
     description: string;
     unit: string;
     product: number;
 }
+
 export interface OrderItem {
     id: number;
-    product_variation: ProductVariation;
-    created_date: Date;
-    updated_date: Date;
+    productVariation: ProductVariation;
+    createdDate: Date;
+    updatedDate: Date;
     quantity: number;
-    total_price: string;
+    totalPrice: string;
     shipment: number;
 }
+
 export interface Batch {
     id: number;
-    created_date: Date;
-    updated_date: Date;
+    createdDate: Date;
+    updatedDate: Date;
     name: string;
 }
 export interface ShipmentResponse {
     id: number;
-    order_items: OrderItem[];
+    orderItems: OrderItem[];
     batch: Batch;
     order: Order;
-    created_date: Date;
-    updated_date: Date;
+    createdDate: Date;
+    updatedDate: Date;
     title: string;
-    shipping_method: string;
-    label_printed: boolean;
+    shippingMethod: string;
+    labelPrinted: boolean;
     deliver: boolean;
     weight: null;
     note: null;
-    shippop_purchase_id: number;
-    tracking_code: string;
-    courier_tracking_code: null;
+    shippopPurchaseId: number;
+    trackingCode: string;
+    courierTrackingCode: null;
     status: string;
     warehouse: number;
 }

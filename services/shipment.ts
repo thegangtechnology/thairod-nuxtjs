@@ -43,17 +43,17 @@ export const getShipments = async (
     responseResult.forEach((result) => {
       resultList.push({
         id: result.id,
-        shipmentItem: result.order_items.map((order) => {
-          return { ...order.product_variation, quantity: order.quantity }
+        shipmentItem: result.orderItems.map((order) => {
+          return { ...order.productVariation, quantity: order.quantity }
         }),
-        created_date: result.created_date,
+        created_date: result.createdDate,
         batch: result.batch,
-        tracking_code: result.tracking_code,
+        tracking_code: result.trackingCode,
         deliver: result.deliver,
-        label_printed: result.label_printed,
-        status: getStatus(result.deliver, result.label_printed),
+        label_printed: result.labelPrinted,
+        status: getStatus(result.deliver, result.labelPrinted),
         cid: result.order.cid,
-        patientName: result.order.receiver_address.name
+        patientName: result.order.receiverAddress.name
       })
     })
     return { count: response.data.count, result: resultList }
@@ -68,29 +68,29 @@ export const getShipmentDetail = async (id: number): Promise<ShipmentDetail> => 
     const responseResult: ShipmentResponse = response.data
     return Promise.resolve({
       id: responseResult.id,
-      shipmentItem: responseResult.order_items.map((order) => {
-        return { ...order.product_variation, quantity: order.quantity }
+      shipmentItem: responseResult.orderItems.map((order) => {
+        return { ...order.productVariation, quantity: order.quantity }
       }),
-      created_date: responseResult.created_date,
+      created_date: responseResult.createdDate,
       batch: responseResult.batch,
-      tracking_code: responseResult.tracking_code,
+      tracking_code: responseResult.trackingCode,
       deliver: responseResult.deliver,
-      label_printed: responseResult.label_printed,
-      status: getStatus(responseResult.deliver, responseResult.label_printed),
+      label_printed: responseResult.labelPrinted,
+      status: getStatus(responseResult.deliver, responseResult.labelPrinted),
       cid: responseResult.order.cid,
-      patientName: responseResult.order.receiver_address.name,
-      telno: responseResult.order.receiver_address.telno,
+      patientName: responseResult.order.receiverAddress.name,
+      telno: responseResult.order.receiverAddress.telno,
       warehouse: responseResult.warehouse,
-      orderer_name: responseResult.order.orderer_name,
-      orderer_license: responseResult.order.orderer_license,
+      orderer_name: responseResult.order.ordererName,
+      orderer_license: responseResult.order.ordererLicense,
       updated_name: '',
-      updated_date: responseResult.updated_date,
-      house_number: responseResult.order.receiver_address.house_number,
-      province: responseResult.order.receiver_address.province,
-      district: responseResult.order.receiver_address.district,
-      subdistrict: responseResult.order.receiver_address.subdistrict,
-      postal_code: responseResult.order.receiver_address.postal_code,
-      note: responseResult.order.receiver_address.note
+      updated_date: responseResult.updatedDate,
+      house_number: responseResult.order.receiverAddress.houseNumber,
+      province: responseResult.order.receiverAddress.province,
+      district: responseResult.order.receiverAddress.district,
+      subdistrict: responseResult.order.receiverAddress.subdistrict,
+      postal_code: responseResult.order.receiverAddress.postalCode,
+      note: responseResult.order.receiverAddress.note
     })
   } catch (error) {
     return Promise.reject(new Error(error))
@@ -105,9 +105,14 @@ export const updateBatchNumber = async (
     await $axios.post('/api/batch-shipments/assign/', {
       batch_name: batchNo,
       shipments: selectedRowKeys
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
   } catch (error) {
-    return Promise.reject(new Error(error))
+    return Promise.reject(new Error(error.message))
   }
 }
 
@@ -121,6 +126,10 @@ export const setPrintStatus = async (
       temp.push(
         $axios.patch(`/api/shipments/${rowKey}/`, {
           label_printed: printStatus
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         })
       )
     })
@@ -142,6 +151,11 @@ export const setDeliverStatus = async (
       temp.push(
         $axios.patch(`/api/shipments/${rowKey}/`, {
           deliver: deliverStatus
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         })
       )
     })

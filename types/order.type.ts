@@ -2,41 +2,33 @@
 /**
  * FRONTEND Interface
  */
-export interface Address {
-  firstName: string
-  lastName: string
-  telephone: string
-  address: string
-  province: number | string
-  district: number | string
-  subDistrict: number | string
-  zipcode: string
-  optional: string
+export interface IProduct {
+  id: number
+  createdDate: string
+  description: string
+  name: string
+  price: string
+  product: number
+  unit: string
+  updatedDate: string
 }
-export interface OrderLine {
+
+export interface PatientInfo {
+  name: string
+  phoneNumber: string
+  street: string
+  province: string
+  district: string
+  subDistrict: string
+  zipcode: string
+  note: string
+}
+
+export interface OrderItem {
   id: number
   name: string
-  total: number
-}
-export interface Order {
-  id: number
-  orderLines: OrderLine[]
-  address: Address
-}
-/**
- * BACKEND Interface
- */
-export interface OrderLineJson {
-  id: number
-  created_date: string
-  quantity: string
   price: string
-  total_price: string
-}
-export interface OrderJson {
-  id: number
-  order_number: string
-  status: string
-  order_lines: OrderLineJson[]
-  grand_total_price: string
+  unit: string
+  quantity: number
+  description: string
 }

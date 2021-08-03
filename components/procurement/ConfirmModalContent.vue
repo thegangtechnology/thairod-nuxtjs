@@ -4,11 +4,11 @@
       alt="modal-image"
       src="~/assets/images/procurement/icon/modal-image.svg"
     ><br>
-    <b class="title">ยืนยันการอัปเดตสินค้า</b><br>
+    <strong class="title">ยืนยันการอัปเดตสินค้า</strong><br>
     <p>
       กล่องสินค้า <span>{{ formData.quantity ? formData.quantity.toLocaleString(): '' }} กล่อง</span><br>
-      ราคาทุน <span>{{ formData.cost || formData.cost === 0 ? formData.cost.toLocaleString(): '' }} บาท</span><br>
-      คลังสินค้า <span>{{ formData.warehouse }}</span>
+      ราคาทุน <span>{{ formData.unitPrice || formData.unitPrice === 0 ? formData.unitPrice.toFixed(2).toLocaleString(): '' }} บาท</span><br>
+      คลังสินค้า <span>{{ warehouseList[formData.warehouse].name }}</span>
     </p>
     <div>
       <secondary-button :text="'ยกเลิก'" :on-click="closeModal" />
@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import { UpdateInventoryFormData } from '~/types/procurement.type'
+import { UpdateInventoryFormData, Warehouse } from '~/types/procurement.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
 
@@ -32,7 +32,13 @@ export default Vue.extend(
       handleSubmit: { type: Function, default: () => {} },
       formData: {
         type: Object as PropType<UpdateInventoryFormData>,
-        default: () => ({})
+        default: () => ({
+          // empty
+        })
+      },
+      warehouseList: {
+        type: [] as PropType<Warehouse[]>,
+        default: () => ([] as Warehouse[])
       }
     }
   }

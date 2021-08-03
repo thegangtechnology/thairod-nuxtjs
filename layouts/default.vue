@@ -14,13 +14,13 @@
             :src="require('~/assets/images/sidebar/thairod-logo.svg')"
             alt="thairod-logo"
             height="28"
-          />
+          >
           <img
             :class="{ 'hide-content': collapsed }"
             :src="require('~/assets/images/sidebar/thairod-word-logo.svg')"
             alt="thairod-wording-logo"
             height="26"
-          />
+          >
         </div>
 
         <a-icon
@@ -30,43 +30,36 @@
         />
       </div>
 
-      <a-row
-        align="middle"
-        class="profile-wrapper"
-        justify="space-around"
-        type="flex"
-      >
+      <a-row align="middle" class="profile-wrapper" justify="space-around" type="flex">
         <a-col>
-          <img
-            :src="require('~/assets/images/sidebar/doctor-profile.svg')"
-            alt="doctor-profile"
-            height="48"
-          />
+          <img :src="require('~/assets/images/sidebar/doctor-profile.svg')" alt="doctor-profile" height="48">
         </a-col>
-        <a-col
-          :class="{ 'hide-content': collapsed }"
-          class="profile-detail"
-          span="18"
-        >
+        <a-col :class="{'hide-content': collapsed}" class="profile-detail" span="18">
           firstname lastname
           <p>Admin</p>
         </a-col>
       </a-row>
 
-      <a-menu :default-selected-keys="[selectedMenu]" mode="inline">
-        <a-menu-item key="1">
+      <a-menu mode="inline">
+        <a-menu-item :class="{'sidebar-item-active': selectedMenu === ''}">
           <a-icon type="shop" />
           <span>จัดการคลังสินค้า</span>
         </a-menu-item>
-        <a-menu-item key="order-overview" @click="goToPage('/order-overview')">
+        <a-menu-item
+          :class="{'sidebar-item-active': selectedMenu === 'order-overview'}"
+          @click="goToPage('/order-overview')"
+        >
           <a-icon type="profile" />
           <span>ภาพรวมรายการจัดส่ง</span>
         </a-menu-item>
-        <a-menu-item key="order-overview-delivery" @click="goToPage('/assign')">
+        <a-menu-item
+          :class="{'sidebar-item-active': selectedMenu === 'assign'}"
+          @click="goToPage('/assign')"
+        >
           <a-icon type="file-search" />
           <span>จัดการล็อตรายการจัดส่ง</span>
         </a-menu-item>
-        <a-menu-item key="print" @click="goToPage('/print')">
+        <a-menu-item :class="{'sidebar-item-active': selectedMenu === 'print'}" @click="goToPage('/print')">
           <a-icon type="printer" />
           <span>พิมพ์ใบจัดส่งสินค้า</span>
         </a-menu-item>
@@ -79,35 +72,41 @@
   </a-layout>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import Vue from 'vue'
 
 export default Vue.extend({
-  data() {
+  data () {
     return {
       collapsed: false,
-      menuPaths: ['order-overview', 'order-overview-delivery', 'print'],
+      menuPaths: ['order-overview', 'assign', 'print']
     }
   },
   computed: {
-    selectedMenu(): string {
-      const selected = this.menuPaths.find((path) => path === this.$route.name)
+    selectedMenu (): string {
+      const selected = this.menuPaths.find(path => path === this.$route.name)
       if (selected) {
         return selected
       } else {
         return 'order-overview'
       }
-    },
+    }
   },
   methods: {
-    goToPage(path: string): void {
+    goToPage (path: string): void {
       this.$router.push(`${path}`)
     },
-  },
+    checkCurrentSidebar (): void {
+      const selected = this.menuPaths.find(path => path === this.$route.name)
+      if (selected) {
+        this.selectedMenu = selected
+      }
+    }
+  }
 })
 </script>
 
-<style lang="less">
+<style lang='less'>
 .hide-content {
   display: none !important;
 }
@@ -144,5 +143,20 @@ export default Vue.extend({
 
 .ant-menu-item-selected {
   color: #001740 !important;
+}
+
+.ant-menu-item-selected {
+  background: white !important;
+
+  &::after {
+    border-right: 0 !important;
+    content: '';
+  }
+}
+
+.ant-menu-item.sidebar-item-active {
+  background: #FFECEC !important;
+  border: 0;
+  border-left: 3px solid #F9B7B7;
 }
 </style>

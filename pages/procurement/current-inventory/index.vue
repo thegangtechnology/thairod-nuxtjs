@@ -1,6 +1,6 @@
 <template>
   <div>
-    <procurement-header :title="'ยอดรวมในคลังสินค้า'" :on-back-button-click="onBackButtonClick"/>
+    <procurement-header :title="'ยอดรวมในคลังสินค้า'" :on-back-button-click="onBackButtonClick" />
     <inventory-detail
       :warehouse-stocks="warehouseStocks"
       :left-card="leftCard"
@@ -19,28 +19,28 @@ export default Vue.extend({
   data () {
     return {
       warehouseStocks: [
-        { warehouse: 'Warehouse A', amount: 30, unit: 'กล่อง' },
-        { warehouse: 'Warehouse B', amount: 20, unit: 'กล่อง' },
-        { warehouse: 'Warehouse C', amount: 25, unit: 'กล่อง' },
-        { warehouse: 'Warehouse D', amount: 25, unit: 'กล่อง' }
+        // { warehouse: 'Warehouse A', amount: 30, unit: 'กล่อง' },
+        // { warehouse: 'Warehouse B', amount: 20, unit: 'กล่อง' },
+        // { warehouse: 'Warehouse C', amount: 25, unit: 'กล่อง' },
+        // { warehouse: 'Warehouse D', amount: 25, unit: 'กล่อง' }
       ],
       leftCard: {
         backgroundColor: '#001740',
         title: 'จำนวนในคลัง',
-        amount: 100,
+        amount: 0,
         unit: 'กล่อง'
       },
       rightCard: {
         backgroundColor: '#133571',
         title: 'ยอดรวมสะสม',
-        amount: 10000,
+        amount: 0,
         unit: 'กล่อง'
       }
     }
   },
   methods: {
     onBackButtonClick () : void {
-      this.$router.push('/procurement/item-detail')
+      this.$router.push({ path: '/procurement/item-detail', query: { id: this.$route.query.id } })
     }
   }
 })

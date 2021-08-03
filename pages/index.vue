@@ -49,11 +49,8 @@ export default Vue.extend({
   },
   methods: {
     onLogin () : void {
-      // TODO: go to procurement if user has permission to procurement, go to order page otherwise.
+      // go to procurement if user has permission to procurement, go to order page otherwise.
       this.$router.push('/procurement')
-    },
-    onForgotPassword () : void {
-      console.log('forgot password')
     },
     handleSubmit () : void {
       this.form.validateFields((err) => {

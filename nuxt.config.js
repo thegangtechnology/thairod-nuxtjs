@@ -32,7 +32,8 @@ export default {
     '~plugins/assign-components.ts',
     '~plugins/print-components.ts',
     '~plugins/date.ts',
-    '@/plugins/accessor.ts'
+    '@/plugins/accessor.ts',
+    '@/plugins/axios.ts'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -52,15 +53,16 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    proxy: true
+    // proxy: true
+    baseUrl: process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
   },
 
-  proxy: {
-    '/api/': {
-      target: process.env.SERVER_URL,
-      changeOrigin: true
-    }
-  },
+  // proxy: {
+  //   '/api/': {
+  //     target: ,
+  //     changeOrigin: true
+  //   }
+  // },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
