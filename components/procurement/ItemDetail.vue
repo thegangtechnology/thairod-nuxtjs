@@ -2,16 +2,16 @@
   <div class="container">
     <img
       alt="item-image"
-      src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+      :src="imageMap[itemDetail.id]"
     >
     <a-row type="flex">
       <a-col :flex="10">
         <div class="card left-card">
           <div> จำนวนในคลัง </div>
-          <b>{{ inventoryRecord.currentAmount }} {{ inventoryRecord.unit }}</b>
+          <strong>{{ inventoryRecord.currentAmount > 0 ? inventoryRecord.currentAmount : '-' }} {{ inventoryRecord.unit }}</strong>
           <a-divider />
           <div> ยอดรวมสะสม </div>
-          <b class="acc-amount">{{ inventoryRecord.accumulativeAmount }} {{ inventoryRecord.unit }}</b>
+          <strong class="acc-amount">{{ inventoryRecord.accumulativeAmount > 0 ? inventoryRecord.accumulativeAmount : '-' }} {{ inventoryRecord.unit }}</strong>
         </div>
         <a-button
           block
@@ -26,10 +26,10 @@
       <a-col :flex="10">
         <div class="card right-card">
           <div> จำนวนที่ใช้วันนี้ </div>
-          <b>{{ inventoryRecord.usedAmount }} {{ inventoryRecord.unit }}</b>
+          <strong>{{ inventoryRecord.usedAmount > 0 ? inventoryRecord.usedAmount : '-' }} {{ inventoryRecord.unit }}</strong>
           <a-divider />
           <div> ยอดใช้สะสม </div>
-          <b class="acc-amount">{{ inventoryRecord.accumulativeUsed }} {{ inventoryRecord.unit }}</b>
+          <strong class="acc-amount">{{ inventoryRecord.accumulativeUsed > 0 ? inventoryRecord.accumulativeUsed : '-' }} {{ inventoryRecord.unit }}</strong>
         </div>
         <a-button
           block
@@ -43,63 +43,58 @@
     </a-row>
     <a-divider class="main-divider" />
     <div>
-      <b class="list-title"> รายละเอียดสินค้า </b>
-      <a-list :data-source="itemList" class="list-items">
-        <a-list-item slot="renderItem" slot-scope="{name, quantity, unit}">
-          <a-list-item-meta
-            :description="quantity + ' ' + unit"
-          >
-            <span slot="title">{{ name }}</span>
-            <a-avatar
-              slot="avatar"
-              src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-            />
-          </a-list-item-meta>
-        </a-list-item>
-      </a-list>
+      <strong class="list-title"> รายละเอียดสินค้า </strong>
+      <ul>
+        <li v-for="item in itemDetail.productDescription.split('\n')" :key="item">
+          {{ item }}
+        </li>
+      </ul>
+      <p> {{ itemDetail.description }} </p>
     </div>
     <primary-button class="update-button" :text="'อัปเดตคลังสินค้า'" :on-click="updateInventory" />
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { PropType } from 'vue'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
+import { InventoryRecord, ItemDetail } from '~/types/procurement.type'
+import { productImageMap } from '~/data/image-map'
+import { defaultInventoryRecord, defaultItemDetail } from '~/types/procurement.default'
 
 export default Vue.extend({
   components: { PrimaryButton },
-  props: {},
+  props: {
+    inventoryRecord: {
+      type: Object as PropType<InventoryRecord>,
+      default: () => (defaultInventoryRecord)
+    },
+    itemDetail: {
+      type: Object as PropType<ItemDetail>,
+      default: () => (defaultItemDetail)
+    }
+  },
   data () {
     return {
-      inventoryRecord: { currentAmount: 100, accumulativeAmount: 800, usedAmount: 100, accumulativeUsed: 800, unit: 'กล่อง' },
-      itemList: [
-        { name: 'ยา Favipiravir', quantity: 1, unit: 'กล่อง' },
-        { name: 'อาหาร', quantity: 1, unit: 'กล่อง' },
-        { name: 'เครื่องวัดค่าออกซิเจน', quantity: 1, unit: 'เครื่อง' }
-      ]
+      imageMap: productImageMap
     }
   },
   computed: {},
   methods: {
     updateInventory () : void {
-      this.$router.push('/procurement/update-inventory')
+      this.$router.push({ path: '/procurement/update-inventory/', query: { id: this.$route.query.id } })
     },
     moreCurrentInventoryInfo () : void {
-      this.$router.push('/procurement/current-inventory')
+      this.$router.push({ path: '/procurement/current-inventory/', query: { id: this.$route.query.id } })
     },
     moreUsedInventoryInfo () : void {
-      this.$router.push('/procurement/used-inventory')
+      this.$router.push({ path: '/procurement/used-inventory/', query: { id: this.$route.query.id } })
     }
   }
 })
 </script>
 
 <style scoped lang="less">
-
-.list-title {
-  font-weight: bolder;
-  color: black;
-}
 
 .container {
   padding: 18px;
@@ -108,7 +103,8 @@ export default Vue.extend({
 img {
   display: block;
   width: 100%;
-  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-radius: 8px;
 }
 
 .update-button {
@@ -167,11 +163,9 @@ img {
   width: 40px;
 }
 
-.ant-list-item-meta-description {
-  color: #000000;
-  font-weight: bolder;
-  line-height: 10px;
-  font-size: 18px;
+ul {
+  margin-bottom: 4px;
+  padding-left: 18px;
 }
 
 </style>

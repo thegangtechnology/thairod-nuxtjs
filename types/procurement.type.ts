@@ -17,10 +17,31 @@ export interface InventoryDetailCard {
   unit: string
 }
 
-export interface ItemOverViewInfo {
+export interface ItemOverviewInfo {
   id: string,
   name: string,
   stock: number,
   unit: string,
-  lastUpdate: string
+  updatedDate: string,
+}
+
+export interface InventoryRecord {
+  currentAmount: number,
+  accumulativeAmount: number,
+  usedAmount: number,
+  accumulativeUsed: number,
+  unit: String
+}
+
+export interface ItemDetail {
+  id: string,
+  productDescription: string,
+  description: string,
+  name: string,
+  unit: string
+}
+
+export interface ItemDetailPageInfo {
+  itemDetail: ItemDetail,
+  inventoryRecord: InventoryRecord
 }
