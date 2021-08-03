@@ -1,21 +1,21 @@
 <template>
   <div
-    class='order-content-wrapper'
+    class="order-content-wrapper"
   >
     <a-form
-      :form='patientInfoForm'
-      :hide-required-mark='true'
-      @submit='goToOrderConfirmation'
+      :form="patientInfoForm"
+      :hide-required-mark="true"
+      @submit="goToOrderConfirmation"
     >
-      <a-row justify='center' type='flex'>
-        <a-col :md='12' :span='24'>
-          <a-form-item label='ชื่อ - นามสกุล'>
+      <a-row justify="center" type="flex">
+        <a-col :md="12" :span="24">
+          <a-form-item label="ชื่อ - นามสกุล">
             <a-input v-decorator="['name',]" disabled />
           </a-form-item>
         </a-col>
 
-        <a-col :md='12' :span='24'>
-          <a-form-item label='เบอร์โทร'>
+        <a-col :md="12" :span="24">
+          <a-form-item label="เบอร์โทร">
             <a-input
               v-decorator="[
                 'phoneNumber',
@@ -25,27 +25,30 @@
           </a-form-item>
         </a-col>
 
-        <a-col :span='24'>
-          <a-form-item label='ที่อยู่'>
-            <a-textarea v-decorator="[
+        <a-col :span="24">
+          <a-form-item label="ที่อยู่">
+            <a-textarea
+              v-decorator="[
                 'street'
-              ]" :rows='3' />
+              ]"
+              :rows="3"
+            />
           </a-form-item>
         </a-col>
 
-        <a-col :md='12' :span='24'>
-          <a-form-item label='จังหวัด'>
+        <a-col :md="12" :span="24">
+          <a-form-item label="จังหวัด">
             <a-select
               v-decorator="[
                 'province',
                 { rules: [{ required: true, message: 'กรุณาระบุจังหวัด' }] },
               ]"
-              @change='handleProvinceChange'
+              @change="handleProvinceChange"
             >
               <a-select-option
-                v-for='province in provinces'
-                :key='province'
-                :value='province'
+                v-for="province in provinces"
+                :key="province"
+                :value="province"
               >
                 {{ province }}
               </a-select-option>
@@ -53,19 +56,19 @@
           </a-form-item>
         </a-col>
 
-        <a-col :md='12' :span='24'>
-          <a-form-item label='เขต/อำเภอ'>
+        <a-col :md="12" :span="24">
+          <a-form-item label="เขต/อำเภอ">
             <a-select
               v-decorator="[
                 'district',
                 { rules: [{ required: true, message: 'กรุณาระบุเขต/อำเภอ' }] },
               ]"
-              @change='handleDistrictChange'
+              @change="handleDistrictChange"
             >
               <a-select-option
-                v-for='district in districts'
-                :key='district'
-                :value='district'
+                v-for="district in districts"
+                :key="district"
+                :value="district"
               >
                 {{ district }}
               </a-select-option>
@@ -73,19 +76,19 @@
           </a-form-item>
         </a-col>
 
-        <a-col :md='12' :span='24'>
-          <a-form-item label='แขวง/ตำบล'>
+        <a-col :md="12" :span="24">
+          <a-form-item label="แขวง/ตำบล">
             <a-select
               v-decorator="[
                 'subDistrict',
                 { rules: [{ required: true, message: 'กรุณาระบุแขวง/ตำบล' }] },
               ]"
-              @change='handleSubDistrictChange'
+              @change="handleSubDistrictChange"
             >
               <a-select-option
-                v-for='subDistrict in subDistricts'
-                :key='subDistrict'
-                :value='subDistrict'
+                v-for="subDistrict in subDistricts"
+                :key="subDistrict"
+                :value="subDistrict"
               >
                 {{ subDistrict }}
               </a-select-option>
@@ -93,37 +96,37 @@
           </a-form-item>
         </a-col>
 
-        <a-col :md='12' :span='24'>
-          <a-form-item label='รหัสไปรษณีย์'>
+        <a-col :md="12" :span="24">
+          <a-form-item label="รหัสไปรษณีย์">
             <a-input
               v-decorator="[
                 'zipcode',
                 { rules: [{ required: true, message: 'กรุณาระบุรหัสไปรษณีย์' }] },
               ]"
+              style="width: 100%"
             />
           </a-form-item>
         </a-col>
 
-        <a-col :span='24'>
-          <p>แผนที่</p>
-          MAP
-        </a-col>
+        <!--        TODO: Add map later-->
+        <!--        <a-col :span="24">-->
+        <!--          <p>แผนที่</p>-->
+        <!--          MAP-->
+        <!--        </a-col>-->
 
-        <a-col :span='24'>
-          <a-form-item label='จุดสังเกต'>
+        <a-col :span="24">
+          <a-form-item label="จุดสังเกต">
             <a-textarea
-              v-decorator="['note']" :rows='3'
+              v-decorator="['note']"
+              :rows="3"
             />
           </a-form-item>
         </a-col>
       </a-row>
 
-      <a-row class='button-group' type='flex'>
-        <a-col span='12'>
-          <secondary-button :on-click='clickBack' :text="'กลับ'" size='default' />
-        </a-col>
-        <a-col span='12'>
-          <primary-button :on-click='goToOrderConfirmation' :text="'ต่อไป'" size='default' />
+      <a-row class="button-group" type="flex">
+        <a-col span="24" :md="{ span: 12, offset: 12 }">
+          <primary-button :on-click="goToOrderConfirmation" :text="'ต่อไป'" size="default" />
         </a-col>
       </a-row>
     </a-form>
@@ -154,7 +157,7 @@ export default Vue.extend({
     SecondaryButton
   },
   layout: 'mobile-empty',
-  data() {
+  data () {
     return {
       form: {},
       patientInfoForm: this.$form.createForm(this),
@@ -164,20 +167,20 @@ export default Vue.extend({
     }
   },
   computed: {
-    patientInfo(): PatientInfo {
+    patientInfo (): PatientInfo {
       return CheckoutModule.patient
     },
-    patientName(): string {
+    patientName (): string {
       return this.patientInfo.name
     },
-    patientHash(): string {
+    patientHash (): string {
       return this.$route.query.patient as string
     },
-    provinces(): string[] {
+    provinces (): string[] {
       return [...new Set(this.locations.map((loc: IAddress) => loc.province))]
     }
   },
-  async mounted() {
+  async mounted () {
     fetch(
       'https://gist.githubusercontent.com/ChaiyachetU/a72a3af3c6561b97883d7af935188c6b/raw/0e9389fa1fc06b532f9081793b3e36db31a1e1c6/thailand.json'
     )
@@ -186,22 +189,22 @@ export default Vue.extend({
     CommonModule.setHeaderTitle({ header: 'กรุณาตรวจสอบข้อมูล' })
     await CheckoutModule.getPatientOrder({ patientHash: this.patientHash })
     this.patientInfoForm.setFieldsValue({
-      'name': this.patientInfo.name,
-      'phoneNumber': this.patientInfo.phoneNumber,
-      'street': this.patientInfo.street,
-      'province': this.patientInfo.province,
-      'district': this.patientInfo.district,
-      'subDistrict': this.patientInfo.subDistrict,
-      'zipcode': this.patientInfo.zipcode,
-      'note': this.patientInfo.note
+      name: this.patientInfo.name,
+      phoneNumber: this.patientInfo.phoneNumber,
+      street: this.patientInfo.street,
+      province: this.patientInfo.province,
+      district: this.patientInfo.district,
+      subDistrict: this.patientInfo.subDistrict,
+      zipcode: this.patientInfo.zipcode,
+      note: this.patientInfo.note
     })
   },
   methods: {
-    handleProvinceChange(value: string): void {
-      this.patientInfoForm.setFieldsValue({ 'province': value })
-      this.patientInfoForm.setFieldsValue({ 'district': '' })
-      this.patientInfoForm.setFieldsValue({ 'subDistrict': '' })
-      this.patientInfoForm.setFieldsValue({ 'zipcode': '' })
+    handleProvinceChange (value: string): void {
+      this.patientInfoForm.setFieldsValue({ province: value })
+      this.patientInfoForm.setFieldsValue({ district: '' })
+      this.patientInfoForm.setFieldsValue({ subDistrict: '' })
+      this.patientInfoForm.setFieldsValue({ zipcode: '' })
       this.districts = [
         ...new Set(
           this.locations
@@ -210,10 +213,10 @@ export default Vue.extend({
         )
       ]
     },
-    handleDistrictChange(value: string): void {
-      this.patientInfoForm.setFieldsValue({ 'district': value })
-      this.patientInfoForm.setFieldsValue({ 'subDistrict': '' })
-      this.patientInfoForm.setFieldsValue({ 'zipcode': '' })
+    handleDistrictChange (value: string): void {
+      this.patientInfoForm.setFieldsValue({ district: value })
+      this.patientInfoForm.setFieldsValue({ subDistrict: '' })
+      this.patientInfoForm.setFieldsValue({ zipcode: '' })
       this.subDistricts = [
         ...new Set(
           this.locations
@@ -222,16 +225,16 @@ export default Vue.extend({
         )
       ]
     },
-    handleSubDistrictChange(value: string): void {
-      this.patientInfoForm.setFieldsValue({ 'subDistrict': value })
-      this.patientInfoForm.setFieldsValue({ 'zipcode': '' })
+    handleSubDistrictChange (value: string): void {
+      this.patientInfoForm.setFieldsValue({ subDistrict: value })
+      this.patientInfoForm.setFieldsValue({ zipcode: '' })
       const foundLocation = this.locations
         .find((loc: IAddress) => loc.district === this.patientInfoForm.getFieldValue('subDistrict'))
       if (foundLocation) {
-        this.patientInfoForm.setFieldsValue({ 'zipcode': (foundLocation as IAddress).zipcode })
+        this.patientInfoForm.setFieldsValue({ zipcode: (foundLocation as IAddress).zipcode })
       }
     },
-    goToOrderConfirmation(): void {
+    goToOrderConfirmation (): void {
       this.patientInfoForm.validateFields((err) => {
         if (!err) {
           CheckoutModule.changePatientAddress({ address: this.patientInfoForm.getFieldsValue() })
@@ -239,7 +242,7 @@ export default Vue.extend({
         }
       })
     },
-    clickBack(): void {
+    clickBack (): void {
       //  back method
     }
   }

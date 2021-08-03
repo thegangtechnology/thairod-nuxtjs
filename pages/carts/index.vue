@@ -5,7 +5,7 @@
     <div class="carts-card__container">
       <a-row class="mb-6">
         <a-col v-for="(item, i) in 3" :key="i" class="carts-item-list">
-          <CartsListItem />
+          <CartsListItem :products="[]" />
         </a-col>
       </a-row>
     </div>
@@ -67,13 +67,14 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import Vue from 'vue'
 import CartsListItem from '~/components/carts/CartsListItem.vue'
 import CardPatientDetail from '~/components/CardPatientDetail.vue'
 import PatientModule from '~/store/patient.module'
 import { Patient } from '~/types/patient.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
+import DoctorModule from '~/store/doctor.module'
 
 export default Vue.extend({
   components: {
@@ -82,7 +83,7 @@ export default Vue.extend({
     PrimaryButton
   },
   layout: 'product-layout',
-  data() {
+  data () {
     return {
       visible: false,
       amount: 1,
@@ -90,33 +91,33 @@ export default Vue.extend({
     }
   },
   computed: {
-    patient(): Patient {
-      return PatientModule.patient
+    patient (): Patient {
+      return DoctorModule.patient
+    },
+    hash (): string {
+      return this.$route.query.doctor as string
     }
   },
-  async mounted() {
-    await PatientModule.getPatient({ id: 1 })
+  async mounted () {
+    await DoctorModule.getDoctorOrder({ hash: this.hash })
+    // await CheckoutModule.getPatient({ id: 1 })
   },
   methods: {
-    showModal(): void {
+    showModal (): void {
       this.visible = true
     },
-
-    closeModal(): void {
+    closeModal (): void {
       this.visible = false
     },
-    copyLink(): void {
-      // let copyText = document.getElementById('textToCopy')
-      // copyText.select()
-      // copyText.setSelectionRange(0, 99999)
-      // document.execCommand('copy')
-      // if (document.execCommand('copy')) {
-      //   this.success()
-      //   setTimeout(() => this.closeModal(), 1000)
-      // }
+    copyLink (): void {
+      const copyText = document.getElementById('textToCopy') as HTMLInputElement
+      copyText.select()
+      document.execCommand('copy')
+      this.success()
+      setTimeout(() => this.closeModal(), 1000)
     },
-    success(): void {
-      this.$message.success('Cpoied', 1)
+    success (): void {
+      this.$message.success('Copied', 1)
     }
   }
 })
@@ -126,22 +127,27 @@ export default Vue.extend({
 .input-round {
   border-radius: 40px;
 }
+
 .carts-card__container {
   margin-bottom: 60px;
 }
+
 .carts-card__title {
   font-size: 1.25rem;
   color: #000000;
   margin-bottom: 20px;
 }
+
 .carts-card__subtitle {
   font-size: 1rem;
   color: #000000;
   margin-bottom: 12px;
 }
+
 .carts-item-list {
   margin-bottom: 18px;
 }
+
 .carts-card__button-container {
   position: fixed;
   bottom: 0;
@@ -150,9 +156,11 @@ export default Vue.extend({
   background-color: #ffffff;
   padding: 16px;
 }
+
 .carts-card__button-container .update-button {
   font-size: 18px;
 }
+
 .checkout__button {
   color: #ffffff;
   background-color: #666666;
