@@ -43,7 +43,7 @@ export function getWarehouseList () : Promise<Warehouse[]> {
     })
 }
 
-export function updateProcurement (body: UpdateProcurementBody) : Promise<void | AxiosResponse<any>> {
+export function updateProcurement (body: UpdateProcurementBody) : Promise<void | AxiosResponse> {
   return $axios.post(`${apiPath.procurement}/`, body, {
     headers: {
       'Content-Type': 'application/json'

@@ -1,4 +1,4 @@
-import { InventoryRecord, ItemDetail, ItemOverviewInfo } from './procurement.type'
+import { InventoryDetailCard, InventoryRecord, ItemDetail, ItemOverviewInfo } from './procurement.type'
 
 export const defaultItemDetail: ItemDetail = {
   id: 0,
@@ -22,4 +22,11 @@ export const defaultItemOverviewInfo : ItemOverviewInfo = {
   stock: 0,
   unit: '',
   updatedDate: ''
+}
+
+export const defaultInventoryDetailCard : InventoryDetailCard = {
+  backgroundColor: '#ffffff',
+  title: '',
+  amount: 0,
+  unit: ''
 }
