@@ -106,7 +106,7 @@ class ShipmentModule extends VuexModule {
   }
 
   @Action({ rawError: true })
-  public initialiseShipment (
+  public async initialiseShipment (
     payload: {
     label_printed?: CheckBoolean,
     deliver?: CheckBoolean,
@@ -116,7 +116,7 @@ class ShipmentModule extends VuexModule {
   ) {
     this.SET_LOADING(true)
     try {
-      Promise.all([
+      const res = await Promise.all([
         getShipments(),
         getShipments(false, false),
         getShipments(true, false),
@@ -125,17 +125,16 @@ class ShipmentModule extends VuexModule {
         getShipments(null, null, false),
         getShipments(null, null, true),
         getShipments(payload.label_printed, payload.deliver, payload.batch_isnull, payload.page)
-      ]).then((allAmount) => {
-        this.SET_TOTAL_AMOUNT(allAmount[0].count)
-        this.SET_WAIT_AMOUNT(allAmount[1].count)
-        this.SET_PRINT_AMOUNT(allAmount[2].count)
-        this.SET_OUT_AMOUNT(allAmount[3].count)
-        this.SET_RECEIVE_AMOUNT(0)
-        this.SET_BATCH_AMOUNT(allAmount[5].count)
-        this.SET_NONBATCH_AMOUNT(allAmount[6].count)
-        this.SET_SHIPMENT_LIST((allAmount[7].result))
-        this.SET_LOADING(false)
-      })
+      ])
+      this.SET_TOTAL_AMOUNT(res[0].count)
+      this.SET_WAIT_AMOUNT(res[1].count)
+      this.SET_PRINT_AMOUNT(res[2].count)
+      this.SET_OUT_AMOUNT(res[3].count)
+      this.SET_RECEIVE_AMOUNT(0)
+      this.SET_BATCH_AMOUNT(res[5].count)
+      this.SET_NONBATCH_AMOUNT(res[6].count)
+      this.SET_SHIPMENT_LIST((res[7].result))
+      this.SET_LOADING(false)
     } catch (error) {
       Promise.reject(new Error(error.message))
     }
