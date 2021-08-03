@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios'
 import { ItemDetail, ItemOverviewInfo } from '~/types/procurement.type'
 import { $axios } from '~/utils/api'
 import apiPath from '~/data/api_path'
@@ -5,8 +6,8 @@ import { ProductVariationsParam, ProductVariationsReturn, UpdateProcurementBody 
 import { defaultItemDetail } from '~/types/procurement.default'
 import { Warehouse } from '~/models/Warehouse'
 
-export async function getProductVariations (params: ProductVariationsParam) : Promise<ProductVariationsReturn> {
-  return await $axios
+export function getProductVariations (params: ProductVariationsParam) : Promise<ProductVariationsReturn> {
+  return $axios
     .get(apiPath.productVariation, {
       params
     })
@@ -42,8 +43,8 @@ export function getWarehouseList () : Promise<Warehouse[]> {
     })
 }
 
-export function updateProcurement (body: UpdateProcurementBody) : void {
-  $axios.post(`${apiPath.procurement}/`, body, {
+export function updateProcurement (body: UpdateProcurementBody) : Promise<void | AxiosResponse<any>> {
+  return $axios.post(`${apiPath.procurement}/`, body, {
     headers: {
       'Content-Type': 'application/json'
     }
