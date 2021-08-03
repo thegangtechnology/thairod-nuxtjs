@@ -5,7 +5,7 @@
     :style="{backgroundColor: '#EEEFF6FF', color: 'black', borderColor: '#efefef', fontSize: '18px', textShadow: 'none'}"
     @click="onClick"
   >
-    <b>{{ text }}</b>
+    <strong>{{ text }}</strong>
   </a-button>
 </template>
 
@@ -15,7 +15,12 @@ import Vue from 'vue'
 
 export default Vue.extend({
   props: {
-    onClick: { type: Function, default: () => {} },
+    onClick: {
+      type: Function,
+      default: () => {
+      // empty
+      }
+    },
     text: { type: String, default: '' }
   }
 })

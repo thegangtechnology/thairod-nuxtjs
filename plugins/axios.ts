@@ -10,6 +10,12 @@ export default function ({ $axios }: Context) {
       }
     }
   ]
+  $axios.defaults.transformRequest = [
+    (data) => {
+      if (data) {
+        return JSON.stringify(snakecaseKeys(data, { deep: true }))
+      }
+    }]
   $axios.interceptors.request.use((config) => {
     const newConfig = { ...config }
     if (config.params) {

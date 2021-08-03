@@ -1,11 +1,9 @@
 import { ItemDetail, ItemOverviewInfo } from '~/types/procurement.type'
 import { $axios } from '~/utils/api'
 import apiPath from '~/data/api_path'
-import {
-  ProductVariationsParam,
-  ProductVariationsReturn
-} from '~/types/procurementService.type'
+import { ProductVariationsParam, ProductVariationsReturn, UpdateProcurementBody } from '~/types/procurementService.type'
 import { defaultItemDetail } from '~/types/procurement.default'
+import { Warehouse } from '~/models/Warehouse'
 
 export async function getProductVariations (params: ProductVariationsParam) : Promise<ProductVariationsReturn> {
   return await $axios
@@ -22,14 +20,35 @@ export async function getProductVariations (params: ProductVariationsParam) : Pr
     })
 }
 
-export async function getItemDetail (id: string | (string | null)[]) : Promise<ItemDetail> {
-  return await $axios
+export function getItemDetail (id: string | (string | null)[]) : Promise<ItemDetail> {
+  return $axios
     .get(`${apiPath.productVariation}/${id}`)
     .then((res) => {
-      const data : ItemDetail = res.data
-      return data
+      return res.data
     })
     .catch(() => {
       return defaultItemDetail
+    })
+}
+
+export function getWarehouseList () : Promise<Warehouse[]> {
+  return $axios
+    .get(apiPath.warehouse)
+    .then((res) => {
+      return res.data.results
+    })
+    .catch(() => {
+      return Promise.resolve([] as Warehouse[])
+    })
+}
+
+export function updateProcurement (body: UpdateProcurementBody) : void {
+  $axios.post(`${apiPath.procurement}/`, body, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .catch(() => {
+      // empty
     })
 }
