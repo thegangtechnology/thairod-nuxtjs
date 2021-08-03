@@ -19,7 +19,7 @@ export default Vue.extend({
   props: {
     onClick: { type: Function, default: () => {} },
     text: { type: String, default: '' },
-    size: { type: String, default: '' },
+    size: { type: String, default: null },
     block: { type: Boolean, default: false }
   }
 })

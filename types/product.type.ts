@@ -8,7 +8,9 @@ export interface Product {
   price: number
   name: string
   description: string
+  productDescription: string
   unit: string
+  image: string
 }
 
 /**
@@ -20,5 +22,7 @@ export interface ProductJson {
   price: number
   name: string
   description: string
+  productDescription: string
   unit: string
+  image: string
 }
