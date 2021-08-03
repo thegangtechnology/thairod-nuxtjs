@@ -17,6 +17,7 @@
             :precision="0"
             :min="1"
             :step="10"
+            :style="{ height: '38px' }"
           />
         </a-form-item>
         <a-form-item label="ราคาทุน">
@@ -25,6 +26,7 @@
             :precision="0"
             :min="0"
             :step="10"
+            :style="{ height: '38px' }"
           />
         </a-form-item>
         <a-form-item label="คลังสินค้า">
@@ -71,6 +73,14 @@ import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vu
 
 export default Vue.extend({
   components: { ConfirmModalContent, PrimaryButton, SecondaryButton },
+  props: {
+    submitForm: {
+      type: Function,
+      default: () => {
+        return () => {}
+      }
+    }
+  },
   data () {
     return {
       form: this.$form.createForm(this),
@@ -78,7 +88,7 @@ export default Vue.extend({
         visible: false,
         confirmLoading: false
       },
-      warehouses: ['Warehouse A', 'Warehouse B', 'คลังสินค้า C']
+      warehouses: ['Default']
     }
   },
   methods: {
@@ -94,14 +104,15 @@ export default Vue.extend({
     },
     handleSubmit () {
       this.modal.confirmLoading = true
+      this.submitForm(this.form.getFieldsValue())
       this.modal.confirmLoading = false
       this.closeModal()
       this.form.resetFields()
-      this.$router.push('/procurement/item-detail')
+      this.$router.push({ path: '/procurement/item-detail/', query: { id: this.$route.query.id } })
     },
     onCancel (): void {
       this.form.resetFields()
-      this.$router.push('/procurement/item-detail')
+      this.$router.push({ path: '/procurement/item-detail/', query: { id: this.$route.query.id } })
     }
   }
 }
@@ -112,6 +123,8 @@ export default Vue.extend({
 .ant-select-selection {
   border-radius: 25px;
   height: 38px;
+  padding-top: 4px;
+  font-size: 20px !important;
 }
 
 .ant-input-number-handler-wrap {
@@ -122,8 +135,10 @@ export default Vue.extend({
   max-width: 80vw;
 }
 
-#cost.ant-input-number, #quantity.ant-input-number {
+#cost.ant-input-number-input, #quantity.ant-input-number-input {
   height: 38px;
+  font-size: 20px !important;
+  padding-bottom: 2px;
 }
 </style>
 

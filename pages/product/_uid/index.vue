@@ -4,7 +4,7 @@
       :title="product.name"
       :on-back-button-click="onBackButtonClick"
     />
-    <ProductDetail :item="product" />
+    <ProductDetail :item="product" @updateAmount="updateAmount"/>
   </div>
 </template>
 
@@ -22,7 +22,9 @@ export default Vue.extend({
   },
   layout: 'empty',
   data () {
-    return {}
+    return {
+      slug: 0
+    }
   },
   computed: {
     product (): Product {
@@ -30,11 +32,21 @@ export default Vue.extend({
     }
   },
   async mounted () {
-    await ProductModule.getProduct({ id: 1 })
+    await ProductModule.getProduct(
+      { id: this.$route.params.uid }
+    )
   },
   methods: {
     onBackButtonClick (): void {
       this.$router.push('/product')
+    },
+    updateAmount (amount: number, id: number): void {
+      const newProduct = { ...this.product }
+      newProduct.amount = amount
+      console.log(amount, id)
+      ProductModule.updateProduct(
+        newProduct
+      )
     }
   }
 })
