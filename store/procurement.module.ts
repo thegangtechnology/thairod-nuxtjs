@@ -1,7 +1,7 @@
 import { getModule, Module, MutationAction, VuexModule } from 'vuex-module-decorators'
 import { store } from '@/store'
-import { InventoryRecord, ItemDetail, ItemDetailPageInfo, ItemOverviewInfo } from '~/types/procurement.type'
-import { getProductVariations, getItemDetail } from '~/services/procurement'
+import { InventoryRecord, ItemDetail, ItemDetailPageInfo, ItemOverviewInfo, Warehouse } from '~/types/procurement.type'
+import { getProductVariations, getItemDetail, getWarehouseList } from '~/services/procurement.service'
 import { ProductVariationsParam } from '~/types/procurementService.type'
 import { defaultInventoryRecord, defaultItemDetail } from '~/types/procurement.default'
 
@@ -20,6 +20,7 @@ class ProcurementModule extends VuexModule {
   itemOverviewInfo: ItemOverviewInfo[] = [] as ItemOverviewInfo[]
   totalItems: number = 0
   itemDetailPageInfo: ItemDetailPageInfo = { itemDetail: defaultItemDetail, inventoryRecord: defaultInventoryRecord }
+  warehouseList: Warehouse[] = [] as Warehouse[]
 
   @MutationAction({ mutate: ['itemOverviewInfo', 'totalItems'] })
   public async getItemOverview (params: ProductVariationsParam) {
@@ -39,6 +40,14 @@ class ProcurementModule extends VuexModule {
     const itemDetailPageInfo: ItemDetailPageInfo = { itemDetail, inventoryRecord }
     return {
       itemDetailPageInfo
+    }
+  }
+
+  @MutationAction({ mutate: ['warehouseList'] })
+  public async getWarehouseList () {
+    const warehouseList : Warehouse[] = await getWarehouseList()
+    return {
+      warehouseList
     }
   }
 }

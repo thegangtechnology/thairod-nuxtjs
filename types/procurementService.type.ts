@@ -15,3 +15,10 @@ export interface SelectedItemDetailReturn {
   inventoryRecord: InventoryRecord,
   itemDetail: ItemDetail
 }
+
+export interface UpdateProcurementBody {
+  quantity: number,
+  unitPrice: number,
+  warehouse: number,
+  productVariation: number
+}

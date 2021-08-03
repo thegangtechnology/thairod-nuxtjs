@@ -1,7 +1,7 @@
 import { InventoryRecord, ItemDetail, ItemOverviewInfo } from './procurement.type'
 
 export const defaultItemDetail: ItemDetail = {
-  id: '',
+  id: 0,
   productDescription: '',
   description: '',
   name: '',
@@ -17,7 +17,7 @@ export const defaultInventoryRecord: InventoryRecord = {
 }
 
 export const defaultItemOverviewInfo : ItemOverviewInfo = {
-  id: '',
+  id: 0,
   name: '',
   stock: 0,
   unit: '',
