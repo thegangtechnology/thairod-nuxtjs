@@ -31,6 +31,7 @@ export default {
     '~plugins/order-components.ts',
     '~plugins/assign-components.ts',
     '~plugins/print-components.ts',
+    '~plugins/shipment.plugin.ts',
     '~plugins/date.ts',
     '@/plugins/accessor.ts',
     '@/plugins/axios.ts'

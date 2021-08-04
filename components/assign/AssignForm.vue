@@ -174,7 +174,7 @@ import BoxSvg from '~/assets/images/print/box.svg'
 import ShipmentModule from '~/store/shipment.module'
 import { ShipmentLine } from '~/types/shipment.type'
 import { IColumns, columns } from '~/static/ShipmentColumns'
-import { getBatchNumber } from '~/services/shipment'
+import { getBatchNumber } from '~/services/shipment.service'
 
 interface IMain {
   [key: string]: string
