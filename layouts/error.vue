@@ -1,6 +1,6 @@
 <template>
   <div class="centered">
-    <img :src="require('@/assets/images/error-page.svg')" alt="Error image">
+    <img :src="require('@/assets/images/error-page.svg')" alt="Error image" class="mb-8">
     <h1 v-if="error.statusCode === 404">
       {{ pageNotFound }}
     </h1>
@@ -11,7 +11,9 @@
       กรุณาตรวจสอบ URL อีกครั้ง หรือกดปุ่มด้านล่างเพื่อ <br>
       ย้อนกลับไปที่หน้าก่อนหน้า
     </div>
-    <primary-button :text="'ย้อนกลับ'" :on-click="goBack" />
+    <div class="pa-4">
+      <primary-button :text="'ย้อนกลับ'" :on-click="goBack" />
+    </div>
   </div>
 </template>
 
@@ -52,6 +54,7 @@ export default {
 h1 {
   font-size: 24px;
   font-weight: bold;
+  margin-bottom: 0;
 }
 .centered{
   height: 100vh;
@@ -63,7 +66,7 @@ h1 {
 }
 .detail__text{
   text-align: center;
-  line-height: normal;
   font-size: 16px;
+  padding:0 16px;
 }
 </style>
