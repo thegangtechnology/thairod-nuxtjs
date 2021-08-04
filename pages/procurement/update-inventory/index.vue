@@ -22,6 +22,7 @@ export default Vue.extend(
   {
     components: { UpdateInventoryForm, ProcurementHeader },
     layout: 'empty',
+    middleware: 'auth',
     data () {
       return {
       }
