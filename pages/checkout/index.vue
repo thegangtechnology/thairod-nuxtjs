@@ -125,11 +125,8 @@
       </a-row>
 
       <a-row class="button-group" type="flex">
-        <a-col span="12">
-          <secondary-button :on-click="clickBack" :text="'กลับ'" />
-        </a-col>
-        <a-col span="12">
-          <primary-button :on-click="goToOrderConfirmation" :text="'ต่อไป'" />
+        <a-col span="24">
+          <primary-button :on-click="goToOrderConfirmation" :text="'ต่อไป'" block />
         </a-col>
       </a-row>
     </a-form>
@@ -142,7 +139,6 @@ import CheckoutModule from '~/store/checkout.module'
 import { PatientInfo } from '~/types/order.type'
 import CommonModule from '~/store/common.module'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
-import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
 
 interface IAddress {
   district: string;
@@ -156,8 +152,7 @@ interface IAddress {
 
 export default Vue.extend({
   components: {
-    PrimaryButton,
-    SecondaryButton
+    PrimaryButton
   },
   layout: 'mobile-empty',
   data () {
@@ -244,9 +239,6 @@ export default Vue.extend({
           this.$router.push(`/checkout/checkout-confirmation/?patient=${this.patientHash}`)
         }
       })
-    },
-    clickBack (): void {
-      //  back method
     }
   }
 })
