@@ -95,6 +95,7 @@ export default Vue.extend({
     },
     updateAmount (value: number) {
       this.amount = value
+      this.$emit('updateAmount', this.amount, this.product.id)
     },
     handleMinus (): void {
       this.amount--

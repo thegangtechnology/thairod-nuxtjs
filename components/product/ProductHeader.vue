@@ -6,10 +6,12 @@
         {{ title }}
       </span>
       <a v-if="isDetail" class="carts__button" @click="goToCart">
-        <a-icon
-          class="trigger float-right shopping-cart__button"
-          type="shopping-cart"
-        />
+        <a-badge :count="totalCart">
+          <a-icon
+            class="trigger float-right shopping-cart__button"
+            type="shopping-cart"
+          />
+        </a-badge>
       </a>
     </div>
   </div>
@@ -17,6 +19,7 @@
 
 <script lang='ts'>
 import Vue from 'vue'
+import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   props: {
@@ -24,12 +27,16 @@ export default Vue.extend({
     onBackButtonClick: { type: Function, default: () => null },
     isDetail: { type: Boolean, default: true }
   },
+  computed: {
+    totalCart (): number {
+      if (sessionStorage.getItem('doc-or-storage')) {
+        ProductModule.setTotalCart({ totalItem: JSON.parse(sessionStorage.getItem('doc-or-storage')).length })
+      }
+      return ProductModule.total
+    }
+  },
   methods: {
     goToCart () {
-      // const cartItems = ProductModule.cartItems.map((product) => {
-      //   return { itemId: product.id, quantity: product.amount }
-      // })
-      // sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
       this.$router.push(`/carts/?doctor=${this.$route.query.doctor}`)
     }
   }

@@ -19,7 +19,7 @@
         </div>
         <div v-if="!collapsed" class="pa-4">
           <div class="mb-3">
-            <DoctorDetail />
+            <DoctorDetail :doctor-detail="doctor" />
           </div>
         </div>
         <a-menu theme="light" mode="inline">
@@ -39,12 +39,14 @@
           <span class="page-name">
             ไทยรอดMALL
           </span>
-          <a class="carts__button" @click="goToCart">
-            <a-icon
-              class="trigger float-right shopping-cart__button"
-              type="shopping-cart"
-            />
-          </a>
+          <a-badge :count="totalCart">
+            <a class="carts__button" @click="goToCart">
+              <a-icon
+                class="trigger float-right shopping-cart__button"
+                type="shopping-cart"
+              />
+            </a>
+          </a-badge>
         </a-layout-header>
         <a-layout-content>
           <nuxt />
@@ -57,6 +59,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import DoctorDetail from '~/components/DoctorDetail.vue'
+import DoctorModule from '~/store/doctor.module'
+import { DoctorInfo } from '~/types/order.type'
+import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   components: {
@@ -66,6 +71,20 @@ export default Vue.extend({
     return {
       collapsed: true
     }
+  },
+  computed: {
+    doctor (): DoctorInfo {
+      return DoctorModule.doctor
+    },
+    totalCart (): number {
+      if (sessionStorage.getItem('doc-or-storage')) {
+        ProductModule.setTotalCart({ totalItem: JSON.parse(sessionStorage.getItem('doc-or-storage')).length })
+      }
+      return ProductModule.total
+    }
+  },
+  async mounted () {
+    await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor })
   },
   methods: {
     hiddenMenu () {

@@ -43,7 +43,7 @@ const imageDefault = [
 class ProductModule extends VuexModule {
   productList: Product[] = []
   product: Product = {} as Product
-  cartItems: any[] = []
+  total: number = 0
 
   @Mutation
   SET_PRODUCT_LIST ({
@@ -64,17 +64,10 @@ class ProductModule extends VuexModule {
   }
 
   @Mutation
-  UPDATE_AMOUNT ({
-    product
-  }: {
-    product: Product
-  }) {
-    const duplicateItemIndex = this.cartItems.findIndex(item => item.id === product.id)
-    if (duplicateItemIndex !== -1) {
-      this.cartItems[duplicateItemIndex].amount = product.amount
-    } else {
-      this.cartItems.push(product)
-    }
+  SET_TOTAL_CART ({
+    totalItem
+  }: { totalItem: number }) {
+    this.total = totalItem
   }
 
   @Action({ commit: 'SET_PRODUCT_LIST' })
@@ -139,9 +132,11 @@ class ProductModule extends VuexModule {
     }
   }
 
-  @Action({ rawError: true })
-  public async updateProduct (product: Product) {
-    this.UPDATE_AMOUNT({ product })
+  @Action({ commit: 'SET_TOTAL_CART' })
+  setTotalCart ({ totalItem }: { totalItem: number }) {
+    return {
+      totalItem
+    }
   }
 }
 

@@ -100,7 +100,6 @@
 import Vue, { PropType } from 'vue'
 import { ICheckoutProduct, Product } from '~/types/product.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
-import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   components: { PrimaryButton },
@@ -114,35 +113,7 @@ export default Vue.extend({
   data () {
     return {
       amount: 1,
-      // mockup data
-      form: {},
-      data: {
-        id: 1,
-        name: 'Favipiravir',
-        description: '1 ชุด มี 12 เม็ด',
-        detail: ' Favipiravir มีฤทธิ์ต้านไวรัสในกลุ่มอาร์เอนเอไวรัสได้หลาย ชนิด เช่น ไวรัสไข้หวัดใหญ่ (influenza virus), ไวรัสโรคปาก และเท้าเปื่อย (foot-and-mouth disease virus), ไวรัส ไข้เหลือง (yellow fever virus)นอกจากนี้ยังมีการศึกษาอย่าง ต่อเนื่องกับไวรัสที่ก่อโรคในคนอีกหลายชนิดการที่ยานี้จะมีฤทธิ์ต้านไวรัสได้ต้องถูกเปลี่ยนแปลงในร่างกายโดยเอนไซม์ ภายในเซลล์ได้เป็นfavipiravir ribosyl triphosphate ที่มีฤทธิ์ ในการยับยั้งเอนไซม์ RNA-dependent RNA polymerase (หรือ RNA replicase) ซึ่งเอนไซม์ดังกล่าวมีความสำคัญใน กระบวน การถ่ายแบบอาร์เอ็นเอ (RNA replication) นอกจาก นี้สารออกฤทธิ์ดังกล่าวยังทำให้เกิดการ สร้างสารพันธุกรรม อาร์เอนเอของไวรัสที่ผิดปกติและทำให้ไวรัสตาย ยานี้ไม่ยับ ยั้งการสร้างอาร์เอ็นเอและดีเอ็นเอในเซลล์สัตว์เลี้ยงลูกด้วยนม จึงไม่เป็นอันตรายต่อเซลล์ของคนและสัตว์',
-        amount: 100,
-        itemSets: [
-          {
-            id: 1,
-            image: require('@/assets/images/default/icon-product-2.svg'),
-            name: 'ยา Favipiravir',
-            amount: '1 กล่อง'
-          },
-          {
-            id: 2,
-            image: require('@/assets/images/default/icon-product-3.svg'),
-            name: 'อาหาร',
-            amount: '1 กล่อง'
-          },
-          {
-            id: 3,
-            image: require('@/assets/images/default/icon-product-1.svg'),
-            name: 'ที่วัดค่าออกซิเจน',
-            amount: '1 เครื่อง'
-          }
-        ]
-      }
+      form: {}
     }
   },
   computed: {
@@ -154,25 +125,15 @@ export default Vue.extend({
         if (foundItem) {
           quantity = foundItem.quantity
         }
-        console.log(foundItem, 'foundItem', quantity)
       }
       return quantity
-      // const foundItem = ProductModule.cartItems.find(item => item.id === Number(this.$route.params.uid))
-      // console.log(foundItem, 'found item')
-      // if (foundItem) {
-      //   return foundItem.amount
-      // } else {
-      //   return 1
-      // }
     }
   },
   mounted () {
     this.amount = this.getAmount
-    console.log(this.getAmount, 'get amount')
   },
   methods: {
     updateAmount (value: number) {
-      console.log('changed', value)
       this.amount = value
     },
     handleMinus (): void {
@@ -182,7 +143,6 @@ export default Vue.extend({
       this.amount++
     },
     addToCart (): void {
-      console.log('addtocart')
       this.$emit('updateAmount', this.amount, this.item)
     }
   }

@@ -49,11 +49,13 @@ export default Vue.extend({
   },
   computed: {
     getAmount (): number {
-      console.log(this.item, 'itemmmm')
-      const foundItem = ProductModule.cartItems.find(item => item.id === this.item?.id)
-      console.log(foundItem, 'found item')
+      const cartItems = JSON.parse(sessionStorage.getItem('doc-or-storage') as string)
+      if (!cartItems) {
+        return 0
+      }
+      const foundItem = cartItems.find(item => item.id === this.item?.id)
       if (foundItem) {
-        return foundItem.amount
+        return foundItem.quantity
       } else {
         return 0
       }
@@ -61,7 +63,6 @@ export default Vue.extend({
   },
   mounted () {
     this.amount = this.getAmount
-    console.log(this.item, 'item')
   },
   methods: {
     goToProduct (id: number): void {
@@ -69,7 +70,6 @@ export default Vue.extend({
     },
     addToCart (): void {
       this.amount += 1
-      console.log(this.amount, 'addtocart', this.item)
       this.$emit('updateAmount', this.amount, this.item)
     }
   }

@@ -40,6 +40,7 @@ import ProductModule from '~/store/product.module'
 import { Patient } from '~/types/patient.type'
 import { ICheckoutProduct, Product } from '~/types/product.type'
 import ProductCard from '~/components/product/ProductCard.vue'
+import DoctorModule from '~/store/doctor.module'
 
 export default Vue.extend({
   components: {
@@ -55,7 +56,7 @@ export default Vue.extend({
   },
   computed: {
     patient (): Patient {
-      return PatientModule.patient
+      return DoctorModule.patient
     },
     productList (): Product[] {
       return ProductModule.productList
@@ -82,19 +83,11 @@ export default Vue.extend({
         } else {
           cartItems.push({ itemId: product.id, quantity: amount })
         }
+      } else {
+        cartItems.push({ itemId: product.id, quantity: amount })
       }
       sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
-
-      // const cartItems = ProductModule.cartItems.map((product) => {
-      //   return { itemId: product.id, quantity: product.amount }
-      // })
-      // console.log('product list',product)
-      // const newProduct = { ...product }
-      // newProduct.amount = amount
-      // console.log(amount)
-      // ProductModule.updateProduct(
-      //   newProduct
-      // )
+      ProductModule.setTotalCart({ totalItem: cartItems.length })
     }
 
   }

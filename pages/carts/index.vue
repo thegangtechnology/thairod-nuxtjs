@@ -10,6 +10,7 @@
             @removeItem="removeItem"
             @handleMinus="handleQuantity"
             @handlePlus="handleQuantity"
+            @updateAmount="handleQuantity"
           />
         </a-col>
       </a-row>
@@ -135,6 +136,8 @@ export default Vue.extend({
       const copyText = document.getElementById('textToCopy') as HTMLInputElement
       copyText.select()
       document.execCommand('copy')
+      sessionStorage.removeItem('doc-or-storage')
+      ProductModule.setTotalCart({ totalItem: 0 })
       this.success()
       setTimeout(() => this.closeModal(), 1000)
     },
@@ -145,6 +148,7 @@ export default Vue.extend({
       const foundIndex = this.cartItems.findIndex(item => item.id === itemId)
       this.cartItems.splice(foundIndex, 1)
       sessionStorage.setItem('doc-or-storage', JSON.stringify(this.buildCartItemOrder(this.cartItems)))
+      ProductModule.setTotalCart({ totalItem: this.cartItems.length })
     },
     buildCartItemOrder (items: Product[]): ICheckoutProduct[] {
       return items.map((product: Product) => {
@@ -155,6 +159,7 @@ export default Vue.extend({
       const foundIndex = this.cartItems.findIndex(item => item.id === itemId)
       this.cartItems[foundIndex].quantity = quantity
       sessionStorage.setItem('doc-or-storage', JSON.stringify(this.buildCartItemOrder(this.cartItems)))
+      ProductModule.setTotalCart({ totalItem: this.cartItems.length })
     }
   }
 })

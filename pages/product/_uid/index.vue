@@ -50,17 +50,12 @@ export default Vue.extend({
         } else {
           cartItems.push({ itemId: product.id, quantity: amount })
         }
+      } else {
+        cartItems.push({ itemId: product.id, quantity: amount })
       }
       sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
-      // const newProduct = { ...this.product }
-      // newProduct.amount = amount
-      // console.log(amount, id)
-      // ProductModule.updateProduct(
-      //   newProduct
-      // )
+      ProductModule.setTotalCart({ totalItem: cartItems.length })
     }
   }
 })
 </script>
-
-<style scoped></style>
