@@ -64,7 +64,12 @@ export default Vue.extend({
     product: {
       type: Object as PropType<Product>,
       default: () => {
+        return {
+          id: 0,
+          quantity: 0
+        }
       }
+
     }
   },
   data () {

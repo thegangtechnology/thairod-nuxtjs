@@ -4,7 +4,7 @@
       :title="product.name"
       :on-back-button-click="onBackButtonClick"
     />
-    <ProductDetail :item="product" @updateAmount="updateAmount"/>
+    <ProductDetail :item="product" @updateAmount="updateAmount" />
   </div>
 </template>
 

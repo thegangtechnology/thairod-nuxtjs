@@ -12,8 +12,6 @@ import { Patient } from '@/types/patient.type'
 import apiPath from '~/data/api_path'
 import {
   OrderItem,
-  PatientInfo,
-  IProduct,
   DoctorInfo
 } from '~/types/order.type'
 import { ICheckoutProduct } from '~/types/product.type'
@@ -70,7 +68,7 @@ class DoctorModule extends VuexModule {
     products
   }: {
     hash: string;
-    products: ICheckoutProduct;
+    products: ICheckoutProduct[];
   }) {
     const data = {
       doctorLinkHash: hash,

@@ -89,7 +89,7 @@ export default Vue.extend({
       visible: false,
       amount: 1,
       url: location.host,
-      cartItems: []
+      cartItems: [] as Product[]
     }
   },
   computed: {
@@ -140,9 +140,9 @@ export default Vue.extend({
       this.cartItems.splice(cartIndex, 1)
       sessionStorage.setItem('doc-or-storage', JSON.stringify(this.buildCartItemOrder(this.cartItems)))
     },
-    buildCartItemOrder (items: Product): ICheckoutProduct {
-      return items.map((product) => {
-        return { itemId: product.id, quantity: product.quantity }
+    buildCartItemOrder (items: Product[]): ICheckoutProduct[] {
+      return items.map((product: Product) => {
+        return { itemId: product.id, quantity: product.quantity } as ICheckoutProduct
       })
     },
     handlePlus (quantity: number, itemId: number): void {
