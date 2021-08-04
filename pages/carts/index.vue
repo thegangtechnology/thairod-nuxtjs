@@ -5,7 +5,12 @@
     <div class="carts-card__container">
       <a-row class="mb-6">
         <a-col v-for="(item, i) in cartItems" :key="i" class="carts-item-list">
-          <CartsListItem :product="item" @removeItem="removeItem(i)" @handlePlus="handlePlus" />
+          <CartsListItem
+            :product="item"
+            @removeItem="removeItem"
+            @handleMinus="handleQuantity"
+            @handlePlus="handleQuantity"
+          />
         </a-col>
       </a-row>
     </div>
@@ -136,8 +141,9 @@ export default Vue.extend({
     success (): void {
       this.$message.success('Copied', 1)
     },
-    removeItem (cartIndex: number): void {
-      this.cartItems.splice(cartIndex, 1)
+    removeItem (itemId: number): void {
+      const foundIndex = this.cartItems.findIndex(item => item.id === itemId)
+      this.cartItems.splice(foundIndex, 1)
       sessionStorage.setItem('doc-or-storage', JSON.stringify(this.buildCartItemOrder(this.cartItems)))
     },
     buildCartItemOrder (items: Product[]): ICheckoutProduct[] {
@@ -145,9 +151,10 @@ export default Vue.extend({
         return { itemId: product.id, quantity: product.quantity } as ICheckoutProduct
       })
     },
-    handlePlus (quantity: number, itemId: number): void {
+    handleQuantity (quantity: number, itemId: number): void {
       const foundIndex = this.cartItems.findIndex(item => item.id === itemId)
       this.cartItems[foundIndex].quantity = quantity
+      sessionStorage.setItem('doc-or-storage', JSON.stringify(this.buildCartItemOrder(this.cartItems)))
     }
   }
 })

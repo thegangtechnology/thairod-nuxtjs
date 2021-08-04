@@ -105,7 +105,7 @@ export default Vue.extend({
       this.$emit('handlePlus', this.amount, this.product.id)
     },
     removeItem (): void {
-      this.$emit('removeItem')
+      this.$emit('removeItem', this.product.id)
     }
   }
 })

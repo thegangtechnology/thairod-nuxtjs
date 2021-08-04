@@ -12,7 +12,7 @@
 import Vue from 'vue'
 import ProductDetail from '~/components/product/ProductDetail.vue'
 import ProductModule from '~/store/product.module'
-import { Product } from '~/types/product.type'
+import { ICheckoutProduct, Product } from '~/types/product.type'
 import ProductHeader from '~/components/product/ProductHeader.vue'
 
 export default Vue.extend({
@@ -38,15 +38,26 @@ export default Vue.extend({
   },
   methods: {
     onBackButtonClick (): void {
-      this.$router.push('/product')
+      this.$router.push(`/product/?doctor=${this.$route.query.doctor}`)
     },
-    updateAmount (amount: number, id: number): void {
-      const newProduct = { ...this.product }
-      newProduct.amount = amount
-      console.log(amount, id)
-      ProductModule.updateProduct(
-        newProduct
-      )
+    updateAmount (amount: number, product: Product): void {
+      let cartItems = []
+      if (sessionStorage.getItem('doc-or-storage')) {
+        cartItems = JSON.parse(sessionStorage.getItem('doc-or-storage') as string)
+        const duplicateItemIndex = cartItems.findIndex((item: ICheckoutProduct) => item.itemId === product.id)
+        if (duplicateItemIndex !== -1) {
+          cartItems[duplicateItemIndex].quantity = amount
+        } else {
+          cartItems.push({ itemId: product.id, quantity: amount })
+        }
+      }
+      sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
+      // const newProduct = { ...this.product }
+      // newProduct.amount = amount
+      // console.log(amount, id)
+      // ProductModule.updateProduct(
+      //   newProduct
+      // )
     }
   }
 })

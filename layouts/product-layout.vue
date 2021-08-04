@@ -57,7 +57,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import DoctorDetail from '~/components/DoctorDetail.vue'
-import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   components: {
@@ -77,10 +76,6 @@ export default Vue.extend({
       this.$router.push(`${path}`)
     },
     goToCart () {
-      const cartItems = ProductModule.cartItems.map((product) => {
-        return { itemId: product.id, quantity: product.amount }
-      })
-      sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
       this.$router.push(`/carts/?doctor=${this.$route.query.doctor}`)
     }
   }

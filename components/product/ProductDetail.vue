@@ -89,7 +89,7 @@
           </a-button-group>
         </a-col>
         <a-col :span="12">
-          <primary-button class="update-button" :text="'เพิ่มใส่ตะกร้า'" block :on-click="addToCart" :size="'large'"/>
+          <primary-button class="update-button" :text="'เพิ่มใส่ตะกร้า'" block :on-click="addToCart" :size="'large'" />
         </a-col>
       </a-row>
     </div>
@@ -98,7 +98,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import { Product } from '~/types/product.type'
+import { ICheckoutProduct, Product } from '~/types/product.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 import ProductModule from '~/store/product.module'
 
@@ -147,13 +147,23 @@ export default Vue.extend({
   },
   computed: {
     getAmount (): number {
-      const foundItem = ProductModule.cartItems.find(item => item.id === Number(this.$route.params.uid))
-      console.log(foundItem, 'found item')
-      if (foundItem) {
-        return foundItem.amount
-      } else {
-        return 1
+      let quantity = 1
+      if (sessionStorage.getItem('doc-or-storage')) {
+        const cartItems = JSON.parse(sessionStorage.getItem('doc-or-storage') as string)
+        const foundItem = cartItems.find((item: ICheckoutProduct) => item.itemId === Number(this.$route.params.uid))
+        if (foundItem) {
+          quantity = foundItem.quantity
+        }
+        console.log(foundItem, 'foundItem', quantity)
       }
+      return quantity
+      // const foundItem = ProductModule.cartItems.find(item => item.id === Number(this.$route.params.uid))
+      // console.log(foundItem, 'found item')
+      // if (foundItem) {
+      //   return foundItem.amount
+      // } else {
+      //   return 1
+      // }
     }
   },
   mounted () {

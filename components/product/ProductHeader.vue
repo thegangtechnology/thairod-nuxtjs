@@ -17,7 +17,6 @@
 
 <script lang='ts'>
 import Vue from 'vue'
-import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   props: {
@@ -27,10 +26,10 @@ export default Vue.extend({
   },
   methods: {
     goToCart () {
-      const cartItems = ProductModule.cartItems.map((product) => {
-        return { itemId: product.id, quantity: product.amount }
-      })
-      sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
+      // const cartItems = ProductModule.cartItems.map((product) => {
+      //   return { itemId: product.id, quantity: product.amount }
+      // })
+      // sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
       this.$router.push(`/carts/?doctor=${this.$route.query.doctor}`)
     }
   }
