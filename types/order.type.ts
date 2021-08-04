@@ -8,26 +8,32 @@ export interface Main {
   [key: string]: string | boolean
 }
 
-export interface IProduct {
-  id: number
-  createdDate: string
-  description: string
+export interface DoctorInfo {
   name: string
-  price: string
-  product: number
-  unit: string
-  updatedDate: string
+  license: string
+}
+
+export interface IProduct {
+  id: number;
+  createdDate: string;
+  description: string;
+  name: string;
+  price: string;
+  product: number;
+  unit: string;
+  updatedDate: string;
+  productDescription: string;
 }
 
 export interface PatientInfo {
-  name: string
-  phoneNumber: string
-  street: string
-  province: string
-  district: string
-  subDistrict: string
-  zipcode: string
-  note: string
+  name: string;
+  phoneNumber: string;
+  street: string;
+  province: string;
+  district: string;
+  subDistrict: string;
+  zipcode: string;
+  note: string;
 }
 
 export interface OrderItem {

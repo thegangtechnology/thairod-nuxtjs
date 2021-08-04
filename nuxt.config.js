@@ -36,7 +36,7 @@ export default {
     '@/assets/styles/antd.less',
     '@/assets/styles/order-overview/main.less',
     '@/assets/styles/print/main.less',
-    '@/assets/styles/delivery/main.less'
+    '@/assets/styles/assign/main.less'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -45,7 +45,7 @@ export default {
     '~plugins/order-components.ts',
     '~plugins/assign-components.ts',
     '~plugins/print-components.ts',
-    '~plugins/delivery-components.ts',
+    '~plugins/date.ts',
     '@/plugins/accessor.ts',
     '@/plugins/axios.ts'
   ],
@@ -68,6 +68,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
+    // proxy: true
     baseURL:
       process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
   },
@@ -102,6 +103,13 @@ export default {
   },
 
   router: {},
+
+  // proxy: {
+  //   '/api/': {
+  //     target: ,
+  //     changeOrigin: true
+  //   }
+  // },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

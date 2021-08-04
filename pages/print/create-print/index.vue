@@ -3,7 +3,7 @@
     <div class="page-card__container">
       <div class="page-card__header">
         <div class="page-header__title">
-          สร้างล็อตการจัดส่งใหม่
+          พิมพ์ใบจัดส่งสินค้า
         </div>
         <a-input
           v-model="search"
@@ -13,10 +13,11 @@
           <a-icon slot="prefix" type="search" />
         </a-input>
       </div>
-      <AssignForm
+      <PrintForm
         :original-data="originalData"
         :loading="isLoading"
-        :amount="amount"
+        :amount="unprintedAmount"
+        :search="search"
         @pageChange="handlePageChange"
       />
     </div>
@@ -30,7 +31,6 @@ import ShipmentModule from '~/store/shipment.module'
 @Component
 export default class Main extends Vue {
   search: string = ''
-  amount: number = 0
 
   get isLoading () {
     return ShipmentModule.loading
@@ -40,8 +40,12 @@ export default class Main extends Vue {
     return ShipmentModule.getShipmentList
   }
 
+  get unprintedAmount () {
+    return ShipmentModule.waitShipment
+  }
+
   mounted () {
-    this.handlePageChange(1)
+    this.onQueryChange(1)
   }
 
   handlePageChange (page: number) {
@@ -49,20 +53,11 @@ export default class Main extends Vue {
   }
 
   onQueryChange (page: number = 1) {
-    const type = this.$route.query.type
-    if (type && type === 'assign') {
-      ShipmentModule.initialiseShipment({
-        batch_isnull: false,
-        page
-      })
-      this.amount = ShipmentModule.totalShipment
-    } else {
-      ShipmentModule.initialiseShipment({
-        batch_isnull: true,
-        page
-      })
-      this.amount = ShipmentModule.nonbatchShipment
-    }
+    ShipmentModule.initialiseShipment({
+      label_printed: false,
+      deliver: false,
+      page
+    })
   }
 }
 </script>

@@ -3,7 +3,7 @@
     <div class="overview-body__container">
       <div class="overview-filter__container">
         <div class="overview-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon" />
+          <img :src="FilterIcon" alt="FilterIcon">
           <span> ตัวกรองข้อมูล </span>
         </div>
         <a-form layout="vertical">
@@ -12,7 +12,7 @@
               <a-form-item label="วันและเวลาที่สั่ง">
                 <a-date-picker @change="onDateFilterChange">
                   <div slot="suffixIcon">
-                    <img :src="CalendarIcon" alt="CalendarIcon" />
+                    <img :src="CalendarIcon" alt="CalendarIcon">
                   </div>
                 </a-date-picker>
               </a-form-item>
@@ -24,7 +24,9 @@
                   :default-value="{ key: '' }"
                   @change="handleBatchFilterChange"
                 >
-                  <a-select-option value=""> All </a-select-option>
+                  <a-select-option value="">
+                    All
+                  </a-select-option>
                   <a-select-option
                     v-for="batch in exportBatchSelect"
                     :key="batch"
@@ -42,12 +44,15 @@
                   :default-value="{ key: '' }"
                   @change="handleOrderedItemFilterChange"
                 >
-                  <a-select-option value=""> All </a-select-option>
-                  <a-select-option value="Green Package">
-                    Green Package
+                  <a-select-option value="">
+                    All
                   </a-select-option>
-                  <a-select-option value="Yellow Package">
-                    Yellow Package
+                  <a-select-option
+                    v-for="item in shipmentItemSelect"
+                    :key="item"
+                    :value="item"
+                  >
+                    {{ item }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
@@ -56,66 +61,117 @@
         </a-form>
       </div>
       <div class="overview-table__container">
-        <div class="overview-table__status">
-          Displaying {{ recordsLength }} records
-        </div>
         <div class="overview-table__table">
           <a-table
-            row-key="orderId"
+            row-key="id"
             :row-selection="
               option === 'default'
                 ? null
                 : {
-                    selectedRowKeys: selectedRowKeys,
-                    onChange: onSelectChange,
-                  }
+                  selectedRowKeys: selectedRowKeys,
+                  onChange: onSelectChange,
+                }
             "
-            :columns="columns"
+            :pagination="{
+              total: amount,
+            }"
+            :loading="loading"
+            :columns="tableColumns"
             :data-source="data"
-            :custom-row="customRow"
+            :custom-row="option === 'default' ? customRow : null"
+            @change="onPageChange"
           >
+            <div slot="id" slot-scope="text, record" class="table-form__input">
+              <div>
+                {{ record.id }}
+              </div>
+              <div>
+                {{ record.created_date | date }}
+              </div>
+            </div>
             <div
-              slot="orderId"
+              slot="shipmentItem"
+              slot-scope="text, record"
+              class="table-form__input"
+            >
+              <div v-for="item in record.shipmentItem" :key="item.id">
+                {{ item.name }}
+              </div>
+            </div>
+            <div
+              slot="quantity"
+              slot-scope="text, record"
+              class="table-form__input"
+            >
+              <div v-for="item in record.shipmentItem" :key="item.id">
+                x{{ item.quantity }} {{ item.unit }}
+              </div>
+            </div>
+            <div
+              slot="patientName"
               slot-scope="text, record"
               class="table-form__input"
             >
               <div>
-                {{ record.orderId }}
+                {{ text }}
               </div>
               <div>
-                {{ record.orderedDate }}
+                {{ record.cid }}
+              </div>
+            </div>
+            <div
+              slot="batch"
+              slot-scope="text, record"
+              class="table-form__input"
+            >
+              <div v-if="record.batch === null">
+                N/A
+              </div>
+              <div v-else>
+                {{ record.batch.name }}
               </div>
             </div>
             <div slot="status" slot-scope="text" class="table-form__input">
-              <div v-if="text === 'wait'" class="overview-row__status">
-                รอพิมพ์ใบจัดส่ง
+              <div v-if="text === 'wait'" class="overview-status-container">
+                <div class="overview-row__status wait">
+                  <span> รอพิมพ์ใบจัดส่ง </span>
+                </div>
               </div>
-              <div v-else-if="text === 'print'" class="overview-row__status">
-                รอจัดส่ง
+              <div
+                v-else-if="text === 'print'"
+                class="overview-status-container"
+              >
+                <div class="overview-row__status print">
+                  <span> รอจัดส่ง </span>
+                </div>
               </div>
-              <div v-else-if="text === 'out'" class="overview-row__status">
-                รอรับสินค้า
+              <div v-else-if="text === 'out'" class="overview-status-container">
+                <div class="overview-row__status out">
+                  <span>รอรับสินค้า </span>
+                </div>
               </div>
-              <div v-else>ได้รับเรียบร้อย</div>
+              <div v-else class="overview-status-container">
+                <div class="overview-row__status received">
+                  <span> ได้รับเรียบร้อย </span>
+                </div>
+              </div>
             </div>
             <div slot="operation" class="table-form__input">
-              <img :src="RightIcon" alt="RightIcon" />
+              <img :src="RightIcon" alt="RightIcon">
             </div>
           </a-table>
         </div>
       </div>
     </div>
     <div v-if="option !== 'default'" class="overview-button__container">
-      <a-button class="overview-button__cta cancel">
-        <!-- @click="goBack" -->
+      <a-button class="overview-button__cta cancel" @click="cancelUpdate">
         <span> ยกเลิก </span>
       </a-button>
       <a-button
         class="overview-button__cta submit"
         @click="visibleSubmitDialog = true"
       >
-        <span> อัปเดตข้อมูล </span>
-        <!-- ({{ updateAmount }})  -->
+        <span> อัปเดตข้อมูล ({{ updateIdList.length }}) </span>
       </a-button>
     </div>
     <a-modal
@@ -126,11 +182,14 @@
       :width="480"
     >
       <div class="overview-modal__img">
-        <img :src="BoxImg" alt="BoxImg" />
+        <img :src="BoxImg" alt="BoxImg">
       </div>
-      <div class="overview-modal__title">ยืนยันการอัปเดตข้อมูล</div>
+      <div class="overview-modal__title">
+        ยืนยันการอัปเดตข้อมูล
+      </div>
       <div class="overview-modal__subtitle">
-        รายการสั่งซื้อจำนวน 3 รายการกำลังจะถูกอัปเดตข้อมูลการพิมพ์ใบจัดส่งจาก
+        รายการสั่งซื้อจำนวน ({{ updateIdList.length }})
+        รายการกำลังจะถูกอัปเดตข้อมูลการพิมพ์ใบจัดส่งจาก
         {{ getModalDescription.from }} เป็น
         <span>{{ getModalDescription.to }} </span>
       </div>
@@ -141,7 +200,7 @@
             class="overview-button__cta cancel"
             @click="visibleSubmitDialog = false"
           >
-            Cancel
+            ยกเลิก
           </a-button>
           <a-button
             key="submit"
@@ -149,7 +208,7 @@
             type="primary"
             @click="onSave"
           >
-            Confirm
+            ยืนยัน
           </a-button>
         </div>
       </template>
@@ -158,14 +217,20 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import moment from 'moment'
 import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import CorrectSvg from '~/assets/icons/correct.svg'
 import RightSvg from '~/assets/icons/right-table.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
-import { OrderModule } from '~/store'
+import ShipmentModule from '~/store/shipment.module'
+import {
+  IColumns,
+  columns,
+  columnsWithOperation
+} from '~/static/ShipmentColumns'
+import { ShipmentLine } from '~/types/shipment.type'
 
 type Status = 'wait' | 'print' | 'out' | 'received'
 
@@ -180,22 +245,13 @@ interface IFilter extends IMain {
   searchRecord: string
 }
 
-interface IOrder {
-  orderId: string
-  cid: string
-  patientName: string
-  orderedItem: string
-  orderedDate: string
-  exportBatch: string
-  trackingNo: string
-  status: Status
-}
-
 @Component
 export default class OverviewTable extends Vue {
-  @Prop({ required: true }) originalData!: IOrder[]
+  @Prop({ required: true }) originalData!: ShipmentLine[]
+  @Prop({ required: true }) loading!: boolean
   @Prop({ required: true }) option!: string
   @Prop({ required: true }) search!: string
+  @Prop({ required: true }) amount!: number
   @Prop({ required: true }) tabKey!: string
 
   private CalendarIcon = CalendarSvg
@@ -204,93 +260,89 @@ export default class OverviewTable extends Vue {
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
 
-  columns = [
-    {
-      title: 'เลขที่รายการสั่งซื้อ',
-      scopedSlots: { customRender: 'orderId' },
-    },
-    {
-      title: 'รายการสินค้า',
-      dataIndex: 'orderedItem',
-    },
-    {
-      title: 'จำนวน',
-    },
-    {
-      title: 'ผู้รับการรักษา',
-      dataIndex: 'patientName',
-    },
-    {
-      title: 'ล็อตการจัดส่ง',
-      dataIndex: 'exportBatch',
-    },
-    {
-      title: 'สถานะการจัดส่ง',
-      dataIndex: 'status',
-      scopedSlots: { customRender: 'status' },
-    },
-    {
-      title: 'หมายเลขติดตาม',
-      dataIndex: 'trackingNo',
-    },
-    {
-      key: 'operation',
-      scopedSlots: { customRender: 'operation' },
-    },
-  ]
-
-  data: IOrder[] = []
-  selectedRowKeys: string[] = []
-  originalSelectedRowKeys: string[] = []
+  data: ShipmentLine[] = []
+  selectedRowKeys: number[] = []
+  originalSelectedRowKeys: number[] = []
   visibleSubmitDialog: boolean = false
 
   filterForm: IFilter = {
     orderedDate: '',
     exportBatch: '',
     orderedItem: '',
-    searchRecord: '',
+    searchRecord: ''
+  }
+
+  @Emit('update')
+  cancelUpdate () {
+    return false
+  }
+
+  @Emit('pageChange')
+  handlePageChange (page: number) {
+    return page
   }
 
   @Watch('search', { immediate: true, deep: true })
-  onSearchChange() {
+  onSearchChange () {
     this.filterForm.searchRecord = this.search
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
-  onFilterChange() {
+  onFilterChange () {
     this.filterData()
   }
 
   @Watch('tabKey', { immediate: true, deep: true })
-  onTabChange() {
+  onTabChange () {
     this.importData()
   }
 
   @Watch('originalData', { immediate: true, deep: true })
-  onOriginalChange() {
+  onOriginalChange () {
     this.importData()
   }
 
   @Watch('option', { immediate: true, deep: true })
-  onOptionChange() {
+  onOptionChange () {
     this.initSelect()
   }
 
-  get recordsLength(): number {
+  get recordsLength (): number {
     return this.data.length
   }
 
-  get exportBatchSelect(): string[] {
-    return [...new Set(this.originalData.map((item) => item.exportBatch))]
+  get exportBatchSelect (): string[] {
+    return [
+      ...new Set(
+        this.originalData
+          .filter(item => item.batch !== null)
+          .map(item => item.batch!.name)
+      )
+    ]
   }
 
-  get unselectedIds() {
+  get shipmentItemSelect () {
+    return this.originalData
+      .map(item => item.shipmentItem)
+      .reduce<string[]>((accum, shipmentItem) => {
+        if (shipmentItem.length > 0) {
+          shipmentItem.forEach((item) => {
+            if (!accum.includes(item.name)) {
+              accum.push(item.name)
+            }
+          })
+        }
+        return accum
+      }, [])
+  }
+
+  get unselectedIds () {
     return this.data
-      .filter((item) => !this.selectedRowKeys.includes(item.orderId))
-      .map((filtered) => filtered.orderId)
+      .filter(item => !this.selectedRowKeys.includes(item.id))
+      .map(filtered => filtered.id)
   }
 
-  get getModalDescription() {
+  get getModalDescription () {
     if (this.option === 'updatePrint') {
       if (this.tabKey === 'wait') {
         return { from: 'รอพิมพ์ใบจัดส่ง', to: 'รอจัดส่ง' }
@@ -315,24 +367,50 @@ export default class OverviewTable extends Vue {
     return { from: '', to: '' }
   }
 
-  mounted() {
+  get updateIdList (): number[] {
+    if (this.option === 'updatePrint') {
+      return this.unselectedIds
+    }
+    if (this.option === 'updateDelivery') {
+      if (this.tabKey === 'print') {
+        return this.selectedRowKeys
+      } else {
+        return this.unselectedIds
+      }
+    }
+    if (this.option === 'updateReceived') {
+      if (this.tabKey === 'out') {
+        return this.selectedRowKeys
+      } else {
+        return this.unselectedIds
+      }
+    }
+    return []
+  }
+
+  get tableColumns (): IColumns[] {
+    if (this.option !== 'default') { return columns }
+    return columnsWithOperation
+  }
+
+  mounted () {
     this.importData()
   }
 
-  importData() {
+  importData () {
     this.data = this.originalData
   }
 
-  initSelect() {
+  initSelect () {
     this.originalSelectedRowKeys = this.originalData
       .filter((item) => {
         return this.handleCondition(item.status)
       })
-      .map((filtered) => filtered.orderId)
+      .map(filtered => filtered.id)
     this.selectedRowKeys = this.originalSelectedRowKeys
   }
 
-  handleCondition(status: Status) {
+  handleCondition (status: Status) {
     if (this.option === 'updatePrint') {
       return status === 'print'
     }
@@ -345,19 +423,19 @@ export default class OverviewTable extends Vue {
     return true
   }
 
-  onDateFilterChange(_date: object, dateString: string) {
+  onDateFilterChange (_date: object, dateString: string) {
     this.filterForm.orderedDate = dateString
   }
 
-  handleBatchFilterChange(value: { key: string; value: string }) {
+  handleBatchFilterChange (value: { key: string; value: string }) {
     this.filterForm.exportBatch = value.key
   }
 
-  handleOrderedItemFilterChange(value: { key: string; value: string }) {
+  handleOrderedItemFilterChange (value: { key: string; value: string }) {
     this.filterForm.orderedItem = value.key
   }
 
-  filterData() {
+  filterData () {
     this.data = this.originalData.filter((row) => {
       const result: boolean[] = []
       Object.keys(this.filterForm).forEach((key) => {
@@ -369,83 +447,87 @@ export default class OverviewTable extends Vue {
     })
   }
 
-  filterFields(key: string, row: IOrder): boolean {
+  filterFields (key: string, row: ShipmentLine): boolean {
     if (key === 'orderedDate') {
       return (
-        moment(row.orderedDate).format('YYYY-MM-DD') ===
+        moment(row.created_date).format('YYYY-MM-DD') ===
         this.filterForm.orderedDate
       )
     }
     if (key === 'searchRecord') {
-      const columsDataIndex = this.columns
-        .filter((column) => column.dataIndex)
-        .map((column) => column.dataIndex)
-      const searchedArray = columsDataIndex.map((col) =>
-        String(row[col as keyof IOrder]).includes(this.filterForm.searchRecord)
+      const columsDataIndex = this.tableColumns
+        .filter(column => column.dataIndex)
+        .map(column => column.dataIndex)
+      const searchedArray = columsDataIndex.map(col =>
+        String(row[col as keyof ShipmentLine]).includes(
+          this.filterForm.searchRecord
+        )
       )
       return searchedArray.some(Boolean)
     }
-    return row[key as keyof IOrder] === this.filterForm[key]
+    return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
-  handleUpdatePrint() {
-    /**
-     * If tab === 'wait' => change selected to 'print' status
-     * If tab === 'print' => change unselected to 'wait' status
-     */
-    if (this.tabKey === 'wait') {
-      this.saveToStore(this.selectedRowKeys, 'print')
-    } else {
-      this.saveToStore(this.unselectedIds, 'wait')
-    }
+  handleUpdatePrint () {
+    ShipmentModule.setPrintStatus({
+      selectedRowKeys: this.unselectedIds,
+      printStatus: false
+    })
   }
 
-  handleUpdateDelievery() {
+  handleUpdateDelievery () {
     /**
      * If tab === 'print' => change selected to 'out' status
      * If tab === 'out' => change unselected to 'print' status
      */
     if (this.tabKey === 'print') {
-      this.saveToStore(this.selectedRowKeys, 'out')
+      ShipmentModule.setDeliverStatus({
+        selectedRowKeys: this.selectedRowKeys,
+        deliverStatus: true
+      })
     } else {
-      this.saveToStore(this.unselectedIds, 'print')
+      ShipmentModule.setDeliverStatus({
+        selectedRowKeys: this.unselectedIds,
+        deliverStatus: false
+      })
     }
   }
 
-  handleUpdateReceived() {
-    /**
-     * If tab === 'out' => change selected to 'received' status
-     * If tab === 'received' => change unselected to 'out' status
-     */
-    if (this.tabKey === 'out') {
-      this.saveToStore(this.selectedRowKeys, 'received')
-    } else {
-      this.saveToStore(this.unselectedIds, 'out')
-    }
-  }
+  // handleUpdateReceived() {
+  //   /**
+  //    * If tab === 'out' => change selected to 'received' status
+  //    * If tab === 'received' => change unselected to 'out' status
+  //    */
+  //   if (this.tabKey === 'out') {
+  //     this.saveToStore(this.selectedRowKeys, 'received')
+  //   } else {
+  //     this.saveToStore(this.unselectedIds, 'out')
+  //   }
+  // }
 
-  saveToStore(ids: string[], status: Status) {
-    OrderModule.updateStatus({ status, selectedRows: ids })
-  }
-
-  onSave() {
-    if (this.option === 'updatePrint') this.handleUpdatePrint()
-    if (this.option === 'updateDelivery') this.handleUpdateDelievery()
-    if (this.option === 'updateReceived') this.handleUpdateReceived()
+  onSave () {
+    if (this.option === 'updatePrint') { this.handleUpdatePrint() }
+    if (this.option === 'updateDelivery') { this.handleUpdateDelievery() }
+    // if (this.option === 'updateReceived') this.handleUpdateReceived()
+    this.onPageChange({ current: 1 })
     this.visibleSubmitDialog = false
   }
 
-  onSelectChange(selectedRowKeys: string[]) {
+  onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
   }
 
-  customRow(record: IOrder) {
+  onPageChange (page: {current: number}) {
+    this.handlePageChange(page.current)
+  }
+
+  customRow (record: ShipmentLine) {
     return {
       on: {
         click: () => {
-          this.$router.push(`/order-overview/${record.orderId}`)
-        },
-      },
+          this.$router.push(`/order-overview/${record.id}`)
+        }
+      }
     }
   }
 }

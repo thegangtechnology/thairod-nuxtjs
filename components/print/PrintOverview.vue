@@ -1,5 +1,5 @@
 <template>
-  <div class="assign-tab__container">
+  <div class="print-tab__container">
     <div>
       <a-tabs
         :default-active-key="tabKey"
@@ -8,51 +8,60 @@
       >
         <a-tab-pane key="all">
           <span slot="tab"> ทั้งหมด ({{ getTotalLength }})</span>
-          <AssignTable
+          <PrintTable
             :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
+            :update="isUpdate"
             :loading="isLoading"
             :amount="getTotalLength"
             @pageChange="handlePageChange"
+            @cancel="handleCancelUpdate"
           />
         </a-tab-pane>
-        <a-tab-pane key="unassign">
-          <span slot="tab"> ที่ต้องจัดการ ({{ getUnassignLength }})</span>
-          <AssignTable
+        <a-tab-pane key="unprinted">
+          <span slot="tab"> ที่ต้องพิมพ์ ({{ getUnprintedLength }})</span>
+          <PrintTable
             :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
+            :update="false"
             :loading="isLoading"
-            :amount="getUnassignLength"
+            :amount="getUnprintedLength"
             @pageChange="handlePageChange"
           />
         </a-tab-pane>
-        <a-tab-pane key="assign">
-          <span slot="tab"> จัดการแล้ว ({{ getAssignLength }}) </span>
-          <AssignTable
+        <a-tab-pane key="printed">
+          <span slot="tab"> ดำเนินการพิมพ์แล้ว ({{ getPrintedLength }}) </span>
+          <PrintTable
             :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
+            :update="isUpdate"
             :loading="isLoading"
-            :amount="getAssignLength"
+            :amount="getPrintedLength"
             @pageChange="handlePageChange"
+            @cancel="handleCancelUpdate"
           />
         </a-tab-pane>
-        <div slot="tabBarExtraContent" class="assign-tab__buttons">
+        <div
+          v-if="!isUpdate"
+          slot="tabBarExtraContent"
+          class="print-tab__buttons"
+        >
           <a-button
-            v-if="tabKey !== 'unassign'"
-            class="assign-button__cta"
-            @click="toAssignBatch"
+            v-if="tabKey !== 'unprinted'"
+            class="print-button__cta"
+            @click="isUpdate = true"
           >
-            แก้ไขล็อตการจัดส่ง
+            อัปเดตการพิมพ์ใบจัดส่ง
           </a-button>
           <a-button
-            v-if="tabKey !== 'assign'"
-            class="assign-button__cta primary"
-            @click="toCreateBatch"
+            v-if="tabKey !== 'printed'"
+            class="print-button__cta primary"
+            @click="toCreatePrint"
           >
-            สร้างล็อตการจัดส่งใหม่
+            พิมพ์ใบจัดส่งสินค้า
           </a-button>
         </div>
       </a-tabs>
@@ -65,10 +74,11 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import ShipmentModule from '~/store/shipment.module'
 
 @Component
-export default class AssignOverview extends Vue {
+export default class PrintOverview extends Vue {
   @Prop({ required: true }) search!: string
 
   tabKey: string = 'all'
+  isUpdate: boolean = false
 
   get isLoading () {
     return ShipmentModule.loading
@@ -82,54 +92,53 @@ export default class AssignOverview extends Vue {
     return ShipmentModule.totalShipment
   }
 
-  get getUnassignLength () {
-    return ShipmentModule.nonbatchShipment
+  get getUnprintedLength () {
+    return ShipmentModule.waitShipment
   }
 
-  get getAssignLength () {
-    return ShipmentModule.batchShipment
+  get getPrintedLength () {
+    return ShipmentModule.printShipment
   }
 
   mounted () {
     ShipmentModule.initialiseShipment({})
   }
 
-  toCreateBatch () {
-    this.$router.push('/assign/create-batch')
-  }
-
-  toAssignBatch () {
-    this.$router.push({
-      path: '/assign/create-batch',
-      query: {
-        type: 'assign'
-      }
-    })
+  handleCancelUpdate () {
+    this.isUpdate = false
   }
 
   handlePageChange (page: number) {
-    this.onTabChange(this.tabKey, page)
+    this.onTabChange(this.tabKey, page, true)
+    this.isUpdate = true
   }
 
-  onTabChange (key: string, page: number = 1) {
+  toCreatePrint () {
+    this.$router.push('/print/create-print')
+  }
+
+  onTabChange (key: string, page: number = 1, isUpdate: boolean = false) {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
         page
       })
     }
-    if (key === 'unassign') {
+    if (key === 'unprinted') {
       ShipmentModule.initialiseShipment({
-        batch_isnull: true,
+        label_printed: false,
+        deliver: false,
         page
       })
     }
-    if (key === 'assign') {
+    if (key === 'printed') {
       ShipmentModule.initialiseShipment({
-        batch_isnull: false,
+        label_printed: true,
+        deliver: false,
         page
       })
     }
     this.tabKey = key
+    this.isUpdate = isUpdate
   }
 }
 </script>

@@ -6,12 +6,15 @@
       @change="onTabChange"
     >
       <a-tab-pane key="all">
-        <span slot="tab"> ทั้งหมด ({{ allData.length }})</span>
+        <span slot="tab"> ทั้งหมด ({{ getTabContentAmount('all') }})</span>
         <OverviewTable
-          :originalData="allData"
+          :original-data="originalData"
           :search="search"
           :tab-key="tabKey"
           :option="updateOption"
+          :loading="isLoading"
+          :amount="getTabContentAmount('all')"
+          @pageChange="handlePageChange"
         />
       </a-tab-pane>
       <a-tab-pane key="wait">
@@ -19,10 +22,13 @@
           ที่ต้องจัดส่ง ({{ getTabContentAmount('wait') }})
         </span>
         <OverviewTable
-          :originalData="getTabContent('wait')"
+          :original-data="originalData"
           :search="search"
           :tab-key="tabKey"
           :option="updateOption"
+          :loading="isLoading"
+          :amount="getTabContentAmount('wait')"
+          @pageChange="handlePageChange"
         />
       </a-tab-pane>
       <a-tab-pane key="print">
@@ -30,10 +36,14 @@
           พิมพ์ใบจัดส่งแล้ว ({{ getTabContentAmount('print') }})
         </span>
         <OverviewTable
-          :originalData="getTabContent('print')"
+          :original-data="originalData"
           :search="search"
           :tab-key="tabKey"
           :option="updateOption"
+          :loading="isLoading"
+          :amount="getTabContentAmount('print')"
+          @pageChange="handlePageChange"
+          @update="handleCancelUpdate"
         />
       </a-tab-pane>
       <a-tab-pane key="out">
@@ -41,10 +51,14 @@
           ดำเนินการส่งแล้ว ({{ getTabContentAmount('out') }})
         </span>
         <OverviewTable
-          :originalData="getTabContent('out')"
+          :original-data="originalData"
           :search="search"
           :tab-key="tabKey"
           :option="updateOption"
+          :loading="isLoading"
+          :amount="getTabContentAmount('out')"
+          @pageChange="handlePageChange"
+          @update="handleCancelUpdate"
         />
       </a-tab-pane>
       <a-tab-pane key="received">
@@ -52,10 +66,14 @@
           ส่งมอบสำเร็จ ({{ getTabContentAmount('received') }})
         </span>
         <OverviewTable
-          :originalData="getTabContent('received')"
+          :original-data="originalData"
           :search="search"
           :tab-key="tabKey"
           :option="updateOption"
+          :loading="isLoading"
+          :amount="getTabContentAmount('received')"
+          @pageChange="handlePageChange"
+          @update="handleCancelUpdate"
         />
       </a-tab-pane>
       <div
@@ -63,8 +81,14 @@
         slot="tabBarExtraContent"
         class="overview-tab__buttons"
       >
-        <a-select v-model="updateOption" class="overview-button__cta">
-          <!-- @change="handleChange" -->
+        <a-button
+          v-if="tabKey === 'wait'"
+          class="overview-button__cta"
+          @click="toPrint"
+        >
+          อัปเดตการพิมพ์ใบจัดส่ง
+        </a-button>
+        <a-select v-else v-model="updateOption" class="overview-select__cta">
           <a-select-option value="default">
             อัปเดตข้อมูลรายการจัดส่ง
           </a-select-option>
@@ -77,9 +101,9 @@
           >
             อัปเดตการจัดส่ง
           </a-select-option>
-          <a-select-option v-if="canUpdateReceived" value="updateReceived">
+          <!-- <a-select-option v-if="canUpdateReceived" value="updateReceived">
             อัปเดตการส่งมอบ
-          </a-select-option>
+          </a-select-option> -->
         </a-select>
       </div>
     </a-tabs>
@@ -88,8 +112,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { OrderModule } from '~/store'
-import { IOrder } from '~/types/order.type'
+import ShipmentModule from '~/store/shipment.module'
 
 @Component
 export default class OrderOverview extends Vue {
@@ -98,37 +121,82 @@ export default class OrderOverview extends Vue {
   tabKey: string = 'wait'
   updateOption: string = 'default'
 
-  originalData: IOrder[] = []
+  get isLoading () {
+    return ShipmentModule.loading
+  }
 
-  onTabChange(key: string) {
+  get originalData () {
+    return ShipmentModule.getShipmentList
+  }
+
+  get canUpdatePrint () {
+    return this.tabKey !== 'received' && this.tabKey !== 'out'
+  }
+
+  get canUpdateOutForDelivery () {
+    return this.tabKey !== 'wait' && this.tabKey !== 'received'
+  }
+
+  get canUpdateReceived () {
+    return this.tabKey !== 'wait' && this.tabKey !== 'print'
+  }
+
+  mounted () {
+    ShipmentModule.initialiseShipment({
+      label_printed: false,
+      deliver: false
+    })
+  }
+
+  handleCancelUpdate () {
+    this.updateOption = 'default'
+  }
+
+  getTabContentAmount (tabKey: string): number {
+    if (tabKey === 'wait') { return ShipmentModule.waitShipment }
+    if (tabKey === 'print') { return ShipmentModule.printShipment }
+    if (tabKey === 'out') { return ShipmentModule.outShipment }
+    if (tabKey === 'received') { return ShipmentModule.receivedShipment }
+    return ShipmentModule.totalShipment
+  }
+
+  handlePageChange (page: number) {
+    this.onTabChange(this.tabKey, page)
+  }
+
+  onTabChange (key: string, page: number = 1) {
+    if (key === 'all') {
+      ShipmentModule.initialiseShipment({
+        page
+      })
+    }
+    if (key === 'wait') {
+      ShipmentModule.initialiseShipment({
+        label_printed: false,
+        deliver: false,
+        page
+      })
+    }
+    if (key === 'print') {
+      ShipmentModule.initialiseShipment({
+        label_printed: true,
+        deliver: false,
+        page
+      })
+    }
+    if (key === 'out') {
+      ShipmentModule.initialiseShipment({
+        label_printed: true,
+        deliver: true,
+        page
+      })
+    }
     this.tabKey = key
     this.updateOption = 'default'
   }
 
-  get allData() {
-    return OrderModule.getOrderList
-  }
-
-  get canUpdatePrint() {
-    return this.tabKey !== 'received' && this.tabKey !== 'out'
-  }
-
-  get canUpdateOutForDelivery() {
-    return this.tabKey !== 'wait' && this.tabKey !== 'received'
-  }
-
-  get canUpdateReceived() {
-    return this.tabKey !== 'wait' && this.tabKey !== 'print'
-  }
-
-  getTabContent(tabKey: string): IOrder[] {
-    return this.allData.filter(item => {
-      return item.status === tabKey
-    })
-  }
-
-  getTabContentAmount(tabKey: string): number {
-    return this.getTabContent(tabKey).length
+  toPrint () {
+    this.$router.push('/print')
   }
 }
 </script>
