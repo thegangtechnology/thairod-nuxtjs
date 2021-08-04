@@ -50,3 +50,10 @@ export interface ItemDetailPageInfo {
   itemDetail: ItemDetail,
   inventoryRecord: InventoryRecord
 }
+
+export interface UserInfo {
+  id: number,
+  firstName: string,
+  lastName: string,
+  username: string
+}

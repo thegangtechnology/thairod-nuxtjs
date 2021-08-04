@@ -19,6 +19,7 @@ import { InventoryRecord, ItemDetail } from '~/types/procurement.type'
 export default Vue.extend({
   components: { ProcurementHeader, ItemDetailComponent },
   layout: 'empty',
+  middleware: 'auth',
   data () {
     return {
     }

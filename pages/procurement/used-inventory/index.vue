@@ -5,6 +5,7 @@
       :warehouse-stocks="warehouseStocks"
       :left-card="leftCard"
       :right-card="rightCard"
+      :inventory-by-warehouse-title="inventoryByWarehouseTitle"
     />
   </div>
 </template>
@@ -16,6 +17,7 @@ import InventoryDetail from '~/components/procurement/InventoryDetail.vue'
 export default Vue.extend({
   components: { InventoryDetail, ProcurementHeader },
   layout: 'empty',
+  middleware: 'auth',
   data () {
     return {
       warehouseStocks: [
@@ -24,6 +26,7 @@ export default Vue.extend({
         // { warehouse: 'Warehouse C', amount: 25, unit: 'กล่อง' },
         // { warehouse: 'Warehouse D', amount: 25, unit: 'กล่อง' }
       ],
+      inventoryByWarehouseTitle: 'ยอดใช้วันนี้จากแต่ละคลังสินค้า',
       leftCard: {
         backgroundColor: '#92959A',
         title: 'จำนวนที่ใช้วันนี้',
@@ -45,7 +48,3 @@ export default Vue.extend({
   }
 })
 </script>
-
-<style scoped>
-
-</style>
