@@ -1,24 +1,19 @@
 /* eslint-disable camelcase */
-/**
- * FRONTEND Interface
- */
 export interface Product {
   id: number
-  sku:string
-  image:string
-  name:string
-  description:string
-  repeatable:boolean
+  product: number
+  price: number
+  productDescription: string
+  unit: string
+  updatedDate: string
+  amount?: number
+  image: string;
+  name: string;
+  description: string;
+  quantity?: number;
 }
 
-/**
- * BACKEND Interface
- */
-export interface ProductJson {
-  id: number
-  sku:string
-  image:string
-  name:string
-  description:string
-  repeatable:boolean
+export interface ICheckoutProduct {
+  itemId: number;
+  quantity: number;
 }
