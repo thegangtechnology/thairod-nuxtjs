@@ -8,4 +8,5 @@ export interface ProductVariation {
   description: string
   productDescription: string
   unit: string
+  updatedDate: string
 }

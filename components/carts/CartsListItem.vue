@@ -4,7 +4,7 @@
       <a-col :xs="5" :sm="4" :md="3" :lg="3" :xl="2">
         <img
           alt="image item"
-          :src="require('@/assets/images/default/icon-product-2.svg')"
+          :src="product.image"
           class="img-responsive item__image"
         >
       </a-col>
@@ -17,10 +17,10 @@
         class="item__detils"
       >
         <div class="item__name">
-          item Name Aaaaaaaa
+          {{ product.name }}
         </div>
         <div class="item__description">
-          Lorem ipsum dolor sit amet
+          {{ product.productDescription }}
         </div>
         <a-row>
           <a-col :span="20">
@@ -46,7 +46,7 @@
             </div>
           </a-col>
           <a-col :span="4" align="end">
-            <a-button shape="circle" icon="delete" class="btn-delete__button" />
+            <a-button shape="circle" icon="delete" class="btn-delete__button" @click="removeItem" />
           </a-col>
         </a-row>
       </a-col>
@@ -56,16 +56,15 @@
 
 <script lang='ts'>
 import Vue, { PropType } from 'vue'
-import { ICheckoutProduct } from '~/types/product.type'
+import { Product } from '~/types/product.type'
 
 export default Vue.extend({
   layout: 'product-layout',
   props: {
-    products: {
-      type: Array as PropType<ICheckoutProduct[]>,
-      default: () => [
-        { itemId: 0, quantity: 0 }
-      ]
+    product: {
+      type: Object as PropType<Product>,
+      default: () => {
+      }
     }
   },
   data () {
@@ -74,13 +73,15 @@ export default Vue.extend({
       amount: 1
     }
   },
+  mounted () {
+    this.amount = this.product!.quantity as number
+  },
   methods: {
     showModal (): void {
       this.visible = true
     },
     handleOk (): void {
       this.visible = false
-      console.log('amount', this.amount)
     },
     handleCancel (): void {
       this.visible = false
@@ -88,14 +89,18 @@ export default Vue.extend({
     handleRemove (): void {
     },
     updateAmount (value: number) {
-      console.log('changed', value)
       this.amount = value
     },
     handleMinus (): void {
       this.amount--
+      this.$emit('handleMinus', this.amount, this.product.id)
     },
     handlePlus (): void {
       this.amount++
+      this.$emit('handlePlus', this.amount, this.product.id)
+    },
+    removeItem (): void {
+      this.$emit('removeItem')
     }
   }
 })

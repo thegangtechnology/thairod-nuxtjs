@@ -5,7 +5,7 @@
       <span class="page-name">
         {{ title }}
       </span>
-      <a href="/carts" class="carts__button" v-if="isDetail">
+      <a v-if="isDetail" class="carts__button" @click="goToCart">
         <a-icon
           class="trigger float-right shopping-cart__button"
           type="shopping-cart"
@@ -15,20 +15,29 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import Vue from 'vue'
-
+import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   props: {
     title: { type: String, default: '' },
     onBackButtonClick: { type: Function, default: () => null },
-    isDetail:{type:Boolean,default:true}
+    isDetail: { type: Boolean, default: true }
+  },
+  methods: {
+    goToCart () {
+      const cartItems = ProductModule.cartItems.map((product) => {
+        return { itemId: product.id, quantity: product.amount }
+      })
+      sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
+      this.$router.push(`/carts/?doctor=${this.$route.query.doctor}`)
+    }
   }
 })
 </script>
 
-<style lang="less">
+<style lang='less'>
 .page-header-product .ant-layout-header {
   background-color: @primary-color;
   text-align: center;
@@ -38,6 +47,7 @@ export default Vue.extend({
   display: flex;
   justify-content: space-between;
 }
+
 .page-header-product .page-name {
   font-family: 'FC Minimal', sans-serif;
   font-size: 30px;
@@ -48,6 +58,7 @@ export default Vue.extend({
   text-overflow: ellipsis;
   padding: 0 10px;
 }
+
 .page-header-product a.carts__button {
   color: #000000;
 }

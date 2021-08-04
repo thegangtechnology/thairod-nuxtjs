@@ -4,24 +4,24 @@ import {
   Module,
   Mutation,
   VuexModule
-} from "vuex-module-decorators";
-import { store } from "@/store";
+} from 'vuex-module-decorators'
+import { store } from '@/store'
+import { $axios } from '@/utils/api'
+import snakecaseKeys from 'snakecase-keys'
+import { Patient } from '@/types/patient.type'
+import apiPath from '~/data/api_path'
 import {
   OrderItem,
   PatientInfo,
   IProduct,
   DoctorInfo
-} from "~/types/order.type";
-import { $axios } from "@/utils/api";
-import apiPath from "~/data/api_path";
-import snakecaseKeys from "snakecase-keys";
-import { Patient } from "@/types/patient.type";
-import { ICheckoutProduct } from "~/types/product.type";
+} from '~/types/order.type'
+import { ICheckoutProduct } from '~/types/product.type'
 
 // remove duplicate module
-const name: string = "doctorModule";
+const name: string = 'doctorModule'
 if (store.state[name]) {
-  store.unregisterModule(name);
+  store.unregisterModule(name)
 }
 
 @Module({
@@ -30,34 +30,42 @@ if (store.state[name]) {
   store
 })
 class DoctorModule extends VuexModule {
-  patient: Patient = {} as Patient;
-  orderItems: OrderItem[] = [];
-  doctor: DoctorInfo = {} as DoctorInfo;
+  patient: Patient = {} as Patient
+  orderItems: OrderItem[] = []
+  doctor: DoctorInfo = {} as DoctorInfo
+  patientHash: string = ''
 
   @Mutation
-  SET_DOCTOR_DETAIL({
+  SET_DOCTOR_DETAIL ({
     doctor,
     patient
   }: {
     doctor: DoctorInfo;
     patient: Patient;
   }) {
-    this.doctor = doctor;
-    this.patient = patient;
+    this.doctor = doctor
+    this.patient = patient
   }
 
-  @Action({ commit: "SET_DOCTOR_DETAIL" })
-  public async getDoctorOrder({ hash }: { hash: string }) {
-    const res = await $axios.get(`${apiPath.orderFlow.hash}/?doctor=${hash}`);
-    const data = res.data;
+  @Mutation
+  SET_PATIENT_HASH ({
+    patientHash
+  }: { patientHash: string }) {
+    this.patientHash = patientHash
+  }
+
+  @Action({ commit: 'SET_DOCTOR_DETAIL' })
+  public async getDoctorOrder ({ hash }: { hash: string }) {
+    const res = await $axios.get(`${apiPath.orderFlow.hash}/?doctor=${hash}`)
+    const data = res.data
     return {
       doctor: data.doctorInfo.doctor,
       patient: data.doctorInfo.patient
-    };
+    }
   }
 
-  @Action({ rawError: true })
-  public async doctorCheckout({
+  @Action({ commit: 'SET_PATIENT_HASH' })
+  public async doctorCheckout ({
     hash,
     products
   }: {
@@ -69,12 +77,15 @@ class DoctorModule extends VuexModule {
       doctorOrder: {
         items: products
       }
-    };
+    }
     const snakecaseData: { [key: string]: any } = snakecaseKeys(data, {
       deep: true
-    });
-    await $axios.post(`${apiPath.orderFlow.doctorCheckout}/`, snakecaseData);
+    })
+    const res = await $axios.post(`${apiPath.orderFlow.doctorCheckout}/`, snakecaseData)
+    return {
+      patientHash: res.data.patientLinkHash
+    }
   }
 }
 
-export default getModule(DoctorModule);
+export default getModule(DoctorModule)

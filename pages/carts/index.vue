@@ -4,8 +4,8 @@
     <a-divider class="my-3" />
     <div class="carts-card__container">
       <a-row class="mb-6">
-        <a-col v-for="(item, i) in 3" :key="i" class="carts-item-list">
-          <CartsListItem :products="[]" />
+        <a-col v-for="(item, i) in cartItems" :key="i" class="carts-item-list">
+          <CartsListItem :product="item" @removeItem="removeItem(i)" @handlePlus="handlePlus" />
         </a-col>
       </a-row>
     </div>
@@ -44,7 +44,7 @@
       <a-input
         id="textToCopy"
         ref="textToCopy"
-        v-model="url"
+        :value="`${url}/checkout/?patient=${patientHash}`"
         placeholder="Link URL"
         class="mb-4 input-round"
       />
@@ -69,12 +69,13 @@
 
 <script lang='ts'>
 import Vue from 'vue'
+import { Product, ICheckoutProduct } from '@/types/product.type'
 import CartsListItem from '~/components/carts/CartsListItem.vue'
 import CardPatientDetail from '~/components/CardPatientDetail.vue'
-import PatientModule from '~/store/patient.module'
 import { Patient } from '~/types/patient.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 import DoctorModule from '~/store/doctor.module'
+import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   components: {
@@ -83,11 +84,12 @@ export default Vue.extend({
     PrimaryButton
   },
   layout: 'product-layout',
-  data() {
+  data () {
     return {
       visible: false,
       amount: 1,
-      url: 'https://www.thairod.co.th/lorem/17'
+      url: location.host,
+      cartItems: []
     }
   },
   computed: {
@@ -96,14 +98,29 @@ export default Vue.extend({
     },
     hash (): string {
       return this.$route.query.doctor as string
+    },
+    patientHash (): string {
+      return `${DoctorModule.patientHash}`
     }
   },
   async mounted () {
+    const productOrders = sessionStorage.getItem('doc-or-storage')
+    if (productOrders) {
+      await ProductModule.getProductList({ page: 1, perPage: -1, search: '' })
+      this.cartItems = JSON.parse(productOrders).map((item: ICheckoutProduct) => {
+        const mappedProduct: Product = ProductModule.productList.find(product => product.id === item.itemId) as Product
+        mappedProduct.quantity = item.quantity
+        return mappedProduct
+      })
+    }
     await DoctorModule.getDoctorOrder({ hash: this.hash })
-    // await CheckoutModule.getPatient({ id: 1 })
   },
   methods: {
     showModal (): void {
+      if (this.cartItems.length === 0) {
+        return
+      }
+      DoctorModule.doctorCheckout({ hash: this.hash, products: this.buildCartItemOrder(this.cartItems) })
       this.visible = true
     },
     closeModal (): void {
@@ -118,6 +135,19 @@ export default Vue.extend({
     },
     success (): void {
       this.$message.success('Copied', 1)
+    },
+    removeItem (cartIndex: number): void {
+      this.cartItems.splice(cartIndex, 1)
+      sessionStorage.setItem('doc-or-storage', JSON.stringify(this.buildCartItemOrder(this.cartItems)))
+    },
+    buildCartItemOrder (items: Product): ICheckoutProduct {
+      return items.map((product) => {
+        return { itemId: product.id, quantity: product.quantity }
+      })
+    },
+    handlePlus (quantity: number, itemId: number): void {
+      const foundIndex = this.cartItems.findIndex(item => item.id === itemId)
+      this.cartItems[foundIndex].quantity = quantity
     }
   }
 })

@@ -55,11 +55,6 @@ export default Vue.extend({
         }
       }
     }
-  },
-  computed: {
-    fullAdderss (): string {
-      return `${this.detail.street} ${this.detail.subDistrict} ${this.detail.district} ${this.detail.province} ${this.detail.zipcode}`
-    }
   }
 })
 </script>

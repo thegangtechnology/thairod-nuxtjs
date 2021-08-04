@@ -13,7 +13,7 @@
               alt="Logo Thairod Mall"
               :src="require('@/assets/images/logo.svg')"
               class="img-responsive"
-            />
+            >
           </div>
           <a-icon type="left" @click="() => (collapsed = !collapsed)" />
         </div>
@@ -23,7 +23,7 @@
           </div>
         </div>
         <a-menu theme="light" mode="inline">
-          <a-menu-item key="1" @click="goToPage('/product')">
+          <a-menu-item key="1" @click="goToPage(`/product/?doctor=${$route.query.doctor}`)">
             <a-icon type="home" />
             <span>หน้ารวมสินค้า</span>
           </a-menu-item>
@@ -39,7 +39,7 @@
           <span class="page-name">
             ไทยรอดMALL
           </span>
-          <a href="/carts" class="carts__button">
+          <a class="carts__button" @click="goToCart">
             <a-icon
               class="trigger float-right shopping-cart__button"
               type="shopping-cart"
@@ -57,24 +57,31 @@
 <script lang="ts">
 import Vue from 'vue'
 import DoctorDetail from '~/components/DoctorDetail.vue'
+import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   components: {
     DoctorDetail
   },
-  data() {
+  data () {
     return {
       collapsed: true
     }
   },
   methods: {
-    hiddenMenu() {
+    hiddenMenu () {
       this.collapsed = false
     },
-    goToPage(path: string): void {
-      console.log('path', path)
+    goToPage (path: string): void {
       this.hiddenMenu()
       this.$router.push(`${path}`)
+    },
+    goToCart () {
+      const cartItems = ProductModule.cartItems.map((product) => {
+        return { itemId: product.id, quantity: product.amount }
+      })
+      sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
+      this.$router.push(`/carts/?doctor=${this.$route.query.doctor}`)
     }
   }
 })

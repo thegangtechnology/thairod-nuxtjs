@@ -1,11 +1,16 @@
 /* eslint-disable camelcase */
 export interface Product {
-  id: number;
-  sku: string;
+  id: number
+  product: number
+  price: number
+  productDescription: string
+  unit: string
+  updatedDate: string
+  amount?: number
   image: string;
   name: string;
   description: string;
-  repeatable: boolean;
+  quantity?: number;
 }
 
 export interface ICheckoutProduct {

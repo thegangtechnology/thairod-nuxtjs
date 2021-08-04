@@ -37,34 +37,34 @@ export interface PatientInfo {
 }
 
 export interface OrderItem {
-  id: number;
-  name: string;
-  price: string;
-  unit: string;
-  quantity: number;
-  description: string;
+  id: number
+  name: string
+  price: string
+  unit: string
+  quantity: number
+  description: string
 }
 
 export interface IOrder extends Main {
-  orderId: string;
-  cid: string;
-  patientName: string;
-  phoneNumber: string;
-  orderedItem: string;
-  orderedDate: string;
-  exportBatch: string;
-  trackingNo: string;
-  warehouse: string;
-  orderedBy: string;
-  updatedBy: string;
-  updatedDate: string;
-  address: string;
-  province: string;
-  district: string;
-  subDistrict: string;
-  zipCode: string;
-  remark: string;
-  deliveryStatus: boolean;
-  printStatus: boolean;
-  status: Status;
+  orderId: string
+  cid: string
+  patientName: string
+  phoneNumber: string
+  orderedItem: string
+  orderedDate: string
+  exportBatch: string
+  trackingNo: string
+  warehouse: string
+  orderedBy: string
+  updatedBy: string
+  updatedDate: string
+  address: string
+  province: string
+  district: string
+  subDistrict: string
+  zipCode: string
+  remark: string
+  deliveryStatus: boolean
+  printStatus: boolean
+  status: Status
 }

@@ -75,7 +75,7 @@
             </a-button>
             <a-input-number
               :value="amount"
-              :min="0"
+              :min="1"
               :max="1000"
               :formatter="
                 value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -89,7 +89,7 @@
           </a-button-group>
         </a-col>
         <a-col :span="12">
-          <primary-button class="update-button" :text="'เพิ่มใส่ตะกร้า'" block :on-click="addToCart" :size="'large'" />
+          <primary-button class="update-button" :text="'เพิ่มใส่ตะกร้า'" block :on-click="addToCart" :size="'large'"/>
         </a-col>
       </a-row>
     </div>
@@ -100,19 +100,22 @@
 import Vue, { PropType } from 'vue'
 import { Product } from '~/types/product.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
+import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   components: { PrimaryButton },
   props: {
     item: {
       type: Object as PropType<Product>,
-      default: () => {}
+      default: () => {
+      }
     }
   },
   data () {
     return {
       amount: 1,
       // mockup data
+      form: {},
       data: {
         id: 1,
         name: 'Favipiravir',
@@ -142,6 +145,21 @@ export default Vue.extend({
       }
     }
   },
+  computed: {
+    getAmount (): number {
+      const foundItem = ProductModule.cartItems.find(item => item.id === Number(this.$route.params.uid))
+      console.log(foundItem, 'found item')
+      if (foundItem) {
+        return foundItem.amount
+      } else {
+        return 1
+      }
+    }
+  },
+  mounted () {
+    this.amount = this.getAmount
+    console.log(this.getAmount, 'get amount')
+  },
   methods: {
     updateAmount (value: number) {
       console.log('changed', value)
@@ -155,49 +173,59 @@ export default Vue.extend({
     },
     addToCart (): void {
       console.log('addtocart')
+      this.$emit('updateAmount', this.amount, this.item)
     }
   }
 })
 </script>
 
 <style scoped lang="less">
-.product-detail{
+.product-detail {
   margin-bottom: 60px;
 }
-.product-detail__title{
+
+.product-detail__title {
   font-family: 'FC Minimal', sans-serif;
   font-weight: bold;
   color: #001740;
-  font-size:24px;
+  font-size: 24px;
 }
+
 .product-detail__name {
   width: 100%;
   font-family: 'FC Minimal', sans-serif;
   font-weight: bold;
   color: #001740;
-  font-size:24px;
+  font-size: 24px;
 }
+
 .product-detail__description {
   margin-bottom: 16px;
-  line-height:normal;
+  line-height: normal;
 }
+
 .product-detail__image {
   max-width: 250px;
   width: 100%;
   margin: auto;
 }
+
 .product-card__item-container {
   margin-bottom: 24px;
 }
+
 .item__detils {
   margin-left: 8px;
 }
+
 .item__name {
   font-size: 1rem;
 }
+
 .item__amount {
   font-size: 1.25rem;
 }
+
 .product-card__button-container {
   position: fixed;
   bottom: 0;
@@ -206,35 +234,43 @@ export default Vue.extend({
   background-color: #ffffff;
   padding: 16px;
 }
+
 .product-card__button-container .update-button {
   font-size: 18px;
 }
+
 .product-card__button-container .ant-btn-group {
   max-width: 200px;
   display: flex;
   align-items: center;
   margin: auto;
 }
-.product-card__button-container .ant-input-number-input-wrap input{
+
+.product-card__button-container .ant-input-number-input-wrap input {
   text-align: center;
 }
+
 .product-card__button-container .input-amount {
   border-color: transparent;
   width: 100%;
 }
+
 .ant-input-number-handler-wrap {
   display: none;
   box-shadow: none;
 }
+
 .product-card__button-container > input::-webkit-outer-spin-button,
 .product-card__button-container > input::-webkit-inner-spin-button {
   -webkit-appearance: none !important;
   margin: 0;
 }
-.product-card__button-container  > input[type='number'] {
+
+.product-card__button-container > input[type='number'] {
   -moz-appearance: textfield !important;
 }
-.product-card__button-container .update-item__button{
+
+.product-card__button-container .update-item__button {
   width: 40px;
   height: 40px;
   min-width: 40px;
@@ -243,19 +279,22 @@ export default Vue.extend({
   border-radius: 50% !important;
 
 }
+
 .product-detail__button {
   color: #ffffff;
   background-color: #666666;
-  border:1px solid #666666;
-  border-radius:0;
-  height:48px;
+  border: 1px solid #666666;
+  border-radius: 0;
+  height: 48px;
 }
+
 @media only screen and (max-width: 599px) {
 
-.product-detail__image {
-  max-width: 100%;
-  width: 100%;
-}
+  .product-detail__image {
+    max-width: 100%;
+    width: 100%;
+  }
+
   .product-detail__name {
     margin-top: 1rem;
   }
@@ -263,7 +302,7 @@ export default Vue.extend({
 </style>
 
 <style lang="less">
-.input-amount > .ant-input-number-input-wrap input{
+.input-amount > .ant-input-number-input-wrap input {
   text-align: center;
 }
 </style>

@@ -26,7 +26,7 @@
         :xl="4"
         class="space-product-item"
       >
-        <ProductCard :item="item" />
+        <ProductCard :item="item" @updateAmount="updateAmount"/>
       </a-col>
     </a-row>
   </div>
@@ -70,7 +70,17 @@ export default Vue.extend({
     })
   },
   methods: {
-    onSearch (): void {}
+    onSearch (): void {},
+    updateAmount (amount: number, product: Product): void {
+      console.log('product list',product)
+      const newProduct = { ...product }
+      newProduct.amount = amount
+      console.log(amount)
+      ProductModule.updateProduct(
+        newProduct
+      )
+    }
+
   }
 })
 </script>

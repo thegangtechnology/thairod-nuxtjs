@@ -125,8 +125,11 @@
       </a-row>
 
       <a-row class="button-group" type="flex">
-        <a-col span="24" :md="{ span: 12, offset: 12 }">
-          <primary-button :on-click="goToOrderConfirmation" :text="'ต่อไป'" size="default" />
+        <a-col span="12">
+          <secondary-button :on-click="clickBack" :text="'กลับ'" />
+        </a-col>
+        <a-col span="12">
+          <primary-button :on-click="goToOrderConfirmation" :text="'ต่อไป'" />
         </a-col>
       </a-row>
     </a-form>
