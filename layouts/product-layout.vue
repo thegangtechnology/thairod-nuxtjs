@@ -78,13 +78,13 @@ export default Vue.extend({
     },
     totalCart (): number {
       if (sessionStorage.getItem('doc-or-storage')) {
-        ProductModule.setTotalCart({ totalItem: JSON.parse(sessionStorage.getItem('doc-or-storage')).length })
+        ProductModule.setTotalCart({ totalItem: JSON.parse(sessionStorage.getItem('doc-or-storage') as string).length })
       }
       return ProductModule.total
     }
   },
   async mounted () {
-    await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor })
+    await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor as string })
   },
   methods: {
     hiddenMenu () {

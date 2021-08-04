@@ -30,7 +30,7 @@ export default Vue.extend({
   computed: {
     totalCart (): number {
       if (sessionStorage.getItem('doc-or-storage')) {
-        ProductModule.setTotalCart({ totalItem: JSON.parse(sessionStorage.getItem('doc-or-storage')).length })
+        ProductModule.setTotalCart({ totalItem: JSON.parse(sessionStorage.getItem('doc-or-storage') as string).length })
       }
       return ProductModule.total
     }

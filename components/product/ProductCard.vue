@@ -29,7 +29,7 @@
 </template>
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import { Product } from '~/types/product.type'
+import { ICheckoutProduct, Product } from '~/types/product.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 import ProductModule from '~/store/product.module'
 
@@ -39,6 +39,9 @@ export default Vue.extend({
     item: {
       type: Object as PropType<Product>,
       default: () => {
+        return {
+          id: 0
+        }
       }
     }
   },
@@ -53,7 +56,7 @@ export default Vue.extend({
       if (!cartItems) {
         return 0
       }
-      const foundItem = cartItems.find(item => item.id === this.item?.id)
+      const foundItem = cartItems.find((item: ICheckoutProduct) => item.itemId === this.item.id)
       if (foundItem) {
         return foundItem.quantity
       } else {

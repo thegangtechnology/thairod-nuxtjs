@@ -1,41 +1,55 @@
 <template>
-  <div class="order-container">
-    <div class="detail-header">
-      <h1>Order Detail</h1>
-      <a-button v-if="!isEdit" icon="edit" @click="isEdit = true">
-        Edit Record
-      </a-button>
-    </div>
-    <div v-if="detail !== null" class="detail-body">
-      <OrderDetail v-if="!isEdit" :detail="detail" />
-      <OrderEdit v-else :detail="detail" @onEdit="fromEdit" />
+  <div class="page__container">
+    <div class="page-card__container">
+      <div class="page-card__header">
+        <div class="page-header__title has-subtitle">
+          <div>รายละเอียดคำสั่งซื้อ</div>
+          <div class="page-header__subtitle">
+            ภาพรวมรายการจัดส่ง /
+            <span v-if="detail !== null">รายการสั่งซื้อ {{ detail.id }}</span>
+          </div>
+        </div>
+        <a-input
+          class="page-header__search"
+          v-model="search"
+          placeholder="ค้นหา"
+        >
+          <a-icon slot="prefix" type="search" />
+        </a-input>
+      </div>
+      <div v-if="detail !== null">
+        <OrderDetail v-if="!isEdit" :detail="detail" />
+        <OrderEdit v-else :detail="detail" @onEdit="fromEdit" />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { OrderModule } from "~/store";
-import { IOrder } from "~/types/order.type";
+import { Vue, Component } from 'vue-property-decorator'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentDetail } from '~/types/shipment.type'
 
 @Component
 export default class DetailPage extends Vue {
-  detail: IOrder | null = null;
+  detail: ShipmentDetail | null = null
+  isEdit: boolean = false
+  search: string = ''
 
-  isEdit: boolean = false;
-
-  created() {
-    this.importDetail();
+  async created() {
+    await this.importDetail()
   }
 
   fromEdit() {
-    this.isEdit = false;
-    this.importDetail();
+    this.isEdit = false
+    this.importDetail()
   }
 
   async importDetail() {
-    const res = await OrderModule.getOrderDetail(this.$route.params.id);
-    if (res) this.detail = res;
+    const res = await ShipmentModule.getShipmentDetail(
+      parseInt(this.$route.params.id)
+    )
+    if (res) this.detail = res
   }
 }
 </script>

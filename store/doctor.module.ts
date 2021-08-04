@@ -7,7 +7,6 @@ import {
 } from 'vuex-module-decorators'
 import { store } from '@/store'
 import { $axios } from '@/utils/api'
-import snakecaseKeys from 'snakecase-keys'
 import { Patient } from '@/types/patient.type'
 import apiPath from '~/data/api_path'
 import {
@@ -76,10 +75,11 @@ class DoctorModule extends VuexModule {
         items: products
       }
     }
-    const snakecaseData: { [key: string]: any } = snakecaseKeys(data, {
-      deep: true
+    const res = await $axios.post(`${apiPath.orderFlow.doctorCheckout}/`, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
-    const res = await $axios.post(`${apiPath.orderFlow.doctorCheckout}/`, snakecaseData)
     return {
       patientHash: res.data.patientLinkHash
     }

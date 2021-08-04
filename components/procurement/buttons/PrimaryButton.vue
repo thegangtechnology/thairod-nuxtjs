@@ -13,7 +13,7 @@
     :block="block"
     @click="onClick"
   >
-    <b>{{ text }}</b>
+    <strong>{{ text }}</strong>
   </a-button>
 </template>
 
@@ -22,7 +22,12 @@ import Vue from 'vue'
 
 export default Vue.extend({
   props: {
-    onClick: { type: Function, default: () => {} },
+    onClick: {
+      type: Function,
+      default: () => {
+      // empty
+      }
+    },
     text: { type: String, default: '' },
     size: { type: String, default: 'default' },
     block: { type: Boolean, default: false }

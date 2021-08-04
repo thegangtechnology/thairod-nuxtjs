@@ -1,7 +1,12 @@
+export interface Warehouse {
+  id: number,
+  name: string
+}
+
 export interface UpdateInventoryFormData {
   quantity: number
-  cost: number
-  warehouse: string
+  unitPrice: number
+  warehouse: number
 }
 
 export interface WarehouseStock {
@@ -18,7 +23,7 @@ export interface InventoryDetailCard {
 }
 
 export interface ItemOverviewInfo {
-  id: string,
+  id: number,
   name: string,
   stock: number,
   unit: string,
@@ -30,11 +35,11 @@ export interface InventoryRecord {
   accumulativeAmount: number,
   usedAmount: number,
   accumulativeUsed: number,
-  unit: String
+  unit: string
 }
 
 export interface ItemDetail {
-  id: string,
+  id: number,
   productDescription: string,
   description: string,
   name: string,

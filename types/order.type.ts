@@ -2,15 +2,15 @@
 /**
  * FRONTEND Interface
  */
-type Status = 'wait' | 'print' | 'out' | 'received';
+type Status = 'wait' | 'print' | 'out' | 'received'
 
 export interface Main {
-  [key: string]: string | boolean;
+  [key: string]: string | boolean
 }
 
 export interface DoctorInfo {
-  name: string;
-  license: string;
+  name: string
+  license: string
 }
 
 export interface IProduct {

@@ -46,7 +46,7 @@ export default Vue.extend({
   },
   methods: {
     toItemDetail () : void {
-      this.$router.push({ path: '/procurement/item-detail', query: { id: this.item.id } })
+      this.$router.push({ path: '/procurement/item-detail', query: { id: this.item.id.toString() } })
     },
     formatDate (date: string) : string {
       return new Date(date).toLocaleString()
