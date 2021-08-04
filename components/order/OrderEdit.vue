@@ -231,7 +231,7 @@
                     label="แผนที่"
                   >
                     <div class="detail-map">
-                      <img :src="MapImage" alt="MapImage">
+                      <img :src="MapImg" alt="MapImg">
                     </div>
                   </a-form-item>
                 </div>
@@ -399,7 +399,7 @@ import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import UserSvg from '~/assets/icons/user.svg'
 import BoxSvg from '~/assets/icons/box.svg'
 import PinSvg from '~/assets/icons/pin.svg'
-import MapSvg from '~/assets/icons/map.svg'
+import MapSvg from '~/assets/images/shipment/map.svg'
 import BoxImg from '~/assets/images/print/box.svg'
 import { ShipmentDetail, ShipmentForm } from '~/types/shipment.type'
 import location from '~/static/location.json'
@@ -422,7 +422,7 @@ export default class OrderEdit extends Vue {
   private UserIcon = UserSvg
   private BoxIcon = BoxSvg
   private PinIcon = PinSvg
-  private MapImage = MapSvg
+  private MapImg = MapSvg
   private BoxImg = BoxImg
 
   form: ShipmentForm = {

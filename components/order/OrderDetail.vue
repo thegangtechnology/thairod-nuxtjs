@@ -185,7 +185,7 @@
               {{ detail.note }}
             </div>
             <div class="detail-map">
-              <img :src="MapImage" alt="MapImage">
+              <img :src="MapImg" alt="MapImg">
             </div>
           </div>
         </div>
@@ -206,7 +206,7 @@ import BoxSvg from '~/assets/icons/box.svg'
 import PinSvg from '~/assets/icons/pin.svg'
 import EditSvg from '~/assets/icons/edit.svg'
 import PrinterSvg from '~/assets/icons/printer.svg'
-import MapSvg from '~/assets/icons/map.svg'
+import MapSvg from '~/assets/images/shipment/map.svg'
 import { ShipmentDetail } from '~/types/shipment.type'
 
 @Component
@@ -218,7 +218,7 @@ export default class OrderDetail extends Vue {
   private PinIcon = PinSvg
   private EditIcon = EditSvg
   private PrinterIcon = PrinterSvg
-  private MapImage = MapSvg
+  private MapImg = MapSvg
 
   @Emit('onEdit')
   toEdit () {
