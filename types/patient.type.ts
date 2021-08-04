@@ -3,10 +3,9 @@
  */
 
 export interface Patient {
-  id?: number
-  fullName?: string
-  phone?: string
-  cardNumber?:string
+  id?: number;
+  name?: string;
+  cid?: string;
 }
 
 /**
@@ -14,9 +13,9 @@ export interface Patient {
  */
 
 export interface PatientJson {
-  id: number
-  first_name:string
-  last_name: string
-  phone: string
-  card_number:string
+  id: number;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  card_number: string;
 }

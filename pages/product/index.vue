@@ -26,7 +26,7 @@
         :xl="4"
         class="space-product-item"
       >
-        <ProductCard :item="item" />
+        <ProductCard :item="item" @updateAmount="updateAmount" />
       </a-col>
     </a-row>
   </div>
@@ -38,8 +38,9 @@ import CardPatientDetail from '~/components/CardPatientDetail.vue'
 import PatientModule from '~/store/patient.module'
 import ProductModule from '~/store/product.module'
 import { Patient } from '~/types/patient.type'
-import { Product } from '~/types/product.type'
+import { ICheckoutProduct, Product } from '~/types/product.type'
 import ProductCard from '~/components/product/ProductCard.vue'
+import DoctorModule from '~/store/doctor.module'
 
 export default Vue.extend({
   components: {
@@ -47,28 +48,48 @@ export default Vue.extend({
     ProductCard
   },
   layout: 'product-layout',
-  data() {
+  data () {
     return {
       isSubmit: false,
       search: ''
     }
   },
   computed: {
-    patient(): Patient {
-      return PatientModule.patient
+    patient (): Patient {
+      return DoctorModule.patient
     },
-    productList(): Product[] {
+    productList (): Product[] {
       return ProductModule.productList
     }
   },
-  async mounted() {
+  async mounted () {
     await PatientModule.getPatient({ id: 1 })
-    await ProductModule.getProductList()
+    await ProductModule.getProductList({
+      page: 1,
+      perPage: -1,
+      search: ''
+    })
   },
   methods: {
-    onSearch(): void {
-      console.log('onSearch', this.search)
+    onSearch (): void {
+    },
+    updateAmount (amount: number, product: Product): void {
+      let cartItems = []
+      if (sessionStorage.getItem('doc-or-storage')) {
+        cartItems = JSON.parse(sessionStorage.getItem('doc-or-storage') as string)
+        const duplicateItemIndex = cartItems.findIndex((item: ICheckoutProduct) => item.itemId === product.id)
+        if (duplicateItemIndex !== -1) {
+          cartItems[duplicateItemIndex].quantity = amount
+        } else {
+          cartItems.push({ itemId: product.id, quantity: amount })
+        }
+      } else {
+        cartItems.push({ itemId: product.id, quantity: amount })
+      }
+      sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
+      ProductModule.setTotalCart({ totalItem: cartItems.length })
     }
+
   }
 })
 </script>
