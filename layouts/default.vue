@@ -41,7 +41,7 @@
       </a-row>
 
       <a-menu mode="inline">
-        <a-menu-item :class="{'sidebar-item-active': selectedMenu === ''}">
+        <a-menu-item :class="{'sidebar-item-active': selectedMenu === ''}" @click="goToPage('/procurement')">
           <a-icon type="shop" />
           <span>จัดการคลังสินค้า</span>
         </a-menu-item>
@@ -64,6 +64,10 @@
           <span>พิมพ์ใบจัดส่งสินค้า</span>
         </a-menu-item>
       </a-menu>
+      <a-button class="logout-button" @click="onLogout">
+        <img alt="logout" class="icon" src="~/assets/images/procurement/icon/logout-icon.svg">
+        ออกจากระบบ
+      </a-button>
     </a-layout-sider>
 
     <a-layout-content>
@@ -79,7 +83,7 @@ export default Vue.extend({
   data () {
     return {
       collapsed: false,
-      menuPaths: ['order-overview', 'assign', 'print']
+      menuPaths: ['procurement', 'order-overview', 'assign', 'print']
     }
   },
   computed: {
@@ -101,6 +105,12 @@ export default Vue.extend({
       if (selected) {
         this.selectedMenu = selected
       }
+    },
+    logout () : void {
+      this.$auth.logout()
+    },
+    onLogout () : void {
+      this.logout()
     }
   }
 })
@@ -158,5 +168,10 @@ export default Vue.extend({
   background: #FFECEC !important;
   border: 0;
   border-left: 3px solid #F9B7B7;
+}
+
+.ant-layout-content {
+  min-height: 100vh !important;
+  z-index: 100;
 }
 </style>

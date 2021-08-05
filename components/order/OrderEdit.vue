@@ -213,7 +213,7 @@
                 <div class="detail-full__container">
                   <a-form-item
                     class="detail-form__item"
-                    label="จุดสังเกตุ"
+                    label="จุดสังเกต"
                   >
                     <a-textarea
                       v-model="form.note"

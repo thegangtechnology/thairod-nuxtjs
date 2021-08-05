@@ -179,7 +179,7 @@
               {{ detail.postal_code }}
             </div>
             <div class="detail-note__header">
-              จุดสังเกตุ
+              จุดสังเกต
             </div>
             <div class="detail-note__info">
               {{ detail.note }}
