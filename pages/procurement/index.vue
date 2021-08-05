@@ -42,7 +42,6 @@ import Sidebar from '~/components/procurement/ProcurementSidebar.vue'
 export default Vue.extend({
   components: { MainHeader, ItemOverview, Sidebar },
   layout: 'empty',
-  middleware: 'auth',
   data () {
     return {
       currentPage: 1,
