@@ -67,13 +67,6 @@ export default {
     '@nuxtjs/auth-next'
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    // proxy: true
-    baseURL:
-      process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
-  },
-
   auth: {
     strategies: {
       local: {
@@ -124,5 +117,13 @@ export default {
         additionalData: '@import "@/assets/styles/antd.less";'
       }
     }
+  },
+  publicRuntimeConfig: {
+    // Axios module configuration: https://go.nuxtjs.dev/config-axios
+    axios: {
+      // proxy: true
+      baseURL:
+        process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
+    },
   }
 }
