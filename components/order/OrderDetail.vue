@@ -19,7 +19,7 @@
           <span v-else :class="detail.status"> ได้รับเรียบร้อย </span>
         </div>
         <div class="detail-header__right">
-          <a-button class="detail-button__cta print">
+          <a-button class="detail-button__cta print" @click="toPrint">
             <img :src="PrinterIcon" alt="PrinterIcon">
             พิมพ์ใบจัดส่งสินค้า
           </a-button>
@@ -207,6 +207,7 @@ import PinSvg from '~/assets/icons/pin.svg'
 import EditSvg from '~/assets/icons/edit.svg'
 import PrinterSvg from '~/assets/icons/printer.svg'
 import MapSvg from '~/assets/images/shipment/map.svg'
+import ShipmentModule from '~/store/shipment.module'
 import { ShipmentDetail } from '~/types/shipment.type'
 
 @Component
@@ -227,6 +228,11 @@ export default class OrderDetail extends Vue {
 
   goBack () {
     this.$router.go(-1)
+  }
+
+  toPrint () {
+    ShipmentModule.printLabel([this.detail.id])
+    this.$router.push('/order-overview')
   }
 }
 </script>
