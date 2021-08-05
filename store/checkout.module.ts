@@ -49,7 +49,7 @@ class CheckoutModule extends VuexModule {
   @Action({ commit: 'SET_CHECKOUT_DETAIL' })
   public async getPatientOrder ({ patientHash }: { patientHash: string }) {
     const res = await $axios.get(
-      `${apiPath.orderFlow.hash}/?patient=${patientHash}/`
+      `${apiPath.orderFlow.hash}/?patient=${patientHash}`
     )
     const data = res.data
     const patientRes = data.doctorInfo.patient
