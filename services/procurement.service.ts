@@ -8,7 +8,7 @@ import { Warehouse } from '~/models/Warehouse'
 
 export function getProductVariations (params: ProductVariationsParam) : Promise<ProductVariationsReturn> {
   return $axios
-    .get(apiPath.productVariation, {
+    .get(`${apiPath.productVariation}/`, {
       params
     })
     .then((res) => {
@@ -34,7 +34,7 @@ export function getItemDetail (id: string | (string | null)[]) : Promise<ItemDet
 
 export function getWarehouseList () : Promise<Warehouse[]> {
   return $axios
-    .get(apiPath.warehouse)
+    .get(`${apiPath.warehouse}/`)
     .then((res) => {
       return res.data.results
     })

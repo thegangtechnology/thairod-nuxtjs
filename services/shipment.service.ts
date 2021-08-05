@@ -30,7 +30,7 @@ export const getShipments = async (
 ): Promise<ShipmentsResult> => {
   try {
     const response = await $axios.get(
-      `${apiPath.shipment}`, {
+      `${apiPath.shipment}/`, {
         params: {
           page,
           batch_isnull,
