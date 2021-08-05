@@ -89,7 +89,13 @@
           </a-button-group>
         </a-col>
         <a-col :span="12">
-          <primary-button class="update-button" :text="'เพิ่มใส่ตะกร้า'" block :on-click="addToCart" :size="'large'" />
+          <primary-button
+            class="update-button ripple"
+            :text="'เพิ่มใส่ตะกร้า'"
+            block
+            :on-click="addToCart"
+            :size="'large'"
+          />
         </a-col>
       </a-row>
     </div>
@@ -207,6 +213,21 @@ export default Vue.extend({
 
 .product-card__button-container .update-button {
   font-size: 18px;
+}
+
+.update-button.ripple {
+  background-position: center;
+  transition: background 0.6s;
+
+  &:hover {
+    background: #FAC5C5 radial-gradient(circle, transparent 1%, #FAC5C5 1%) center/15000%;
+  }
+
+  &:active {
+    background-color: #FAC5C5;
+    background-size: 100%;
+    transition: background 0s;
+  }
 }
 
 .product-card__button-container .ant-btn-group {

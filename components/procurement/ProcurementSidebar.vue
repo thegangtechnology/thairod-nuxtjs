@@ -21,12 +21,12 @@ export default Vue.extend({
   props: {
     collapsed: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   data () {
     return {
-      sidebarCollapsed: true,
+      sidebarCollapsed: false,
       userInfo: [{ firstName: 'เติมศิริ', lastName: 'ธัยยามาตย์', role: 'Admin' }]
     }
   },
