@@ -14,7 +14,7 @@
       </div>
       <div><strong>{{ item.stock ? item.stock : '-' }} {{ item.unit }}</strong></div>
       <div class="label last-update-label">
-        อัพปเดตเมื่อ
+        อัปเดตเมื่อ
       </div>
       <div class="last-update">
         {{ formatDate(item.updatedDate) }}
@@ -49,7 +49,7 @@ export default Vue.extend({
       this.$router.push({ path: '/procurement/item-detail', query: { id: this.item.id.toString() } })
     },
     formatDate (date: string) : string {
-      return new Date(date).toLocaleString()
+      return new Date(date).toLocaleString('th', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' })
     }
   }
 })
@@ -83,7 +83,7 @@ button {
 }
 
 .last-update {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
 }
 

@@ -5,6 +5,7 @@
       :warehouse-stocks="warehouseStocks"
       :left-card="leftCard"
       :right-card="rightCard"
+      :inventory-by-warehouse-title="inventoryByWarehouseTitle"
     />
   </div>
 </template>
@@ -24,6 +25,7 @@ export default Vue.extend({
         // { warehouse: 'Warehouse C', amount: 25, unit: 'กล่อง' },
         // { warehouse: 'Warehouse D', amount: 25, unit: 'กล่อง' }
       ],
+      inventoryByWarehouseTitle: 'ยอดรวมจากแต่ละคลังสินค้า',
       leftCard: {
         backgroundColor: '#001740',
         title: 'จำนวนในคลัง',
@@ -45,7 +47,3 @@ export default Vue.extend({
   }
 })
 </script>
-
-<style scoped>
-
-</style>
