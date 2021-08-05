@@ -31,15 +31,18 @@
       </div>
 
       <a-row align="middle" class="profile-wrapper" justify="space-around" type="flex">
-        <a-col>
-          <img :src="require('~/assets/images/sidebar/doctor-profile.svg')" alt="doctor-profile" height="48">
-        </a-col>
-        <a-col :class="{'hide-content': collapsed}" class="profile-detail" span="18">
-          {{ getFirstname }} {{ getLastname }}
-          <p>{{ getUsername }}</p>
+        <a-col :class="{'hide-content': collapsed}" class="profile-detail" span="24">
+          <a-list :data-source="userInfo" class="list-items">
+            <a-list-item slot="renderItem" slot-scope="{firstName, lastName, username}">
+              <a-list-item-meta
+                :description="username"
+              >
+                <span slot="title" class="list-title">{{ firstName }} {{ lastName }} </span>
+              </a-list-item-meta>
+            </a-list-item>
+          </a-list>
         </a-col>
       </a-row>
-
       <a-menu mode="inline">
         <a-menu-item :class="{'sidebar-item-active': selectedMenu === ''}" @click="goToPage('/procurement')">
           <a-icon type="shop" />
@@ -80,6 +83,7 @@
 
 <script lang='ts'>
 import Vue from 'vue'
+import { UserInfo } from '~/types/procurement.type'
 
 export default Vue.extend({
   data () {
@@ -97,14 +101,8 @@ export default Vue.extend({
         return 'order-overview'
       }
     },
-    getUsername (): string {
-      return this.$auth.user ? String(this.$auth.user.username) : ''
-    },
-    getFirstname (): string {
-      return this.$auth.user ? String(this.$auth.user.firstName) : ''
-    },
-    getLastname (): string {
-      return this.$auth.user ? String(this.$auth.user.lastName) : ''
+    userInfo () : (UserInfo | null)[] {
+      return [this.$auth.user] as (UserInfo | null)[]
     }
   },
   methods: {
