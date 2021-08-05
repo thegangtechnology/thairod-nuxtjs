@@ -18,7 +18,7 @@ class PatientModule extends VuexModule {
 
   @MutationAction({ mutate: ['patient'] })
   public async getPatient ({ id }: { id: number }) {
-    const path: string = `patient/${id}`
+    const path: string = `patient/${id}/`
     await Promise.resolve(path)
     // mockup data
     const data = {

@@ -17,7 +17,12 @@ import Vue from 'vue'
 export default Vue.extend({
   props: {
     title: { type: String, default: '' },
-    onButtonClick: { type: Function, default: () => {} },
+    onButtonClick: {
+      type: Function,
+      default: () => {
+      // empty
+      }
+    }
   }
 })
 </script>

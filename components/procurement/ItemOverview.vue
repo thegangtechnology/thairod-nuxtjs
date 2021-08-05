@@ -4,7 +4,7 @@
       <img
         slot="cover"
         alt="item-image"
-        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+        :src="imageMap[item.id]"
       >
       <div class="title">
         {{ item.name }}
@@ -12,12 +12,12 @@
       <div class="label">
         จำนวนในคลัง
       </div>
-      <div><b>{{ item.stock }} {{ item.unit }}</b></div>
+      <div><strong>{{ item.stock ? item.stock : '-' }} {{ item.unit }}</strong></div>
       <div class="label last-update-label">
-        อัพปเดตเมื่อ
+        อัปเดตเมื่อ
       </div>
       <div class="last-update">
-        {{ item.lastUpdate }}
+        {{ formatDate(item.updatedDate) }}
       </div>
       <secondary-button :text="'ดูรายละเอียด'" :on-click="toItemDetail" />
     </a-card>
@@ -27,22 +27,29 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
-import { ItemOverViewInfo } from '~/types/procurement.type'
+import { ItemOverviewInfo } from '~/types/procurement.type'
+import { productImageMap } from '~/data/image-map'
+import { defaultItemOverviewInfo } from '~/types/procurement.default'
 
 export default Vue.extend({
   components: { SecondaryButton },
   props: {
     item: {
-      type: Object as PropType<ItemOverViewInfo>,
-      default: () => ({})
+      type: Object as PropType<ItemOverviewInfo>,
+      default: () => (defaultItemOverviewInfo)
     }
   },
   data () {
-    return {}
+    return {
+      imageMap: productImageMap
+    }
   },
   methods: {
-    toItemDetail () {
-      this.$router.push('/procurement/item-detail')
+    toItemDetail () : void {
+      this.$router.push({ path: '/procurement/item-detail', query: { id: this.item.id.toString() } })
+    },
+    formatDate (date: string) : string {
+      return new Date(date).toLocaleString('th', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' })
     }
   }
 })
@@ -73,10 +80,11 @@ button {
   padding: 12px 0 4px 0;
   font-weight: bold;
   font-size: 20px;
+  overflow-wrap: break-word;
 }
 
 .last-update {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
 }
 

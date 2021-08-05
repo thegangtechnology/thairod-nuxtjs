@@ -5,6 +5,7 @@
       :warehouse-stocks="warehouseStocks"
       :left-card="leftCard"
       :right-card="rightCard"
+      :inventory-by-warehouse-title="inventoryByWarehouseTitle"
     />
   </div>
 </template>
@@ -19,33 +20,30 @@ export default Vue.extend({
   data () {
     return {
       warehouseStocks: [
-        { warehouse: 'Warehouse A', amount: 30, unit: 'กล่อง' },
-        { warehouse: 'Warehouse B', amount: 20, unit: 'กล่อง' },
-        { warehouse: 'Warehouse C', amount: 25, unit: 'กล่อง' },
-        { warehouse: 'Warehouse D', amount: 25, unit: 'กล่อง' }
+        // { warehouse: 'Warehouse A', amount: 30, unit: 'กล่อง' },
+        // { warehouse: 'Warehouse B', amount: 20, unit: 'กล่อง' },
+        // { warehouse: 'Warehouse C', amount: 25, unit: 'กล่อง' },
+        // { warehouse: 'Warehouse D', amount: 25, unit: 'กล่อง' }
       ],
+      inventoryByWarehouseTitle: 'ยอดใช้วันนี้จากแต่ละคลังสินค้า',
       leftCard: {
         backgroundColor: '#92959A',
         title: 'จำนวนที่ใช้วันนี้',
-        amount: 100,
+        amount: 0,
         unit: 'กล่อง'
       },
       rightCard: {
         backgroundColor: '#B7B8B9',
         title: 'ยอดใช้สะสม',
-        amount: 10000,
+        amount: 0,
         unit: 'กล่อง'
       }
     }
   },
   methods: {
     onBackButtonClick () : void {
-      this.$router.push('/procurement/item-detail')
+      this.$router.push({ path: '/procurement/item-detail', query: { id: this.$route.query.id } })
     }
   }
 })
 </script>
-
-<style scoped>
-
-</style>

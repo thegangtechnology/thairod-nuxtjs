@@ -1,66 +1,36 @@
-<!--<template>-->
-<!--  <div class="app-wrapper">-->
-<!--    <nuxt />-->
-<!--  </div>-->
-<!--</template>-->
-
-<!--<script lang="ts">-->
-<!--import Vue from 'vue'-->
-
-<!--export default Vue.extend({})-->
-<!--</script>-->
-
-<!--<style>-->
-<!--.app-wrapper {-->
-<!--  margin: 20px;-->
-<!--}-->
-
-<!--.ant-btn:hover {-->
-<!--  color: black;-->
-<!--  border-color: black;-->
-<!--}-->
-
-<!--.ant-btn.ant-btn-primary {-->
-<!--  background: black;-->
-<!--  color: white;-->
-<!--  border-color: black;-->
-<!--}-->
-<!--</style>-->
-
-
 <template>
   <div>
     <a-page-header>
-      <span slot="title" class="title">
+      <span slot='title' class='title'>
         {{ headerTitle }}
       </span>
     </a-page-header>
-    <div class="app-wrapper">
+    <div class='app-wrapper'>
       <nuxt />
     </div>
   </div>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import Vue from 'vue'
 import CommonModule from '~/store/common.module'
 
 export default Vue.extend({
   computed: {
-    headerTitle (): string {
+    headerTitle(): string {
       return CommonModule.headerTitle
     }
   }
 })
 </script>
 
-<style lang="less">
+<style lang='less'>
 .app-wrapper {
   padding: 20px;
 }
 
 .ant-page-header {
-  background-color: @primary-color;
+  background-color: @primary-color !important;
   text-align: center;
   padding: 16px 24px 12px 24px;
 }

@@ -1,33 +1,29 @@
 <template>
-  <div class="order-container">
-    <div class="order-header">
-      <h1>Assign Batch</h1>
-      <a-button icon="home" @click="toOrder">To Order Overview</a-button>
-      <a-button icon="plus" @click="assignBatch">Assign Batch</a-button>
+  <div class="page__container">
+    <div class="page-card__container">
+      <div class="page-card__header">
+        <div class="page-header__title">
+          จัดการล็อตรายการจัดส่ง
+        </div>
+        <a-input
+          v-model="search"
+          class="page-header__search"
+          placeholder="ค้นหา"
+        >
+          <a-icon slot="prefix" type="search" />
+        </a-input>
+      </div>
+      <AssignOverview :search="search" />
     </div>
-    <AssignOverview />
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { OrderModule } from "~/store";
+import { Vue, Component } from 'vue-property-decorator'
 
 @Component
 export default class Main extends Vue {
-  created() {
-    if (OrderModule.getOrderListLength < 1) {
-      OrderModule.initialiseOrder();
-    }
-  }
-
-  toOrder() {
-    this.$router.push(`/order-overview`);
-  }
-
-  assignBatch() {
-    this.$router.push(`/assign/create-batch`);
-  }
+  search: string = ''
 }
 </script>
 

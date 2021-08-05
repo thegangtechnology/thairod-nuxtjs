@@ -1,162 +1,238 @@
 <template>
-  <div>
-    <div class="detail-container">
-      <div class="detail-col">
-        <a-form layout="vertical" class="detail-form__container">
-          <div class="detail-form">
-            <div class="detail__title">ข้อมูลคนไข้</div>
-            <div class="detail__row">
-              <a-form-item class="detail-form__item" label="Ordered ID">
-                <span class="detail__info">{{ detail.orderId }}</span>
-              </a-form-item>
-              <a-form-item class="detail-form__item" label="Ordered Item">
-                <span class="detail__info">{{ detail.orderedItem }}</span>
-              </a-form-item>
-              <a-form-item class="detail-form__item" label="Ordered Date">
-                <span class="detail__info">{{ detail.orderedDate }}</span>
-              </a-form-item>
-            </div>
-            <div class="detail__row">
-              <a-form-item class="detail-form__item" label="CID">
-                <span class="detail__info">{{ detail.cid }}</span>
-              </a-form-item>
-              <a-form-item class="detail-form__item" label="Patient Name">
-                <span class="detail__info">{{ detail.patientName }}</span>
-              </a-form-item>
-              <a-form-item class="detail-form__item" label="Phone No.">
-                <span class="detail__info">{{ detail.phoneNumber }}</span>
-              </a-form-item>
-            </div>
-            <div class="detail__row">
-              <a-form-item class="detail-form__item" label="Export Batch">
-                <span class="detail__info">{{ detail.exportBatch }}</span>
-              </a-form-item>
-              <a-form-item class="detail-form__item" label="Warehouse">
-                <span class="detail__info">{{ detail.warehouse }}</span>
-              </a-form-item>
-              <a-form-item class="detail-form__item" label="Ordered By">
-                <span class="detail__info">{{ detail.orderedBy }}</span>
-              </a-form-item>
-            </div>
-          </div>
-          <div class="detail-form">
-            <div class="detail__title">ข้อมูลการจัดส่ง</div>
-            <div class="detail__row">
-              <a-form-item class="detail-form__item" label="Tracking No.">
-                <span class="detail__info">{{ detail.trackingNo }}</span>
-              </a-form-item>
-              <a-form-item class="detail-form__item" label="Updated By">
-                <span class="detail__info">{{ detail.updatedBy }}</span>
-              </a-form-item>
-              <a-form-item class="detail-form__item" label="Update Date">
-                <span class="detail__info">{{ detail.updatedDate }}</span>
-              </a-form-item>
-            </div>
-          </div>
-        </a-form>
+  <div class="overview-body">
+    <div class="overview-body__container">
+      <div class="detail-header__container">
+        <div class="detail-header__left">
+          เลขที่รายการสั่งซื้อ: {{ detail.id }}
+          <span v-if="detail.status === 'wait'" :class="detail.status">
+            รอพิมพ์ใบจัดส่ง
+          </span>
+          <span v-else-if="detail.status === 'print'" :class="detail.status">
+            รอจัดส่ง
+          </span>
+          <span
+            v-else-if="detail.status === 'out'"
+            :class="detail.status"
+          >
+            รอรับสินค้า
+          </span>
+          <span v-else :class="detail.status"> ได้รับเรียบร้อย </span>
+        </div>
+        <div class="detail-header__right">
+          <a-button class="detail-button__cta print" @click="toPrint">
+            <img :src="PrinterIcon" alt="PrinterIcon">
+            พิมพ์ใบจัดส่งสินค้า
+          </a-button>
+          <a-button type="primary" class="detail-button__cta edit" @click="toEdit">
+            <img :src="EditIcon" alt="EditIcon">
+            แก้ไขข้อมูล
+          </a-button>
+        </div>
       </div>
-      <div class="detail-col">
-        <a-form layout="vertical" class="detail-form__container">
-          <div class="detail-form">
-            <div class="detail__title">ข้อมูลที่อยู้จัดส่ง</div>
-            <div class="detail__row">
-              <a-form-item label="Address">
-                <span class="detail__info">{{ detail.address }}</span>
-              </a-form-item>
+      <div class="detail-body__container">
+        <div class="detail-left__container">
+          <div class="overview-filter__container">
+            <div class="overview-filter__header">
+              <img :src="UserIcon" alt="UserIcon">
+              <span> ข้อมูลการรักษา </span>
             </div>
-            <div class="detail__row">
-              <a-form-item label="Province">
-                <span class="detail__info">{{ detail.province }}</span>
-              </a-form-item>
-              <a-form-item label="District">
-                <span class="detail__info">{{ detail.district }}</span>
-              </a-form-item>
-              <a-form-item label="Sub-District">
-                <span class="detail__info">{{ detail.subDistrict }}</span>
-              </a-form-item>
-              <a-form-item label="Zipcode">
-                <span class="detail__info">{{ detail.zipCode }}</span>
-              </a-form-item>
-            </div>
-            <div class="detail__row">
-              <a-form-item label="จุดสังเกต">
-                <span class="detail__info">{{ detail.remark }}</span>
-              </a-form-item>
-            </div>
-            <div class="detail__title">พิกัด</div>
-            <div class="detail__map"></div>
+            <a-form layout="vertical">
+              <div class="overview-filter__form">
+                <div class="date">
+                  <a-form-item
+                    class="detail-form__item"
+                    label="ชื่อผู้รับการรักษา"
+                  >
+                    <span class="detail-form__info">
+                      {{
+                        detail.patientName
+                      }}
+                    </span>
+                  </a-form-item>
+                </div>
+                <div class="batch">
+                  <a-form-item
+                    class="detail-form__item"
+                    label="รหัสบัตรประชาชน"
+                  >
+                    <span class="detail-form__info">{{ detail.cid }}</span>
+                  </a-form-item>
+                </div>
+                <div class="package">
+                  <a-form-item class="detail-form__item" label="เบอร์โทร">
+                    <span class="detail-form__info">
+                      {{ detail.telno }}
+                    </span>
+                  </a-form-item>
+                </div>
+              </div>
+            </a-form>
+            <a-form layout="vertical">
+              <div class="overview-filter__form">
+                <div class="date">
+                  <a-form-item class="detail-form__item" label="ชื่อแพทย์">
+                    <span class="detail-form__info">
+                      {{ detail.orderer_name }}
+                    </span>
+                  </a-form-item>
+                </div>
+                <div class="batch">
+                  <a-form-item class="detail-form__item" label="เลขที่ใบอนุญาต">
+                    <span class="detail-form__info">
+                      {{ detail.orderer_license }}
+                    </span>
+                  </a-form-item>
+                </div>
+              </div>
+            </a-form>
           </div>
-        </a-form>
+          <div class="overview-filter__container">
+            <div class="overview-filter__header">
+              <img :src="BoxIcon" alt="BoxIcon">
+              <span> รายการสินค้า </span>
+            </div>
+            <a-form layout="vertical">
+              <div class="overview-item__form">
+                <div
+                  v-for="item in detail.shipmentItem"
+                  :key="item.id"
+                  class="detail-item"
+                >
+                  <a-form-item class="detail-form__item" :label="item.name">
+                    <span class="detail-form__info">
+                      {{ item.quantity }} {{ item.unit }}
+                    </span>
+                  </a-form-item>
+                </div>
+              </div>
+            </a-form>
+          </div>
+          <div class="overview-filter__container">
+            <div class="overview-filter__header">
+              <img :src="BoxIcon" alt="BoxIcon">
+              <span> ข้อมูลการจัดส่งสินค้า </span>
+            </div>
+
+            <a-form layout="vertical">
+              <div class="overview-filter__form">
+                <div class="date">
+                  <a-form-item class="detail-form__item" label="หมายเลขพัสดุ">
+                    <span class="detail-form__info">
+                      {{ detail.tracking_code }}
+                    </span>
+                  </a-form-item>
+                </div>
+                <div class="batch">
+                  <a-form-item class="detail-form__item" label="ล็อตการจัดส่ง">
+                    <span
+                      v-if="detail.batch === null"
+                      class="detail-form__info"
+                    >
+                      N/A
+                    </span>
+                    <span v-else class="detail-form__info">
+                      {{ detail.batch.name }}
+                    </span>
+                  </a-form-item>
+                </div>
+                <div class="package">
+                  <a-form-item class="detail-form__item" label="คลังสินค้า">
+                    <span class="detail-form__info">
+                      {{ detail.warehouse }}
+                    </span>
+                  </a-form-item>
+                </div>
+              </div>
+            </a-form>
+            <a-form layout="vertical">
+              <div class="overview-filter__form">
+                <div class="date">
+                  <a-form-item
+                    class="detail-form__item"
+                    label="ผู้อัปเดตข้อมูล"
+                  >
+                    <span class="detail-form__info">
+                      {{ detail.updated_name }}
+                    </span>
+                  </a-form-item>
+                </div>
+                <div class="batch">
+                  <a-form-item class="detail-form__item" label="อัปเดตเมื่อ">
+                    <span class="detail-form__info">
+                      {{ detail.updated_date | date }}
+                    </span>
+                  </a-form-item>
+                </div>
+              </div>
+            </a-form>
+          </div>
+        </div>
+        <div class="detail-right__container">
+          <div class="overview-filter__container">
+            <div class="overview-filter__header">
+              <img :src="PinIcon" alt="PinIcon">
+              <span> ข้อมูลที่อยู่จัดส่ง </span>
+            </div>
+            <div class="detail-address__info">
+              {{ detail.house_number }} แขวง {{ detail.subdistrict }} เขต
+              {{ detail.district }} จังหวัด {{ detail.province }}
+              {{ detail.postal_code }}
+            </div>
+            <div class="detail-note__header">
+              จุดสังเกต
+            </div>
+            <div class="detail-note__info">
+              {{ detail.note }}
+            </div>
+            <div class="detail-map">
+              <img :src="MapImg" alt="MapImg">
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="button-container">
-      <div class="button-right">
-        <a-button @click="goBack">Back</a-button>
-      </div>
+    <div class="overview-button__container">
+      <a-button class="overview-button__cta cancel" @click="goBack">
+        กลับ
+      </a-button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from "vue-property-decorator";
-
-import { IOrder } from "~/types/order.type";
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
+import UserSvg from '~/assets/icons/user.svg'
+import BoxSvg from '~/assets/icons/box.svg'
+import PinSvg from '~/assets/icons/pin.svg'
+import EditSvg from '~/assets/icons/edit.svg'
+import PrinterSvg from '~/assets/icons/printer.svg'
+import MapSvg from '~/assets/images/shipment/map.svg'
+import ShipmentModule from '~/store/shipment.module'
+import { ShipmentDetail } from '~/types/shipment.type'
 
 @Component
 export default class OrderDetail extends Vue {
-  @Prop({ required: true }) detail!: IOrder;
+  @Prop({ required: true }) detail!: ShipmentDetail
 
-  goBack() {
-    this.$router.go(-1);
+  private UserIcon = UserSvg
+  private BoxIcon = BoxSvg
+  private PinIcon = PinSvg
+  private EditIcon = EditSvg
+  private PrinterIcon = PrinterSvg
+  private MapImg = MapSvg
+
+  @Emit('onEdit')
+  toEdit () {
+    return true
+  }
+
+  goBack () {
+    this.$router.go(-1)
+  }
+
+  toPrint () {
+    ShipmentModule.printLabel([this.detail.id])
+    this.$router.push('/order-overview')
   }
 }
 </script>
-
-<style scoped>
-.detail-container {
-  display: flex;
-  justify-content: space-between;
-}
-.detail-col {
-  display: flex;
-  width: 100%;
-}
-.detail-form__container {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  flex-direction: column;
-  margin: 0 1rem;
-}
-.detail-form {
-  padding: 1rem;
-  background: rgb(233, 233, 233);
-  margin-bottom: 1rem;
-  flex-grow: 1;
-}
-.detail__row {
-  display: flex;
-  justify-content: space-between;
-}
-.detail__title {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
-.detail-form__item {
-  width: 30%;
-}
-.detail__info {
-  font-size: 1.25rem;
-  font-weight: 500;
-}
-.detail__map {
-  width: 100%;
-  height: 300px;
-  background: rgb(107, 107, 107);
-}
-.button-right {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-</style>

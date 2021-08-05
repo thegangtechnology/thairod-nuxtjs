@@ -7,16 +7,28 @@
         :md="12"
         span="24"
       >
-        <a-row type="flex">
-          <a-col flex="100px">
-            <img :src="require('~/assets/images/mockup/default-checkout-green.svg')" height="60" width="60">
+        <a-row>
+          <a-col :span="11" offset="1">
+            <p class="item-name">
+              <strong>
+                {{ itemIndex + 1 }}. {{ item.name }}
+              </strong>
+            </p>
           </a-col>
           <a-col :span="11">
-            <p class="item-name">
-              {{ item.name }}
-            </p>
             <p class="item-total">
-              {{ item.total }} กล่อง
+              <strong>
+                {{ item.quantity }}
+                <span style="text-transform: capitalize;">
+                  {{ item.unit }}
+                </span>
+              </strong>
+            </p>
+          </a-col>
+
+          <a-col :span="24">
+            <p class="item-description">
+              {{ item.description }}
             </p>
           </a-col>
         </a-row>
@@ -25,23 +37,25 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import Vue, { PropType } from 'vue'
-import { OrderLine } from '~/types/order.type'
+import { OrderItem } from '~/types/order.type'
 
 export default Vue.extend({
   props: {
     items: {
-      type: Array as PropType<OrderLine[]>,
+      type: Array as PropType<OrderItem[]>,
       default: () => []
     }
   }
 })
 </script>
 
-<style>
-.item-wrapper p {
-  margin: 0;
+<style scoped lang='less'>
+.item-wrapper {
+  p {
+    margin: 0;
+  }
 }
 
 .item-name {
@@ -49,6 +63,11 @@ export default Vue.extend({
 }
 
 .item-total {
-  font-weight: bold;
+  font-size: 22px;
+  text-align: right;
+}
+
+.item-description {
+  padding-left: 2rem;
 }
 </style>

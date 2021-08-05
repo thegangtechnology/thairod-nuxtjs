@@ -4,8 +4,14 @@
     <a-divider class="my-3" />
     <div class="carts-card__container">
       <a-row class="mb-6">
-        <a-col v-for="(item, i) in 3" :key="i" class="carts-item-list">
-          <CartsListItem />
+        <a-col v-for="(item, i) in cartItems" :key="i" class="carts-item-list">
+          <CartsListItem
+            :product="item"
+            @removeItem="removeItem"
+            @handleMinus="handleQuantity"
+            @handlePlus="handleQuantity"
+            @updateAmount="handleQuantity"
+          />
         </a-col>
       </a-row>
     </div>
@@ -44,7 +50,7 @@
       <a-input
         id="textToCopy"
         ref="textToCopy"
-        v-model="url"
+        :value="`${url}/checkout/?patient=${patientHash}`"
         placeholder="Link URL"
         class="mb-4 input-round"
       />
@@ -56,7 +62,7 @@
         :style="{
           backgroundColor: '#F9B7B7',
           color: '#000000',
-          borderColor: '#ffc1c1'
+          borderColor: '#ffc1c1',
         }"
         @click="copyLink"
       >
@@ -67,13 +73,15 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import Vue from 'vue'
+import { Product, ICheckoutProduct } from '@/types/product.type'
 import CartsListItem from '~/components/carts/CartsListItem.vue'
 import CardPatientDetail from '~/components/CardPatientDetail.vue'
-import PatientModule from '~/store/patient.module'
 import { Patient } from '~/types/patient.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
+import DoctorModule from '~/store/doctor.module'
+import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   components: {
@@ -82,41 +90,76 @@ export default Vue.extend({
     PrimaryButton
   },
   layout: 'product-layout',
-  data() {
+  data () {
     return {
       visible: false,
       amount: 1,
-      url: 'https://www.thairod.co.th/lorem/17'
+      url: location.host,
+      cartItems: [] as Product[]
     }
   },
   computed: {
-    patient(): Patient {
-      return PatientModule.patient
+    patient (): Patient {
+      return DoctorModule.patient
+    },
+    hash (): string {
+      return this.$route.query.doctor as string
+    },
+    patientHash (): string {
+      return `${DoctorModule.patientHash}`
     }
   },
-  async mounted() {
-    await PatientModule.getPatient({ id: 1 })
+  async mounted () {
+    const productOrders = sessionStorage.getItem('doc-or-storage')
+    if (productOrders) {
+      await ProductModule.getProductList({ page: 1, pageSize: -1, search: '' })
+      this.cartItems = JSON.parse(productOrders).map((item: ICheckoutProduct) => {
+        const mappedProduct: Product = ProductModule.productList.find(product => product.id === item.itemId) as Product
+        mappedProduct.quantity = item.quantity
+        return mappedProduct
+      })
+    }
+    await DoctorModule.getDoctorOrder({ hash: this.hash })
   },
   methods: {
-    showModal(): void {
+    showModal (): void {
+      if (this.cartItems.length === 0) {
+        return
+      }
+      DoctorModule.doctorCheckout({ hash: this.hash, products: this.buildCartItemOrder(this.cartItems) })
       this.visible = true
     },
-
-    closeModal(): void {
+    closeModal (): void {
       this.visible = false
     },
-    copyLink(): void {
-      // let copyText = document.getElementById('textToCopy')
-      // copyText.select()
-      // copyText.setSelectionRange(0, 99999)
-      // document.execCommand('copy')
-      // if (document.execCommand('copy')) {
-      //   this.success()
-      //   setTimeout(() => this.closeModal(), 1000)
-      // }
+    copyLink (): void {
+      const copyText = document.getElementById('textToCopy') as HTMLInputElement
+      copyText.select()
+      document.execCommand('copy')
+      sessionStorage.removeItem('doc-or-storage')
+      ProductModule.setTotalCart({ totalItem: 0 })
+      this.success()
+      setTimeout(() => this.closeModal(), 1000)
     },
-    success(): void {
-      this.$message.success('Cpoied', 1)
+    success (): void {
+      this.$message.success('Copied', 1)
+    },
+    removeItem (itemId: number): void {
+      const foundIndex = this.cartItems.findIndex(item => item.id === itemId)
+      this.cartItems.splice(foundIndex, 1)
+      sessionStorage.setItem('doc-or-storage', JSON.stringify(this.buildCartItemOrder(this.cartItems)))
+      ProductModule.setTotalCart({ totalItem: this.cartItems.length })
+    },
+    buildCartItemOrder (items: Product[]): ICheckoutProduct[] {
+      return items.map((product: Product) => {
+        return { itemId: product.id, quantity: product.quantity } as ICheckoutProduct
+      })
+    },
+    handleQuantity (quantity: number, itemId: number): void {
+      const foundIndex = this.cartItems.findIndex(item => item.id === itemId)
+      this.cartItems[foundIndex].quantity = quantity
+      sessionStorage.setItem('doc-or-storage', JSON.stringify(this.buildCartItemOrder(this.cartItems)))
+      ProductModule.setTotalCart({ totalItem: this.cartItems.length })
     }
   }
 })
@@ -126,22 +169,27 @@ export default Vue.extend({
 .input-round {
   border-radius: 40px;
 }
+
 .carts-card__container {
   margin-bottom: 60px;
 }
+
 .carts-card__title {
   font-size: 1.25rem;
   color: #000000;
   margin-bottom: 20px;
 }
+
 .carts-card__subtitle {
   font-size: 1rem;
   color: #000000;
   margin-bottom: 12px;
 }
+
 .carts-item-list {
   margin-bottom: 18px;
 }
+
 .carts-card__button-container {
   position: fixed;
   bottom: 0;
@@ -150,9 +198,11 @@ export default Vue.extend({
   background-color: #ffffff;
   padding: 16px;
 }
+
 .carts-card__button-container .update-button {
   font-size: 18px;
 }
+
 .checkout__button {
   color: #ffffff;
   background-color: #666666;

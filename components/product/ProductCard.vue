@@ -5,31 +5,34 @@
       alt="product image"
       :src="item.image"
       class="img-responsive"
-      @click="goToProduct"
-    />
-    <a-card-meta
-      :title="item.name"
-      class="product-card__info"
-      @click="goToProduct"
+      @click="goToProduct(item.id)"
     >
-      <template slot="description">
-        {{ item.description }}
-      </template>
-    </a-card-meta>
-    <template slot="actions" class="ant-card-actions product-card__button">
+    <div
+      class="product-card__info"
+      @click="goToProduct(item.id)"
+    >
+      {{ item.name }}
+    </div>
+    <div
+      class="product-card__description"
+      @click="goToProduct(item.id)"
+    >
+      {{ item.productDescription }}
+    </div>
+    <div class="product-card__button">
       <primary-button
-        class="update-button"
+        class="update-button ripple"
         :text="'เพิ่มใส่ตะกร้า'"
         block
         :on-click="addToCart"
         :size="'large'"
       />
-    </template>
+    </div>
   </a-card>
 </template>
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import { Product } from '~/types/product.type'
+import { ICheckoutProduct, Product } from '~/types/product.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 
 export default Vue.extend({
@@ -37,46 +40,87 @@ export default Vue.extend({
   props: {
     item: {
       type: Object as PropType<Product>,
-      default: () => {}
+      default: () => {
+        return {
+          id: 0
+        }
+      }
     }
   },
-  data() {
-    return {}
+  data () {
+    return {
+      amount: 0
+    }
   },
-
+  computed: {
+    getAmount (): number {
+      const cartItems = JSON.parse(sessionStorage.getItem('doc-or-storage') as string)
+      if (!cartItems) {
+        return 0
+      }
+      const foundItem = cartItems.find((item: ICheckoutProduct) => item.itemId === this.item.id)
+      if (foundItem) {
+        return foundItem.quantity
+      } else {
+        return 0
+      }
+    }
+  },
+  mounted () {
+    this.amount = this.getAmount
+  },
   methods: {
-    goToProduct(): void {
-      this.$router.push('/product/1')
+    goToProduct (id: number): void {
+      this.$router.push(`/product/${id}/?doctor=${this.$route.query.doctor}`)
     },
-    addToCart(): void {
-      console.log('addtocart')
+    addToCart (): void {
+      this.amount += 1
+      this.$emit('updateAmount', this.amount, this.item)
     }
   }
 })
 </script>
 
 <style lang="less">
+.product-card{
+ padding-bottom: 60px!important;
+}
 .product-card.ant-card {
-  //min-width: 160px;
   max-width: 350px;
   width: 100%;
-  background-color: #ffffff!important;;
-  border-radius: 10px!important;
-  border-color: #e9ecf2!important;;
+  background-color: #ffffff !important;;
+  border-radius: 10px !important;
+  border-color: #e9ecf2 !important;;
   overflow: hidden;
+
 }
+
 .product-card .ant-card-cover img {
   border-radius: 6px;
   max-height: 205px;
 }
+
 .product-card .ant-card-body,
 .product-card .ant-card-cover,
 .product-card .ant-card-actions {
   padding: 8px;
 }
-.product-card .ant-card-actions {
-  border-top: none;
-  background-color: #ffffff;
+
+.product-card .product-card__info {
+  color: #001740;
+  font-weight: bold;
+}
+.product-card .product-card__button {
+  position: absolute;
+  bottom: 14px;
+  left:0;
+  width: 100%;
+  padding:0 8px;
+}
+.product-card__description{
+  line-height: normal;
+  color: #474747;
+  font-size: 18px;
 }
 .product-card .ant-card-meta-title,
 .product-card .ant-card-meta-detail > div:not(:last-child) {
@@ -84,15 +128,33 @@ export default Vue.extend({
   line-height: normal;
   font-size: 18px;
 }
+
 .product-card .ant-card-meta-description {
   font-size: 16px;
 }
+
 .btn-add-cart {
   background-color: #666666;
   color: #ffffff;
 }
+
 .product-card .update-button {
   font-size: 18px;
+}
+
+.update-button.ripple {
+  background-position: center;
+  transition: background 0.6s;
+
+  &:hover {
+    background: #FAC5C5 radial-gradient(circle, transparent 1%, #FAC5C5 1%) center/15000%;
+  }
+
+  &:active {
+    background-color: #FAC5C5;
+    background-size: 100%;
+    transition: background 0s;
+  }
 }
 
 @media only screen and (max-width: 375px) {
@@ -100,12 +162,15 @@ export default Vue.extend({
     min-width: 120px;
     max-width: 100%;
   }
+
   .product-card .ant-card-actions {
     padding: 0 8px;
   }
+
   .btn-add-cart {
     padding: 0 8px;
   }
+
   .product-card .ant-card-cover img {
     border-radius: 6px;
     max-height: 100px;

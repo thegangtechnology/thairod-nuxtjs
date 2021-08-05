@@ -1,29 +1,68 @@
 <template>
-  <div class="order-container">
-    <h1>Assign Batch</h1>
-    <AssignForm :original-data="data" />
+  <div class="page__container">
+    <div class="page-card__container">
+      <div class="page-card__header">
+        <div class="page-header__title">
+          สร้างล็อตการจัดส่งใหม่
+        </div>
+        <a-input
+          v-model="search"
+          class="page-header__search"
+          placeholder="ค้นหา"
+        >
+          <a-icon slot="prefix" type="search" />
+        </a-input>
+      </div>
+      <AssignForm
+        :original-data="originalData"
+        :loading="isLoading"
+        :amount="amount"
+        @pageChange="handlePageChange"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from "vue-property-decorator";
-import { OrderModule } from "~/store";
-import { IOrder } from "~/types/order.type";
+import { Vue, Component } from 'vue-property-decorator'
+import ShipmentModule from '~/store/shipment.module'
 
 @Component
 export default class Main extends Vue {
-  data: IOrder[] = [];
+  search: string = ''
+  amount: number = 0
 
-  created() {
-    if (OrderModule.getOrderListLength < 1) {
-      OrderModule.initialiseOrder();
-    }
+  get isLoading () {
+    return ShipmentModule.loading
   }
 
-  mounted() {
-    this.data = OrderModule.getOrderList.filter(
-      item => item.exportBatch === "Unassigned"
-    );
+  get originalData () {
+    return ShipmentModule.getShipmentList
+  }
+
+  mounted () {
+    this.handlePageChange(1)
+  }
+
+  handlePageChange (page: number) {
+    this.onQueryChange(page)
+  }
+
+  onQueryChange (page: number = 1) {
+    const type = this.$route.query.type
+    if (type && type === 'assign') {
+      ShipmentModule.initialiseShipment({
+        batch_isnull: false,
+        page
+      })
+      this.amount = ShipmentModule.totalShipment
+    } else {
+      ShipmentModule.initialiseShipment({
+        batch_isnull: true,
+        page
+      })
+      this.amount = ShipmentModule.nonbatchShipment
+    }
   }
 }
 </script>

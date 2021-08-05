@@ -3,7 +3,7 @@
     <div class="container">
       <img
         alt="item-image"
-        src="~/assets/images/procurement/item/green-box.svg"
+        :src="imageMap[$route.query.id]"
       >
       <a-form
         :form="form"
@@ -17,14 +17,16 @@
             :precision="0"
             :min="1"
             :step="10"
+            :style="{ height: '38px' }"
           />
         </a-form-item>
         <a-form-item label="ราคาทุน">
           <a-input-number
-            v-decorator="['cost', { rules: [{ required: true, message: 'กรุณาระบุราคาทุน' }] }]"
-            :precision="0"
+            v-decorator="['unitPrice', { rules: [{ required: true, message: 'กรุณาระบุราคาทุน' }] }]"
+            :precision="2"
             :min="0"
             :step="10"
+            :style="{ height: '38px' }"
           />
         </a-form-item>
         <a-form-item label="คลังสินค้า">
@@ -35,8 +37,8 @@
             ]"
             class="select"
           >
-            <a-select-option v-for="warehouse in warehouses" :key="warehouse">
-              {{ warehouse }}
+            <a-select-option v-for="(warehouse, index) in warehouseList" :key="index">
+              {{ warehouse.name }}
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -58,19 +60,35 @@
       :style="{width: '130px'}"
       @cancel="closeModal"
     >
-      <confirm-modal-content :close-modal="closeModal" :handle-submit="handleSubmit" :form-data="form.getFieldsValue()" />
+      <confirm-modal-content :close-modal="closeModal" :handle-submit="handleSubmit" :form-data="form.getFieldsValue()" :warehouse-list="warehouseList" />
     </a-modal>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { PropType } from 'vue'
 import ConfirmModalContent from '~/components/procurement/ConfirmModalContent.vue'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
+import { Warehouse } from '~/types/procurement.type'
+import { productImageMap } from '~/data/image-map'
 
 export default Vue.extend({
   components: { ConfirmModalContent, PrimaryButton, SecondaryButton },
+  props: {
+    submitForm: {
+      type: Function,
+      default: () => {
+        return () => {
+          // empty
+        }
+      }
+    },
+    warehouseList: {
+      type: [] as PropType<Warehouse[]>,
+      default: () => ([] as Warehouse[])
+    }
+  },
   data () {
     return {
       form: this.$form.createForm(this),
@@ -78,30 +96,32 @@ export default Vue.extend({
         visible: false,
         confirmLoading: false
       },
-      warehouses: ['Warehouse A', 'Warehouse B', 'คลังสินค้า C']
+      imageMap: productImageMap
     }
   },
   methods: {
-    showModal () {
+    showModal () : void {
       this.form.validateFields((err) => {
         if (!err) {
           this.modal.visible = true
         }
       })
     },
-    closeModal () {
+    closeModal () : void {
       this.modal.visible = false
     },
-    handleSubmit () {
+    async handleSubmit () : Promise<void> {
       this.modal.confirmLoading = true
-      this.modal.confirmLoading = false
-      this.closeModal()
-      this.form.resetFields()
-      this.$router.push('/procurement/item-detail')
+      await this.submitForm(this.form.getFieldsValue())
+        .then(() => {
+          this.modal.confirmLoading = false
+          this.closeModal()
+          this.$router.push({ path: '/procurement/item-detail/', query: { id: this.$route.query.id } })
+        })
     },
     onCancel (): void {
       this.form.resetFields()
-      this.$router.push('/procurement/item-detail')
+      this.$router.push({ path: '/procurement/item-detail/', query: { id: this.$route.query.id } })
     }
   }
 }
@@ -112,6 +132,8 @@ export default Vue.extend({
 .ant-select-selection {
   border-radius: 25px;
   height: 38px;
+  padding-top: 4px;
+  font-size: 20px !important;
 }
 
 .ant-input-number-handler-wrap {
@@ -122,8 +144,10 @@ export default Vue.extend({
   max-width: 80vw;
 }
 
-#cost.ant-input-number, #quantity.ant-input-number {
+#unitPrice.ant-input-number-input, #quantity.ant-input-number-input {
   height: 38px;
+  font-size: 20px !important;
+  padding-bottom: 2px;
 }
 </style>
 
