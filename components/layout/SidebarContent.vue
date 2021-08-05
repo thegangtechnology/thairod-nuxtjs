@@ -23,7 +23,7 @@
         <a-icon type="profile" />
         <span>ภาพรวมรายการจัดสั่ง</span>
       </a-menu-item>
-      <a-menu-item key="3" @click="$router.push('/order-overview/delivery')">
+      <a-menu-item key="3" @click="$router.push('/assign')">
         <a-icon type="build" />
         <span>จัดการล็อตรายการจัดส่ง</span>
       </a-menu-item>
