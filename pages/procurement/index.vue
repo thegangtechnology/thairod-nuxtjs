@@ -47,7 +47,7 @@ export default Vue.extend({
       currentPage: 1,
       pageSize: 4,
       search: '',
-      collapsed: true
+      collapsed: false
     }
   },
   computed: {

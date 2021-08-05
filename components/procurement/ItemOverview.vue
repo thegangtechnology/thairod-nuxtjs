@@ -80,6 +80,7 @@ button {
   padding: 12px 0 4px 0;
   font-weight: bold;
   font-size: 20px;
+  overflow-wrap: break-word;
 }
 
 .last-update {
