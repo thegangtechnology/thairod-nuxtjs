@@ -1,14 +1,14 @@
 <template>
   <div>
     <a-row :gutter="8">
-      <a-col :span="6">
-        <img
-          alt="Docter icon"
-          :src="require('@/assets/images/docter-female.svg')"
-          class="img-responsive image__icon"
-        >
-      </a-col>
-      <a-col :span="18">
+<!--      <a-col :span="6">-->
+<!--        <img-->
+<!--          alt="Docter icon"-->
+<!--          :src="require('@/assets/images/docter-female.svg')"-->
+<!--          class="img-responsive image__icon"-->
+<!--        >-->
+<!--      </a-col>-->
+      <a-col :span="24">
         <div class="name__text">
           {{ doctorDetail.name }}
         </div>

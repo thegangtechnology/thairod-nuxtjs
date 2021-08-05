@@ -130,7 +130,7 @@ export default Vue.extend({
 .product-layout .ant-layout-sider {
   position: absolute;
   height: 100vh;
-  z-index: 7;
+  z-index: 117;
   left: 0;
   min-width: 300px !important;
   width: 300px !important;

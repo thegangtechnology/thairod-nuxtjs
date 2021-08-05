@@ -17,7 +17,7 @@
       class="product-card__description"
       @click="goToProduct(item.id)"
     >
-      {{ item.description }}
+      {{ item.productDescription }}
     </div>
     <div class="product-card__button">
       <primary-button
