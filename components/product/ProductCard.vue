@@ -120,6 +120,7 @@ export default Vue.extend({
 .product-card__description{
   line-height: normal;
   color: #474747;
+  font-size: 18px;
 }
 .product-card .ant-card-meta-title,
 .product-card .ant-card-meta-detail > div:not(:last-child) {
