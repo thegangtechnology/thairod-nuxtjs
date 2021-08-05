@@ -230,20 +230,9 @@ import {
   columns,
   columnsWithOperation
 } from '~/static/ShipmentColumns'
-import { ShipmentLine } from '~/types/shipment.type'
+import { ShipmentFilter, ShipmentLine } from '~/types/shipment.type'
 
 type Status = 'wait' | 'print' | 'out' | 'received'
-
-interface IMain {
-  [key: string]: string
-}
-
-interface IFilter extends IMain {
-  orderedDate: string
-  exportBatch: string
-  orderedItem: string
-  searchRecord: string
-}
 
 @Component
 export default class OverviewTable extends Vue {
@@ -265,11 +254,11 @@ export default class OverviewTable extends Vue {
   originalSelectedRowKeys: number[] = []
   visibleSubmitDialog: boolean = false
 
-  filterForm: IFilter = {
-    orderedDate: '',
-    exportBatch: '',
-    orderedItem: '',
-    searchRecord: ''
+  filterForm: ShipmentFilter = {
+    shipmentItem: '',
+    created_date: '',
+    batch: '',
+    search: ''
   }
 
   @Emit('update')
@@ -284,7 +273,7 @@ export default class OverviewTable extends Vue {
 
   @Watch('search', { immediate: true, deep: true })
   onSearchChange () {
-    this.filterForm.searchRecord = this.search
+    this.filterForm.search = this.search
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
@@ -312,28 +301,11 @@ export default class OverviewTable extends Vue {
   }
 
   get exportBatchSelect (): string[] {
-    return [
-      ...new Set(
-        this.originalData
-          .filter(item => item.batch !== null)
-          .map(item => item.batch!.name)
-      )
-    ]
+    return this.$batchSelection(this.originalData)
   }
 
   get shipmentItemSelect () {
-    return this.originalData
-      .map(item => item.shipmentItem)
-      .reduce<string[]>((accum, shipmentItem) => {
-        if (shipmentItem.length > 0) {
-          shipmentItem.forEach((item) => {
-            if (!accum.includes(item.name)) {
-              accum.push(item.name)
-            }
-          })
-        }
-        return accum
-      }, [])
+    return this.$itemSelection(this.originalData)
   }
 
   get unselectedIds () {
@@ -424,15 +396,15 @@ export default class OverviewTable extends Vue {
   }
 
   onDateFilterChange (_date: object, dateString: string) {
-    this.filterForm.orderedDate = dateString
+    this.filterForm.created_date = dateString
   }
 
   handleBatchFilterChange (value: { key: string; value: string }) {
-    this.filterForm.exportBatch = value.key
+    this.filterForm.batch = value.key
   }
 
   handleOrderedItemFilterChange (value: { key: string; value: string }) {
-    this.filterForm.orderedItem = value.key
+    this.filterForm.shipmentItem = value.key
   }
 
   filterData () {
@@ -440,7 +412,7 @@ export default class OverviewTable extends Vue {
       const result: boolean[] = []
       Object.keys(this.filterForm).forEach((key) => {
         result.push(
-          this.filterForm[key] !== '' ? this.filterFields(key, row) : true
+          this.filterForm[key as keyof ShipmentFilter] !== '' ? this.filterFields(key, row) : true
         )
       })
       return result.every(Boolean)
@@ -448,24 +420,24 @@ export default class OverviewTable extends Vue {
   }
 
   filterFields (key: string, row: ShipmentLine): boolean {
-    if (key === 'orderedDate') {
+    if (key === 'created_date') {
       return (
         moment(row.created_date).format('YYYY-MM-DD') ===
-        this.filterForm.orderedDate
+        this.filterForm.created_date
       )
     }
-    if (key === 'searchRecord') {
-      const columsDataIndex = this.tableColumns
-        .filter(column => column.dataIndex)
-        .map(column => column.dataIndex)
-      const searchedArray = columsDataIndex.map(col =>
-        String(row[col as keyof ShipmentLine]).includes(
-          this.filterForm.searchRecord
-        )
-      )
-      return searchedArray.some(Boolean)
+    if (key === 'batch') {
+      if (row.batch !== null) {
+        return row.batch.name === this.filterForm.batch
+      }
+      return false
     }
-    return row[key as keyof ShipmentLine] === this.filterForm[key]
+    if (key === 'shipmentItem') {
+      return row.shipmentItem
+        .map(item => item.name)
+        .includes(this.filterForm.shipmentItem)
+    }
+    return row[key as keyof ShipmentLine] === this.filterForm[key as keyof ShipmentFilter]
   }
 
   handleUpdatePrint () {
@@ -505,10 +477,10 @@ export default class OverviewTable extends Vue {
   //   }
   // }
 
+  // if (this.option === 'updateReceived') this.handleUpdateReceived()
   onSave () {
     if (this.option === 'updatePrint') { this.handleUpdatePrint() }
     if (this.option === 'updateDelivery') { this.handleUpdateDelievery() }
-    // if (this.option === 'updateReceived') this.handleUpdateReceived()
     this.onPageChange({ current: 1 })
     this.visibleSubmitDialog = false
   }
