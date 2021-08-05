@@ -31,15 +31,18 @@
       </div>
 
       <a-row align="middle" class="profile-wrapper" justify="space-around" type="flex">
-        <a-col>
-          <img :src="require('~/assets/images/sidebar/doctor-profile.svg')" alt="doctor-profile" height="48">
-        </a-col>
-        <a-col :class="{'hide-content': collapsed}" class="profile-detail" span="18">
-          firstname lastname
-          <p>Admin</p>
+        <a-col :class="{'hide-content': collapsed}" class="profile-detail" span="24">
+          <a-list :data-source="userInfo" class="list-items">
+            <a-list-item slot="renderItem" slot-scope="{firstName, lastName, username}">
+              <a-list-item-meta
+                :description="username"
+              >
+                <span slot="title" class="list-title">{{ firstName }} {{ lastName }} </span>
+              </a-list-item-meta>
+            </a-list-item>
+          </a-list>
         </a-col>
       </a-row>
-
       <a-menu mode="inline">
         <a-menu-item :class="{'sidebar-item-active': selectedMenu === ''}" @click="goToPage('/procurement')">
           <a-icon type="shop" />
@@ -56,7 +59,7 @@
           :class="{'sidebar-item-active': selectedMenu === 'assign'}"
           @click="goToPage('/assign')"
         >
-          <a-icon type="file-search" />
+          <a-icon type="build" />
           <span>จัดการล็อตรายการจัดส่ง</span>
         </a-menu-item>
         <a-menu-item :class="{'sidebar-item-active': selectedMenu === 'print'}" @click="goToPage('/print')">
@@ -64,9 +67,11 @@
           <span>พิมพ์ใบจัดส่งสินค้า</span>
         </a-menu-item>
       </a-menu>
-      <a-button class="logout-button" @click="onLogout">
+      <a-button class="logout-button" :class="{ 'collapsed': collapsed }" @click="onLogout">
         <img alt="logout" class="icon" src="~/assets/images/procurement/icon/logout-icon.svg">
-        ออกจากระบบ
+        <span class="logout-title" :class="{ 'collapsed': collapsed }">
+          ออกจากระบบ
+        </span>
       </a-button>
     </a-layout-sider>
 
@@ -78,6 +83,7 @@
 
 <script lang='ts'>
 import Vue from 'vue'
+import { UserInfo } from '~/types/procurement.type'
 
 export default Vue.extend({
   data () {
@@ -94,6 +100,9 @@ export default Vue.extend({
       } else {
         return 'order-overview'
       }
+    },
+    userInfo () : (UserInfo | null)[] {
+      return [this.$auth.user] as (UserInfo | null)[]
     }
   },
   methods: {
@@ -173,5 +182,21 @@ export default Vue.extend({
 .ant-layout-content {
   min-height: 100vh !important;
   z-index: 100;
+}
+
+.logout-button {
+  background-color: transparent !important;
+  &.collapsed {
+    padding-left: 30px;
+    width: auto;
+  }
+}
+
+.logout-title {
+  opacity: 1;
+  transition: opacity 0.2s !important;
+  &.collapsed {
+    opacity: 0
+  }
 }
 </style>
