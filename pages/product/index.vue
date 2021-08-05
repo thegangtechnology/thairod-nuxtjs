@@ -31,7 +31,7 @@
         show-quick-jumper
         :total="totalItem"
         :default-page-size="pageSize"
-        :page-size-options="['1','2', '10']"
+        :page-size-options="['4','8', '12', '16', '20']"
         @change="changePagination"
         @showSizeChange="changePagination"
       />
@@ -59,7 +59,7 @@ export default Vue.extend({
       isSubmit: false,
       search: '',
       currentPage: 1,
-      pageSize: 1
+      pageSize: 4
     }
   },
   computed: {

@@ -102,7 +102,9 @@ export default {
     }
   },
 
-  router: {},
+  router: {
+    middleware: ['admin']
+  },
 
   // proxy: {
   //   '/api/': {
