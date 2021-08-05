@@ -16,7 +16,7 @@
     </a-list>
     <a-menu mode="inline" :default-selected-keys="['1']">
       <a-menu-item key="1" @click="$router.push('/procurement')">
-        <img class="icon" alt="box-icon" src="~/assets/images/procurement/icon/box-icon.png">
+        <a-icon type="shop" />
         <span>จัดการคลังสินค้า</span>
       </a-menu-item>
       <a-menu-item key="2" @click="$router.push('/order-overview')">
