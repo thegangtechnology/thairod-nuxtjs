@@ -45,6 +45,7 @@ export default {
     '~plugins/order-components.ts',
     '~plugins/assign-components.ts',
     '~plugins/print-components.ts',
+    '~plugins/shipment.plugin.ts',
     '~plugins/date.ts',
     '@/plugins/accessor.ts',
     '@/plugins/axios.ts'
@@ -65,13 +66,6 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/auth-next'
   ],
-
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    // proxy: true
-    baseURL:
-      process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
-  },
 
   auth: {
     strategies: {
@@ -123,5 +117,13 @@ export default {
         additionalData: '@import "@/assets/styles/antd.less";'
       }
     }
+  },
+  publicRuntimeConfig: {
+    // Axios module configuration: https://go.nuxtjs.dev/config-axios
+    axios: {
+      // proxy: true
+      baseURL:
+        process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
+    },
   }
 }

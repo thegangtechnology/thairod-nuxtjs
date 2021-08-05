@@ -112,7 +112,7 @@ export default Vue.extend({
   async mounted () {
     const productOrders = sessionStorage.getItem('doc-or-storage')
     if (productOrders) {
-      await ProductModule.getProductList({ page: 1, perPage: -1, search: '' })
+      await ProductModule.getProductList({ page: 1, pageSize: -1, search: '' })
       this.cartItems = JSON.parse(productOrders).map((item: ICheckoutProduct) => {
         const mappedProduct: Product = ProductModule.productList.find(product => product.id === item.itemId) as Product
         mappedProduct.quantity = item.quantity
