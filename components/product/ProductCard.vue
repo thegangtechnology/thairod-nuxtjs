@@ -7,24 +7,27 @@
       class="img-responsive"
       @click="goToProduct(item.id)"
     >
-    <a-card-meta
-      :title="item.name"
+    <div
       class="product-card__info"
       @click="goToProduct(item.id)"
     >
-      <template slot="description">
-        {{ item.description }}
-      </template>
-    </a-card-meta>
-    <template slot="actions" class="ant-card-actions product-card__button">
+      {{ item.name }}
+    </div>
+    <div
+      class="product-card__description"
+      @click="goToProduct(item.id)"
+    >
+      {{ item.description }}
+    </div>
+    <div class="product-card__button">
       <primary-button
         class="update-button"
         :text="'เพิ่มใส่ตะกร้า'"
         block
-        :on-click="addToCart"
+        :on-click="addToCart"product-card
         :size="'large'"
       />
-    </template>
+    </div>
   </a-card>
 </template>
 <script lang="ts">
@@ -80,6 +83,9 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
+.product-card{
+ padding-bottom: 60px!important;
+}
 .product-card.ant-card {
   //min-width: 160px;
   max-width: 350px;
@@ -88,6 +94,7 @@ export default Vue.extend({
   border-radius: 10px !important;
   border-color: #e9ecf2 !important;;
   overflow: hidden;
+
 }
 
 .product-card .ant-card-cover img {
@@ -101,11 +108,21 @@ export default Vue.extend({
   padding: 8px;
 }
 
-.product-card .ant-card-actions {
-  border-top: none;
-  background-color: #ffffff;
+.product-card .product-card__info {
+  color: #001740;
+  font-weight: bold;
 }
-
+.product-card .product-card__button {
+  position: absolute;
+  bottom: 14px;
+  left:0;
+  width: 100%;
+  padding:0 8px;
+}
+.product-card__description{
+  line-height: normal;
+  color: #474747;
+}
 .product-card .ant-card-meta-title,
 .product-card .ant-card-meta-detail > div:not(:last-child) {
   margin-bottom: 0;

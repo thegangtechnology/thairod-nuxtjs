@@ -163,6 +163,23 @@ export default Vue.extend({
 .product-layout a.carts__button {
   color: #000000;
   line-height: 10px;
+
+}
+.product-layout a.carts__button i {
+  background-position: center;
+  transition: background 0.5s;
+  border-radius: 50%;
+  padding: 4px;
+}
+.product-layout a.carts__button:hover i {
+  background: rgba(255, 255, 255,0.2) radial-gradient(circle, transparent 1%, rgba(255, 255, 255,0.2)  1%) center / 15000%;
+  border-radius: 50%;
+}
+.product-layout a.carts__button:active {
+  background-color: transparent;
+  background-size: 100%;
+  transition: background 0s;
+  border-radius: 50%;
 }
 .product-layout .carts__button .ant-badge-dot {
   position: absolute;
