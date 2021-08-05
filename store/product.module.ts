@@ -67,7 +67,7 @@ class ProductModule extends VuexModule {
     pageSize: number
     search: string
   }) {
-    const path: string = `${apiPath.productVariation}/?page=${page}&page_size=${pageSize}&search=${search}/`
+    const path: string = `${apiPath.productVariation}/?page=${page}&page_size=${pageSize}&search=${search}`
     const res = await $axios.get(path)
     const mappedProduct = res.data.results.map(
       (item: Product) => {
