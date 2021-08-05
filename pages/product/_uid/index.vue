@@ -33,7 +33,7 @@ export default Vue.extend({
   },
   async mounted () {
     await ProductModule.getProduct(
-      { id: this.$route.params.uid }
+      { id: Number(this.$route.params.uid) }
     )
   },
   methods: {

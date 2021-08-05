@@ -9,6 +9,7 @@ import { store } from '@/store'
 import { Product } from '@/types/product.type'
 import { $axios } from '@/utils/api'
 import apiPath from '~/data/api_path'
+import { productImageMap } from '~/data/image-map'
 
 // remove duplicate module
 const name: string = 'productModule'
@@ -16,24 +17,7 @@ if (store.state[name]) {
   store.unregisterModule(name)
 }
 
-const imageDefault = [
-  {
-    name: 'กล่องเขียว',
-    image: require('@/assets/images/default/set-g.svg')
-  },
-  {
-    name: 'กล่องสีเหลือง',
-    image: require('@/assets/images/default/set-y.svg')
-  },
-  {
-    name: 'Favipiravir',
-    image: require('@/assets/images/default/set-p.svg')
-  },
-  {
-    name: 'ฟ้าทะลายโจร',
-    image: require('@/assets/images/default/set-p.svg')
-  }
-]
+const imageDefault: { [key: number]: string } = productImageMap
 
 @Module({
   dynamic: true,
@@ -42,16 +26,19 @@ const imageDefault = [
 })
 class ProductModule extends VuexModule {
   productList: Product[] = []
+  totalProduct: number = 0
   product: Product = {} as Product
   total: number = 0
 
   @Mutation
   SET_PRODUCT_LIST ({
-    productList
+    productList, totalProduct
   }: {
-    productList: Product[]
+    productList: Product[],
+    totalProduct: number
   }) {
     this.productList = productList
+    this.totalProduct = totalProduct
   }
 
   @Mutation
@@ -73,20 +60,17 @@ class ProductModule extends VuexModule {
   @Action({ commit: 'SET_PRODUCT_LIST' })
   public async getProductList ({
     page,
-    perPage,
+    pageSize,
     search
   }: {
     page: number
-    perPage: number
+    pageSize: number
     search: string
   }) {
-    const path: string = `${apiPath.productVariation}?search=page=${page}&page_size=${perPage}&search=${search}`
+    const path: string = `${apiPath.productVariation}/?page=${page}&page_size=${pageSize}&search=${search}`
     const res = await $axios.get(path)
     const mappedProduct = res.data.results.map(
       (item: Product) => {
-        const foundProduct = imageDefault.find(
-          (itemProduct: { name: string; image: string }) => itemProduct.name === item.name
-        )
         return {
           id: item.id,
           product: item.product,
@@ -96,25 +80,22 @@ class ProductModule extends VuexModule {
           productDescription: item.productDescription,
           unit: item.unit,
           updatedDate: item.updatedDate,
-          image: foundProduct ? foundProduct.image : require('@/assets/images/default/product-default.svg')
+          image: imageDefault[item.id] ? imageDefault[item.id] : imageDefault[5]
         }
       }
     )
     return {
-      productList: mappedProduct
+      productList: mappedProduct,
+      totalProduct: res.data.count
     }
   }
 
   @Action({ commit: 'SET_PRODUCT_DETAIL' })
-  public async getProduct ({ id }: { id: string }) {
+  public async getProduct ({ id }: { id: number }) {
     const path: string = `/${apiPath.productVariation}/${id}`
     const res = await $axios.get(path)
 
     const data = res.data
-    const foundProduct = imageDefault.find(
-      (itemProduct: { name: string; image: string }) => itemProduct.name === data.name
-    )
-
     const product: Product = {
       id: data.id,
       product: data.product,
@@ -124,7 +105,7 @@ class ProductModule extends VuexModule {
       productDescription: data.productDescription,
       unit: data.unit,
       updatedDate: data.updatedDate,
-      image: foundProduct ? foundProduct.image : require('@/assets/images/default/product-default.svg'),
+      image: imageDefault[id] ? imageDefault[id] : imageDefault[5],
       amount: data.amount
     }
     return {
