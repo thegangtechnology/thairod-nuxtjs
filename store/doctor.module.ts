@@ -53,7 +53,7 @@ class DoctorModule extends VuexModule {
 
   @Action({ commit: 'SET_DOCTOR_DETAIL' })
   public async getDoctorOrder ({ hash }: { hash: string }) {
-    const res = await $axios.get(`${apiPath.orderFlow.hash}/?doctor=${hash}`)
+    const res = await $axios.get(`${apiPath.orderFlow.hash}/?doctor=${hash}/`)
     const data = res.data
     return {
       doctor: data.doctorInfo.doctor,

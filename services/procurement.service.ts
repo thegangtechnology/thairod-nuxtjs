@@ -23,7 +23,7 @@ export function getProductVariations (params: ProductVariationsParam) : Promise<
 
 export function getItemDetail (id: string | (string | null)[]) : Promise<ItemDetail> {
   return $axios
-    .get(`${apiPath.productVariation}/${id}`)
+    .get(`${apiPath.productVariation}/${id}/`)
     .then((res) => {
       return res.data
     })
