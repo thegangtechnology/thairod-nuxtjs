@@ -35,8 +35,8 @@
           <img :src="require('~/assets/images/sidebar/doctor-profile.svg')" alt="doctor-profile" height="48">
         </a-col>
         <a-col :class="{'hide-content': collapsed}" class="profile-detail" span="18">
-          firstname lastname
-          <p>Admin</p>
+          {{ getFirstname }} {{ getLastname }}
+          <p>{{ getUsername }}</p>
         </a-col>
       </a-row>
 
@@ -56,7 +56,7 @@
           :class="{'sidebar-item-active': selectedMenu === 'assign'}"
           @click="goToPage('/assign')"
         >
-          <a-icon type="file-search" />
+          <a-icon type="build" />
           <span>จัดการล็อตรายการจัดส่ง</span>
         </a-menu-item>
         <a-menu-item :class="{'sidebar-item-active': selectedMenu === 'print'}" @click="goToPage('/print')">
@@ -64,9 +64,11 @@
           <span>พิมพ์ใบจัดส่งสินค้า</span>
         </a-menu-item>
       </a-menu>
-      <a-button class="logout-button" @click="onLogout">
+      <a-button class="logout-button" :class="{ 'collapsed': collapsed }" @click="onLogout">
         <img alt="logout" class="icon" src="~/assets/images/procurement/icon/logout-icon.svg">
-        ออกจากระบบ
+        <span class="logout-title" :class="{ 'collapsed': collapsed }">
+          ออกจากระบบ
+        </span>
       </a-button>
     </a-layout-sider>
 
@@ -94,6 +96,15 @@ export default Vue.extend({
       } else {
         return 'order-overview'
       }
+    },
+    getUsername (): string {
+      return this.$auth.user ? String(this.$auth.user.username) : ''
+    },
+    getFirstname (): string {
+      return this.$auth.user ? String(this.$auth.user.firstName) : ''
+    },
+    getLastname (): string {
+      return this.$auth.user ? String(this.$auth.user.lastName) : ''
     }
   },
   methods: {
@@ -173,5 +184,21 @@ export default Vue.extend({
 .ant-layout-content {
   min-height: 100vh !important;
   z-index: 100;
+}
+
+.logout-button {
+  background-color: transparent !important;
+  &.collapsed {
+    padding-left: 30px;
+    width: auto;
+  }
+}
+
+.logout-title {
+  opacity: 1;
+  transition: opacity 0.2s !important;
+  &.collapsed {
+    opacity: 0
+  }
 }
 </style>
