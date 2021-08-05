@@ -180,13 +180,7 @@ export default Vue.extend({
     }
   },
   async mounted () {
-    console.log(locations)
     this.locations = locations
-    // fetch(
-    //   'https://gist.githubusercontent.com/ChaiyachetU/a72a3af3c6561b97883d7af935188c6b/raw/0e9389fa1fc06b532f9081793b3e36db31a1e1c6/thailand.json'
-    // )
-    //   .then(response => response.json())
-    //   .then(data => (this.locations = data))
     CommonModule.setHeaderTitle({ header: 'กรุณาตรวจสอบข้อมูล' })
     await CheckoutModule.getPatientOrder({ patientHash: this.patientHash })
     this.patientInfoForm.setFieldsValue({
