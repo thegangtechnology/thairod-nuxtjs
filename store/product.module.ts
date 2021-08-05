@@ -67,7 +67,7 @@ class ProductModule extends VuexModule {
     pageSize: number
     search: string
   }) {
-    const path: string = `${apiPath.productVariation}/?page=${page}&page_size=${pageSize}&search=${search}`
+    const path: string = `${apiPath.productVariation}/?page=${page}&page_size=${pageSize}&search=${search}/`
     const res = await $axios.get(path)
     const mappedProduct = res.data.results.map(
       (item: Product) => {
@@ -92,7 +92,7 @@ class ProductModule extends VuexModule {
 
   @Action({ commit: 'SET_PRODUCT_DETAIL' })
   public async getProduct ({ id }: { id: number }) {
-    const path: string = `/${apiPath.productVariation}/${id}`
+    const path: string = `/${apiPath.productVariation}/${id}/`
     const res = await $axios.get(path)
 
     const data = res.data
