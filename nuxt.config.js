@@ -10,11 +10,25 @@ export default {
     },
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1'
+      },
+      {
+        hid: 'description',
+        name: 'description',
+        content: ''
+      },
+      {
+        name: 'format-detection',
+        content: 'telephone=no'
+      }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [{
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: '/favicon.ico'
+    }]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -31,6 +45,7 @@ export default {
     '~plugins/order-components.ts',
     '~plugins/assign-components.ts',
     '~plugins/print-components.ts',
+    '~plugins/shipment.plugin.ts',
     '~plugins/date.ts',
     '@/plugins/accessor.ts',
     '@/plugins/axios.ts'
@@ -48,13 +63,41 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    // proxy: true
-    baseUrl: process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
+  auth: {
+    strategies: {
+      local: {
+        scheme: 'refresh',
+        token: {
+          property: 'access'
+        },
+        refreshToken: {
+          property: 'refresh',
+          data: 'refresh'
+        },
+        user: {
+          property: false
+        },
+        endpoints: {
+          login: { url: '/api/token/', method: 'post', headers: { 'Content-Type': 'application/json' } },
+          refresh: { url: '/api/token/refresh/', method: 'post', headers: { 'Content-Type': 'application/json' } },
+          user: { url: '/api/current_user/', method: 'get' },
+          logout: false
+        }
+      }
+    },
+    redirect: {
+      logout: '/',
+      home: '/procurement',
+      login: '/'
+    }
+  },
+
+  router: {
+    middleware: ['admin']
   },
 
   // proxy: {
@@ -74,5 +117,13 @@ export default {
         additionalData: '@import "@/assets/styles/antd.less";'
       }
     }
+  },
+  publicRuntimeConfig: {
+    // Axios module configuration: https://go.nuxtjs.dev/config-axios
+    axios: {
+      // proxy: true
+      baseURL:
+        process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
+    },
   }
 }

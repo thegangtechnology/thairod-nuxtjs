@@ -11,7 +11,7 @@ import {
   ShipmentDetail,
   ShipmentLine
 } from '~/types/shipment.type'
-import { getShipmentDetail, getShipments, setDeliverStatus, setPrintStatus, updateBatchNumber } from '~/services/shipment'
+import { getShipmentDetail, getShipments, setDeliverStatus, setPrintStatus, updateBatchNumber } from '~/services/shipment.service'
 
 const name: string = 'shipmentModule'
 if (store.state[name]) {

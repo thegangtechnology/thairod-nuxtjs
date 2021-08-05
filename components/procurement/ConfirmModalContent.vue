@@ -28,8 +28,18 @@ export default Vue.extend(
   {
     components: { PrimaryButton, SecondaryButton },
     props: {
-      closeModal: { type: Function, default: () => {} },
-      handleSubmit: { type: Function, default: () => {} },
+      closeModal: {
+        type: Function,
+        default: () => {
+        // empty
+        }
+      },
+      handleSubmit: {
+        type: Function,
+        default: () => {
+        // empty
+        }
+      },
       formData: {
         type: Object as PropType<UpdateInventoryFormData>,
         default: () => ({

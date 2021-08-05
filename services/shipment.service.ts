@@ -1,5 +1,5 @@
 import apiPath from '~/data/api_path'
-import { ShipmentDetail, ShipmentLine, ShipmentResponse, Status } from '~/types/shipment.type'
+import { ShipmentDetail, ShipmentForm, ShipmentLine, ShipmentResponse, Status } from '~/types/shipment.type'
 import { $axios } from '~/utils/api'
 
 type CheckBoolean = boolean | null
@@ -35,7 +35,8 @@ export const getShipments = async (
           page,
           batch_isnull,
           label_printed,
-          deliver
+          deliver,
+          search: null
         }
       })
     const responseResult: ShipmentResponse[] = response.data.results
@@ -83,6 +84,7 @@ export const getShipmentDetail = async (id: number): Promise<ShipmentDetail> => 
       warehouse: responseResult.warehouse,
       orderer_name: responseResult.order.ordererName,
       orderer_license: responseResult.order.ordererLicense,
+      receiver_id: responseResult.order.receiverAddress.id,
       updated_name: '',
       updated_date: responseResult.updatedDate,
       house_number: responseResult.order.receiverAddress.houseNumber,
@@ -171,6 +173,19 @@ export const getBatchNumber = async () => {
   try {
     const res = await $axios.get('/api/batch-shipments/next_generated_name/')
     return Promise.resolve(res.data.name)
+  } catch (error) {
+    return Promise.reject(new Error(error))
+  }
+}
+
+export const updateAddress = async (addressId: number, updateForm: ShipmentForm) => {
+  try {
+    await $axios.patch(`/api/address/${addressId}/`, updateForm,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
   } catch (error) {
     return Promise.reject(new Error(error))
   }

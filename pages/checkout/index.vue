@@ -125,11 +125,8 @@
       </a-row>
 
       <a-row class="button-group" type="flex">
-        <a-col span="12">
-          <secondary-button :on-click="clickBack" :text="'กลับ'" />
-        </a-col>
-        <a-col span="12">
-          <primary-button :on-click="goToOrderConfirmation" :text="'ต่อไป'" />
+        <a-col span="24">
+          <primary-button :on-click="goToOrderConfirmation" :text="'ต่อไป'" block />
         </a-col>
       </a-row>
     </a-form>
@@ -142,7 +139,7 @@ import CheckoutModule from '~/store/checkout.module'
 import { PatientInfo } from '~/types/order.type'
 import CommonModule from '~/store/common.module'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
-import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
+import locations from '~/data/location.json'
 
 interface IAddress {
   district: string;
@@ -156,15 +153,14 @@ interface IAddress {
 
 export default Vue.extend({
   components: {
-    PrimaryButton,
-    SecondaryButton
+    PrimaryButton
   },
   layout: 'mobile-empty',
   data () {
     return {
       form: {},
       patientInfoForm: this.$form.createForm(this),
-      locations: [],
+      locations: [] as IAddress[],
       districts: [] as string[],
       subDistricts: [] as string[]
     }
@@ -184,11 +180,7 @@ export default Vue.extend({
     }
   },
   async mounted () {
-    fetch(
-      'https://gist.githubusercontent.com/ChaiyachetU/a72a3af3c6561b97883d7af935188c6b/raw/0e9389fa1fc06b532f9081793b3e36db31a1e1c6/thailand.json'
-    )
-      .then(response => response.json())
-      .then(data => (this.locations = data))
+    this.locations = locations
     CommonModule.setHeaderTitle({ header: 'กรุณาตรวจสอบข้อมูล' })
     await CheckoutModule.getPatientOrder({ patientHash: this.patientHash })
     this.patientInfoForm.setFieldsValue({
@@ -244,9 +236,6 @@ export default Vue.extend({
           this.$router.push(`/checkout/checkout-confirmation/?patient=${this.patientHash}`)
         }
       })
-    },
-    clickBack (): void {
-      //  back method
     }
   }
 })

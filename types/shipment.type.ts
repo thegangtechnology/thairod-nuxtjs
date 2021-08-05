@@ -91,6 +91,7 @@ export interface ShipmentDetail extends ShipmentLine {
   updated_date: Date // ShipmentResponse.updated_date
   orderer_name: string // ShipmentResponse.Order.orderer_name
   orderer_license: string // ShipmentResponse.Order.orderer_license
+  receiver_id: number // ShipmentResponse.Order.ReceiverAddress.house_number
   house_number: string // ShipmentResponse.Order.ReceiverAddress.house_number
   subdistrict: string // ShipmentResponse.Order.ReceiverAddress.subdistrict
   district: string // ShipmentResponse.Order.ReceiverAddress.district
@@ -101,4 +102,19 @@ export interface ShipmentDetail extends ShipmentLine {
 }
 export interface ShipmentAddress extends ShipmentDetail {
   name: string
+}
+export interface ShipmentFilter {
+  shipmentItem: string
+  created_date: string
+  batch: string
+  search: string
+}
+export interface ShipmentForm {
+  telno: string
+  house_number: string
+  province: string
+  district: string
+  subdistrict: string
+  postal_code: string
+  note: string
 }
