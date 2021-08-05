@@ -13,12 +13,12 @@
       @click="goToProduct(item.id)"
     >
       <template slot="description">
-        {{ item.description }}
+        {{ item.productDescription }}
       </template>
     </a-card-meta>
     <template slot="actions" class="ant-card-actions product-card__button">
       <primary-button
-        class="update-button"
+        class="update-button ripple"
         :text="'เพิ่มใส่ตะกร้า'"
         block
         :on-click="addToCart"
@@ -31,7 +31,6 @@
 import Vue, { PropType } from 'vue'
 import { ICheckoutProduct, Product } from '~/types/product.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
-import ProductModule from '~/store/product.module'
 
 export default Vue.extend({
   components: { PrimaryButton },
@@ -81,7 +80,6 @@ export default Vue.extend({
 
 <style lang="less">
 .product-card.ant-card {
-  //min-width: 160px;
   max-width: 350px;
   width: 100%;
   background-color: #ffffff !important;;
@@ -124,6 +122,21 @@ export default Vue.extend({
 
 .product-card .update-button {
   font-size: 18px;
+}
+
+.update-button.ripple {
+  background-position: center;
+  transition: background 0.6s;
+
+  &:hover {
+    background: #FAC5C5 radial-gradient(circle, transparent 1%, #FAC5C5 1%) center/15000%;
+  }
+
+  &:active {
+    background-color: #FAC5C5;
+    background-size: 100%;
+    transition: background 0s;
+  }
 }
 
 @media only screen and (max-width: 375px) {
