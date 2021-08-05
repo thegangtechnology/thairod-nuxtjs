@@ -5,14 +5,15 @@
       <span class="page-name">
         {{ title }}
       </span>
-      <a v-if="isDetail" class="carts__button" @click="goToCart">
-        <a-badge :count="totalCart">
-          <a-icon
-            class="trigger float-right shopping-cart__button"
-            type="shopping-cart"
-          />
-        </a-badge>
-      </a>
+      <a-badge :count="totalCart">
+        <a v-if="isDetail" class="carts__button" @click="goToCart">
+          <a-badge :count="totalCart">
+            <a-icon
+              class="trigger float-right shopping-cart__button"
+              type="shopping-cart"
+            />
+          </a-badge></a>
+      </a-badge>
     </div>
   </div>
 </template>
@@ -66,6 +67,28 @@ export default Vue.extend({
 }
 
 .page-header-product a.carts__button {
+  color: #000000;
+  display: flex;
+  align-items:center;
+}
+.page-header-product a.carts__button i {
+  background-position: center;
+  transition: background 0.5s;
+  border-radius: 50%;
+  padding: 4px;
+}
+.page-header-product a.carts__button:hover i {
+  background: rgba(255, 255, 255,0.2) radial-gradient(circle, transparent 1%, rgba(255, 255, 255,0.2)  1%) center / 15000%;
+  border-radius: 50%;
+}
+.page-header-product a.carts__button:active {
+  background-color: transparent;
+  background-size: 100%;
+  transition: background 0s;
+  border-radius: 50%;
+}
+
+ a.carts__button {
   color: #000000;
 }
 </style>
