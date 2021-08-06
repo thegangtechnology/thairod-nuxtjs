@@ -8,16 +8,17 @@
       <a-col :flex="10">
         <div class="card left-card">
           <div> จำนวนในคลัง </div>
-          <strong>{{ inventoryRecord.currentAmount > 0 ? inventoryRecord.currentAmount : '-' }} {{ inventoryRecord.unit }}</strong>
+          <strong>{{ itemStock.currentTotal }} {{ itemDetail.unit }}</strong>
           <a-divider />
           <div> ยอดรวมสะสม </div>
-          <strong class="acc-amount">{{ inventoryRecord.accumulativeAmount > 0 ? inventoryRecord.accumulativeAmount : '-' }} {{ inventoryRecord.unit }}</strong>
+          <strong class="acc-amount">{{ itemStock.procured }} {{ itemDetail.unit }}</strong>
         </div>
         <a-button
           block
           class="card-button"
           :style="{backgroundColor: '#001740C6', border: 0, color: '#ffffff'}"
           @click="moreCurrentInventoryInfo"
+          disabled=""
         >
           ดูรายละเอียดเพิ่มเติม
         </a-button>
@@ -26,16 +27,17 @@
       <a-col :flex="10">
         <div class="card right-card">
           <div> จำนวนที่ใช้วันนี้ </div>
-          <strong>{{ inventoryRecord.usedAmount > 0 ? inventoryRecord.usedAmount : '-' }} {{ inventoryRecord.unit }}</strong>
+          <strong>- {{ itemDetail.unit }}</strong>
           <a-divider />
           <div> ยอดใช้สะสม </div>
-          <strong class="acc-amount">{{ inventoryRecord.accumulativeUsed > 0 ? inventoryRecord.accumulativeUsed : '-' }} {{ inventoryRecord.unit }}</strong>
+          <strong class="acc-amount">{{ itemStock.fulfilled }} {{ itemDetail.unit }}</strong>
         </div>
         <a-button
           block
           class="card-button"
           :style="{backgroundColor: '#aeaeae', border: 0, color: '#ffffff'}"
           @click="moreUsedInventoryInfo"
+          disabled=""
         >
           ดูรายละเอียดเพิ่มเติม
         </a-button>
@@ -58,20 +60,20 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
-import { InventoryRecord, ItemDetail } from '~/types/procurement.type'
+import { ItemDetail, Stock } from '~/types/procurement.type'
 import { productImageMap } from '~/data/image-map'
-import { defaultInventoryRecord, defaultItemDetail } from '~/types/procurement.default'
+import { defaultItemDetail, defaultStock } from '~/types/procurement.default'
 
 export default Vue.extend({
   components: { PrimaryButton },
   props: {
-    inventoryRecord: {
-      type: Object as PropType<InventoryRecord>,
-      default: () => (defaultInventoryRecord)
-    },
     itemDetail: {
       type: Object as PropType<ItemDetail>,
       default: () => (defaultItemDetail)
+    },
+    itemStock: {
+      type: Object as PropType<Stock>,
+      default: () => (defaultStock)
     }
   },
   data () {

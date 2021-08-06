@@ -12,13 +12,7 @@
       <div class="label">
         จำนวนในคลัง
       </div>
-      <div><strong>{{ item.stock ? item.stock : '-' }} {{ item.unit }}</strong></div>
-      <div class="label last-update-label">
-        อัปเดตเมื่อ
-      </div>
-      <div class="last-update">
-        {{ formatDate(item.updatedDate) }}
-      </div>
+      <div><strong>{{ itemStock.currentTotal ? itemStock.currentTotal : '-' }} {{ item.unit }}</strong></div>
       <secondary-button :text="'ดูรายละเอียด'" :on-click="toItemDetail" />
     </a-card>
   </a-col>
@@ -27,9 +21,9 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
-import { ItemOverviewInfo } from '~/types/procurement.type'
+import { ItemOverviewInfo, Stock } from '~/types/procurement.type'
 import { productImageMap } from '~/data/image-map'
-import { defaultItemOverviewInfo } from '~/types/procurement.default'
+import { defaultItemOverviewInfo, defaultStock } from '~/types/procurement.default'
 
 export default Vue.extend({
   components: { SecondaryButton },
@@ -37,6 +31,10 @@ export default Vue.extend({
     item: {
       type: Object as PropType<ItemOverviewInfo>,
       default: () => (defaultItemOverviewInfo)
+    },
+    itemStock: {
+      type: Object as PropType<Stock>,
+      default: () => (defaultStock)
     }
   },
   data () {

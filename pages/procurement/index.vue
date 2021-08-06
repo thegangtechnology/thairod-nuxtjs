@@ -14,7 +14,7 @@
             </a-input>
           </a-row>
           <a-row>
-            <item-overview v-for="item in items" :key="item.id" :item="item" />
+            <item-overview v-for="item in items" :key="item.id" :item="item" :item-stock="stocks[item.id]" />
           </a-row>
           <a-row class="pagination-row">
             <a-pagination
@@ -36,7 +36,7 @@ import Vue from 'vue'
 import MainHeader from '~/components/procurement/headers/MainHeader.vue'
 import ItemOverview from '~/components/procurement/ItemOverview.vue'
 import ProcurementModule from '~/store/procurement.module'
-import { ItemOverviewInfo } from '~/types/procurement.type'
+import { ItemOverviewInfo, StockInfo } from '~/types/procurement.type'
 import Sidebar from '~/components/procurement/ProcurementSidebar.vue'
 
 export default Vue.extend({
@@ -56,6 +56,9 @@ export default Vue.extend({
     },
     totalItems () : number {
       return ProcurementModule.totalItems
+    },
+    stocks () : StockInfo {
+      return ProcurementModule.stockInfo
     }
   },
   async mounted () {
