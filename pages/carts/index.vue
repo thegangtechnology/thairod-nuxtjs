@@ -52,7 +52,7 @@
         ref="textToCopy"
         :value="`${url}/checkout/?patient=${patientHash}`"
         placeholder="Link URL"
-        class="mb-4 input-round"
+        class="mb-4 input-round input-disabled"
       />
       <a-button
         type="primary"
@@ -209,5 +209,10 @@ export default Vue.extend({
   border: 1px solid #666666;
   border-radius: 0;
   height: 48px;
+}
+.input-disabled{
+  background-color: #EEEFF6;
+  border-color: #EEEFF6;
+  pointer-events: none;
 }
 </style>

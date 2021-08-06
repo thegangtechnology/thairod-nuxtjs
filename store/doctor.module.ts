@@ -32,20 +32,24 @@ class DoctorModule extends VuexModule {
   doctor: DoctorInfo = {} as DoctorInfo
   patientHash: string = ''
   doctorOrder: OrderItem[] = []
+  patientLinkHash : string = ''
 
   @Mutation
   SET_DOCTOR_DETAIL ({
     doctor,
     patient,
-    doctorOrder
+    doctorOrder,
+    patientLinkHash
   }: {
     doctor: DoctorInfo;
     patient: Patient;
     doctorOrder:OrderItem[];
+    patientLinkHash:string
   }) {
     this.doctor = doctor
     this.patient = patient
     this.doctorOrder = doctorOrder
+    this.patientLinkHash = patientLinkHash
   }
 
   @Mutation
@@ -59,10 +63,12 @@ class DoctorModule extends VuexModule {
   public async getDoctorOrder ({ hash }: { hash: string }) {
     const res = await $axios.get(`${apiPath.orderFlow.hash}/?doctor=${hash}`)
     const data = res.data
+    console.log('data', data)
     return {
       doctor: data.doctorInfo.doctor,
       patient: data.doctorInfo.patient,
-      doctorOrder: data.doctorOrder.items
+      doctorOrder: data.doctorOrder.items,
+      patientLinkHash: data.patientLinkHash
     }
   }
 
