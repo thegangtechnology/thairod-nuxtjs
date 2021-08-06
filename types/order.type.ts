@@ -43,6 +43,7 @@ export interface OrderItem {
   unit: string
   quantity: number
   description: string
+  productDescription: string
 }
 
 export interface IOrder extends Main {
