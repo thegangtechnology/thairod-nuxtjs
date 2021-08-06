@@ -15,6 +15,7 @@ const apiPath = {
   productVariation: 'api/product-variations',
   procurement: 'api/procurements',
   shipment: 'api/shipments',
+  stock: 'api/stock',
   stockAdjustment: 'api/stock-adjustments',
   trackingStatus: 'api/tracking-status',
   warehouse: 'api/warehouses',

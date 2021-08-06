@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container padding-container">
     <div class="text-center mt-6">
       <img :src="require('@/assets/icons/icon-check.svg')" alt="icon check" class="ma-auto">
       <div class="text__title mb-8">
@@ -8,15 +8,16 @@
     </div>
     <CardPatientDetail :patient-detail="patient" />
     <a-divider />
+
     <div class="text__subtitle  mb-3">
       รายละเอียดสินค้า
     </div>
-    <a-row v-for="(item,i) in 2" :key="i" class="item__list">
+    <a-row v-for="(item,i) in doctorOrder" :key="i" class="item__list">
       <a-col :span="18">
-        {{ i+1 }}. กล่องเขียว
+        {{ item.name }}
       </a-col>
       <a-col :span="6" class="text-right">
-        1 กล่อง
+        {{ item.quantity }} {{ item.unit }}
       </a-col>
     </a-row>
     <a-divider />
@@ -24,12 +25,11 @@
       URL สำหรับการยืนยันที่อยู่รับสินค้า
     </div>
     <a-input
-      id="textToCopy"
+      id="copyPatientHash"
       ref="textToCopy"
-      :value="`${url}/checkout/?patient=${patientHash}`"
+      :value="`${url}/checkout/?patient=${patientLinkHash}`"
       placeholder="Link URL"
-      class=" input-round"
-      disabled
+      class="input-round input-disabled"
     />
     <div class="button-container">
       <a-row>
@@ -60,7 +60,7 @@ import Vue from 'vue'
 import CardPatientDetail from '~/components/CardPatientDetail.vue'
 import { Patient } from '~/types/patient.type'
 import DoctorModule from '~/store/doctor.module'
-import ProductModule from '~/store/product.module'
+import { OrderItem } from '~/types/order.type'
 
 export default Vue.extend({
   components: {
@@ -79,20 +79,22 @@ export default Vue.extend({
     hash (): string {
       return this.$route.query.doctor as string
     },
-    patientHash (): string {
-      return `${DoctorModule.patientHash}`
+    patientLinkHash (): string {
+      return `${DoctorModule.patientLinkHash}`
+    },
+    doctorOrder (): OrderItem[] {
+      return DoctorModule.doctorOrder
     }
   },
-  async mounted () {
-    await DoctorModule.getDoctorOrder({ hash: this.hash })
-  },
+  // async mounted () {
+  //   await DoctorModule.getDoctorOrder({ hash: this.hash })
+  // },
   methods: {
     copyLink (): void {
-      const copyText = document.getElementById('textToCopy') as HTMLInputElement
+      const copyText = document.getElementById('copyPatientHash') as HTMLInputElement
       copyText.select()
       document.execCommand('copy')
       sessionStorage.removeItem('doc-or-storage')
-      ProductModule.setTotalCart({ totalItem: 0 })
       this.$message.success('Copied', 1)
     }
   }
@@ -100,6 +102,9 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.padding-container{
+  padding-bottom: 80px;
+}
 .text__title {
   font-size: 24px;
   color: #000000;
@@ -123,5 +128,10 @@ export default Vue.extend({
   font-weight:bold;
   font-size: 18px;
   color: #000000;
+}
+.input-disabled{
+  background-color: #EEEFF6;
+  border-color: #EEEFF6;
+  pointer-events: none;
 }
 </style>

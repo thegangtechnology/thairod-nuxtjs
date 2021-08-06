@@ -91,7 +91,7 @@ export default {
     },
     redirect: {
       logout: '/',
-      home: '/procurement',
+      home: '/print',
       login: '/'
     }
   },
