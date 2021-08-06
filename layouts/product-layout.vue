@@ -88,7 +88,7 @@ export default Vue.extend({
   },
   methods: {
     hiddenMenu () {
-      this.collapsed = false
+      this.collapsed = true
     },
     goToPage (path: string): void {
       this.hiddenMenu()

@@ -31,17 +31,21 @@ class DoctorModule extends VuexModule {
   orderItems: OrderItem[] = []
   doctor: DoctorInfo = {} as DoctorInfo
   patientHash: string = ''
+  doctorOrder: OrderItem[] = []
 
   @Mutation
   SET_DOCTOR_DETAIL ({
     doctor,
-    patient
+    patient,
+    doctorOrder
   }: {
     doctor: DoctorInfo;
     patient: Patient;
+    doctorOrder:OrderItem[];
   }) {
     this.doctor = doctor
     this.patient = patient
+    this.doctorOrder = doctorOrder
   }
 
   @Mutation
@@ -57,7 +61,8 @@ class DoctorModule extends VuexModule {
     const data = res.data
     return {
       doctor: data.doctorInfo.doctor,
-      patient: data.doctorInfo.patient
+      patient: data.doctorInfo.patient,
+      doctorOrder: data.doctorOrder.items
     }
   }
 

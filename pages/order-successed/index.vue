@@ -8,15 +8,17 @@
     </div>
     <CardPatientDetail :patient-detail="patient" />
     <a-divider />
+
+    {{ doctorOrder }}
     <div class="text__subtitle  mb-3">
       รายละเอียดสินค้า
     </div>
-    <a-row v-for="(item,i) in 2" :key="i" class="item__list">
+    <a-row v-for="(item,i) in doctorOrder" :key="i" class="item__list">
       <a-col :span="18">
-        {{ i+1 }}. กล่องเขียว
+        {{ item.name }}
       </a-col>
       <a-col :span="6" class="text-right">
-        1 กล่อง
+        {{ item.quantity }} {{ item.unit }}
       </a-col>
     </a-row>
     <a-divider />
@@ -61,6 +63,7 @@ import CardPatientDetail from '~/components/CardPatientDetail.vue'
 import { Patient } from '~/types/patient.type'
 import DoctorModule from '~/store/doctor.module'
 import ProductModule from '~/store/product.module'
+import { OrderItem } from '~/types/order.type'
 
 export default Vue.extend({
   components: {
@@ -81,6 +84,9 @@ export default Vue.extend({
     },
     patientHash (): string {
       return `${DoctorModule.patientHash}`
+    },
+    doctorOrder (): OrderItem {
+      return DoctorModule.doctorOrder
     }
   },
   async mounted () {
@@ -92,7 +98,6 @@ export default Vue.extend({
       copyText.select()
       document.execCommand('copy')
       sessionStorage.removeItem('doc-or-storage')
-      ProductModule.setTotalCart({ totalItem: 0 })
       this.$message.success('Copied', 1)
     }
   }
