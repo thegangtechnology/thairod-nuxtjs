@@ -63,7 +63,6 @@ class DoctorModule extends VuexModule {
   public async getDoctorOrder ({ hash }: { hash: string }) {
     const res = await $axios.get(`${apiPath.orderFlow.hash}/?doctor=${hash}`)
     const data = res.data
-    console.log('data', data)
     return {
       doctor: data.doctorInfo.doctor,
       patient: data.doctorInfo.patient,
