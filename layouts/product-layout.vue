@@ -37,10 +37,11 @@
             @click="() => (collapsed = !collapsed)"
           />
           <span class="page-name">
-            ไทยรอดMALL
+            ไทยรอดMALL--{{ params }}
           </span>
-          <a-badge :count="totalCart">
-            <a class="carts__button" @click="goToCart">
+
+          <a-badge  :count="totalCart">
+            <a v-if="params !=='order-successed'" class="carts__button" @click="goToCart">
               <a-icon
                 class="trigger float-right shopping-cart__button"
                 type="shopping-cart"
@@ -69,7 +70,8 @@ export default Vue.extend({
   },
   data () {
     return {
-      collapsed: true
+      collapsed: true,
+      params: ''
     }
   },
   computed: {
@@ -81,9 +83,14 @@ export default Vue.extend({
         ProductModule.setTotalCart({ totalItem: JSON.parse(sessionStorage.getItem('doc-or-storage') as string).length })
       }
       return ProductModule.total
+    },
+    params (): string {
+      console.log('params', this.params)
+      return this.$route.params.name as string
     }
   },
   async mounted () {
+    console.log('params', this.$route.name)
     await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor as string })
   },
   methods: {

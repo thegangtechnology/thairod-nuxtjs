@@ -83,13 +83,10 @@ export default Vue.extend({
   async created () {
     await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor as string })
     await this.checkOrder()
-    console.log('doctorOrderddd', this.doctorOrder)
   },
   async mounted () {
     await ProductModule.getProductList(
       { page: this.currentPage, pageSize: this.pageSize, search: this.search })
-
-    // await this.checkOrder()
   },
   methods: {
     async getProducts (): Promise<void> {
@@ -127,7 +124,6 @@ export default Vue.extend({
     },
     checkOrder () {
       if (this.doctorOrder.length > 0) {
-        console.log('doctorOrder', this.doctorOrder)
         this.$router.push({ path: '/order-successed/', query: { doctor: this.$route.query.doctor as string } })
       }
     }
