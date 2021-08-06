@@ -65,7 +65,7 @@ export default Vue.extend({
   },
   computed: {
     hash (): string {
-      return this.$route.query.doctor as string
+      return this.$route.query.doctor as string ? this.$route.query.doctor as string : ''
     },
     patient (): Patient {
       return DoctorModule.patient
@@ -81,7 +81,7 @@ export default Vue.extend({
     }
   },
   async created () {
-    await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor as string })
+    await DoctorModule.getDoctorOrder({ hash: this.hash })
     await this.checkOrder()
   },
   async mounted () {
