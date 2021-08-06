@@ -25,17 +25,8 @@ export interface InventoryDetailCard {
 export interface ItemOverviewInfo {
   id: number,
   name: string,
-  stock: number,
   unit: string,
   updatedDate: string,
-}
-
-export interface InventoryRecord {
-  currentAmount: number,
-  accumulativeAmount: number,
-  usedAmount: number,
-  accumulativeUsed: number,
-  unit: string
 }
 
 export interface ItemDetail {
@@ -46,14 +37,21 @@ export interface ItemDetail {
   unit: string
 }
 
-export interface ItemDetailPageInfo {
-  itemDetail: ItemDetail,
-  inventoryRecord: InventoryRecord
-}
-
 export interface UserInfo {
   id: number,
   firstName: string,
   lastName: string,
   username: string
+}
+
+export interface Stock {
+  fulfilled: number,
+  procured: number,
+  adjustment: number,
+  pending: number,
+  currentTotal: number
+}
+
+export interface StockInfo {
+  [id: string]: Stock
 }

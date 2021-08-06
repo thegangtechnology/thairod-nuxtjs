@@ -8,7 +8,7 @@
     <p>
       กล่องสินค้า <span>{{ formData.quantity ? formData.quantity.toLocaleString(): '' }} กล่อง</span><br>
       ราคาทุน <span>{{ formData.unitPrice || formData.unitPrice === 0 ? formData.unitPrice.toFixed(2).toLocaleString(): '' }} บาท</span><br>
-      คลังสินค้า <span>{{ warehouseList[formData.warehouse].name }}</span>
+      คลังสินค้า <span>{{ formData.warehouse ? warehouseList[formData.warehouse].name : '' }}</span>
     </p>
     <div>
       <secondary-button :text="'ยกเลิก'" :on-click="closeModal" />
