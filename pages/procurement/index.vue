@@ -133,11 +133,11 @@ export default Vue.extend({
 }
 
 .ant-pagination-item-active, .ant-pagination-item-active:focus, .ant-pagination-item-active:hover  {
-  border-color: #001740;
+  border-color: #F9B7B7;
 }
 
 .ant-pagination-item-active:focus a, .ant-pagination-item-active:hover a, .ant-pagination-item-active a{
-  color: #001740;
+  color: #F9B7B7;
 }
 
 .ant-input-affix-wrapper .ant-input:not(:first-child) {

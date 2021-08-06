@@ -47,6 +47,7 @@ import { Patient } from '~/types/patient.type'
 import { ICheckoutProduct, Product } from '~/types/product.type'
 import ProductCard from '~/components/product/ProductCard.vue'
 import DoctorModule from '~/store/doctor.module'
+import { OrderItem } from '~/types/order.type'
 
 export default Vue.extend({
   components: {
@@ -63,6 +64,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    hash (): string {
+      return this.$route.query.doctor as string
+    },
     patient (): Patient {
       return DoctorModule.patient
     },
@@ -71,7 +75,14 @@ export default Vue.extend({
     },
     totalItem (): number {
       return ProductModule.totalProduct
+    },
+    doctorOrder (): OrderItem[] {
+      return DoctorModule.doctorOrder
     }
+  },
+  async created () {
+    await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor as string })
+    await this.checkOrder()
   },
   async mounted () {
     await ProductModule.getProductList(
@@ -110,6 +121,11 @@ export default Vue.extend({
       }
       sessionStorage.setItem('doc-or-storage', JSON.stringify(cartItems))
       ProductModule.setTotalCart({ totalItem: cartItems.length })
+    },
+    checkOrder () {
+      if (this.doctorOrder.length > 0) {
+        this.$router.push({ path: '/order-successed/', query: { doctor: this.$route.query.doctor as string } })
+      }
     }
   }
 })
@@ -158,11 +174,11 @@ export default Vue.extend({
 }
 
 .ant-pagination-item-active, .ant-pagination-item-active:focus, .ant-pagination-item-active:hover {
-  border-color: #001740;
+  border-color: #F9B7B7;
 }
 
 .ant-pagination-item-active:focus a, .ant-pagination-item-active:hover a, .ant-pagination-item-active a {
-  color: #001740;
+  color: #F9B7B7;
 }
 
 .ant-input-affix-wrapper .ant-input:not(:first-child) {

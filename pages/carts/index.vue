@@ -52,7 +52,7 @@
         ref="textToCopy"
         :value="`${url}/checkout/?patient=${patientHash}`"
         placeholder="Link URL"
-        class="mb-4 input-round"
+        class="mb-4 input-round input-disabled"
       />
       <a-button
         type="primary"
@@ -82,6 +82,7 @@ import { Patient } from '~/types/patient.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 import DoctorModule from '~/store/doctor.module'
 import ProductModule from '~/store/product.module'
+import { OrderItem } from '~/types/order.type'
 
 export default Vue.extend({
   components: {
@@ -107,7 +108,14 @@ export default Vue.extend({
     },
     patientHash (): string {
       return `${DoctorModule.patientHash}`
+    },
+    doctorOrder (): OrderItem[] {
+      return DoctorModule.doctorOrder
     }
+  },
+  async created () {
+    await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor as string })
+    await this.checkOrder()
   },
   async mounted () {
     const productOrders = sessionStorage.getItem('doc-or-storage')
@@ -160,6 +168,11 @@ export default Vue.extend({
       this.cartItems[foundIndex].quantity = quantity
       sessionStorage.setItem('doc-or-storage', JSON.stringify(this.buildCartItemOrder(this.cartItems)))
       ProductModule.setTotalCart({ totalItem: this.cartItems.length })
+    },
+    checkOrder () {
+      if (this.doctorOrder.length > 0) {
+        this.$router.push({ path: '/order-successed/', query: { doctor: this.$route.query.doctor as string } })
+      }
     }
   }
 })
@@ -209,5 +222,10 @@ export default Vue.extend({
   border: 1px solid #666666;
   border-radius: 0;
   height: 48px;
+}
+.input-disabled{
+  background-color: #EEEFF6;
+  border-color: #EEEFF6;
+  pointer-events: none;
 }
 </style>
