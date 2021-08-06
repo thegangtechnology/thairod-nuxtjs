@@ -14,6 +14,7 @@ import ProductDetail from '~/components/product/ProductDetail.vue'
 import ProductModule from '~/store/product.module'
 import { ICheckoutProduct, Product } from '~/types/product.type'
 import ProductHeader from '~/components/product/ProductHeader.vue'
+import DoctorModule from '~/store/doctor.module'
 
 export default Vue.extend({
   components: {
@@ -27,6 +28,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    hash (): string {
+      return this.$route.query.doctor as string ? this.$route.query.doctor as string : ''
+    },
     product (): Product {
       return ProductModule.product
     }
@@ -35,6 +39,9 @@ export default Vue.extend({
     await ProductModule.getProduct(
       { id: Number(this.$route.params.uid) }
     )
+  },
+  async created () {
+    await DoctorModule.getDoctorOrder({ hash: this.hash })
   },
   methods: {
     onBackButtonClick (): void {

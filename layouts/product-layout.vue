@@ -70,7 +70,7 @@ export default Vue.extend({
   },
   data () {
     return {
-      collapsed: true,
+      collapsed: true
     }
   },
   computed: {
@@ -85,7 +85,7 @@ export default Vue.extend({
     }
   },
   async mounted () {
-    await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor as string })
+    await DoctorModule.getDoctorOrder({ hash: this.$route.query.doctor as string ? this.$route.query.doctor as string : '' })
   },
   methods: {
     hiddenMenu () {
