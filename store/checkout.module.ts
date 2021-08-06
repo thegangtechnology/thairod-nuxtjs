@@ -65,29 +65,9 @@ class CheckoutModule extends VuexModule {
       zipcode: address.zipcode,
       note: address.note
     }
-
-    // convert item id to name
-    const productVariationRes = await $axios.get(
-      `${apiPath.productVariation}/`
-    )
-    const mappedDoctorOrder = data.doctorOrder.map(
-      (orderProduct: ICheckoutProduct) => {
-        const foundProduct = productVariationRes.data.results.find(
-          (product: IProduct) => product.id === orderProduct.itemId
-        )
-        return {
-          id: foundProduct.id,
-          name: foundProduct.name,
-          price: foundProduct.price,
-          unit: foundProduct.unit.toLowerCase(),
-          description: foundProduct.productDescription,
-          quantity: orderProduct.quantity
-        }
-      }
-    )
     return {
       patient,
-      orderItems: mappedDoctorOrder
+      orderItems: data.doctorOrder.items
     }
   }
 

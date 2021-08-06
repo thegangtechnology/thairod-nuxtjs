@@ -20,7 +20,7 @@
               <strong>
                 {{ item.quantity }}
                 <span style="text-transform: capitalize;">
-                  {{ item.unit }}
+                  {{ item.unit.toLowerCase() }}
                 </span>
               </strong>
             </p>
@@ -28,7 +28,7 @@
 
           <a-col :span="24">
             <p class="item-description">
-              {{ item.description }}
+              {{ item.productDescription }}
             </p>
           </a-col>
         </a-row>
