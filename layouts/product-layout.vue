@@ -39,6 +39,7 @@
           <span class="page-name">
             ไทยรอดMALL
           </span>
+
           <a-badge :count="totalCart">
             <a class="carts__button" @click="goToCart">
               <a-icon
@@ -69,7 +70,7 @@ export default Vue.extend({
   },
   data () {
     return {
-      collapsed: true
+      collapsed: true,
     }
   },
   computed: {
@@ -88,7 +89,7 @@ export default Vue.extend({
   },
   methods: {
     hiddenMenu () {
-      this.collapsed = false
+      this.collapsed = true
     },
     goToPage (path: string): void {
       this.hiddenMenu()
