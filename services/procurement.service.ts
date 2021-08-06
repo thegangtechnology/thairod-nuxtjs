@@ -1,19 +1,34 @@
 import { AxiosResponse } from 'axios'
-import { ItemDetail, ItemOverviewInfo } from '~/types/procurement.type'
+import { ItemDetail, ItemOverviewInfo, StockInfo } from '~/types/procurement.type'
 import { $axios } from '~/utils/api'
 import apiPath from '~/data/api_path'
-import { ProductVariationsParam, ProductVariationsReturn, UpdateProcurementBody } from '~/types/procurementService.type'
+import {
+  ProductVariationsParam,
+  ProductVariationsReturn,
+  UpdateProcurementBody
+} from '~/types/procurementService.type'
 import { defaultItemDetail } from '~/types/procurement.default'
 import { Warehouse } from '~/models/Warehouse'
 
-export function getProductVariations (params: ProductVariationsParam) : Promise<ProductVariationsReturn> {
+export function getStockInfo (idList: number[] | string[]) : Promise<StockInfo> {
+  const paramStr = idList.map((id: number | string) => (`&pv_id=${id}`)).join('')
+  return $axios
+    .get(`${apiPath.stock}/?${paramStr}`)
+    .then((res) => {
+      return res.data.stocks
+    })
+    .catch(() => {
+      return Promise.resolve({} as StockInfo)
+    })
+}
+
+export function getItemOverviewInfo (params: ProductVariationsParam) : Promise<ProductVariationsReturn> {
   return $axios
     .get(`${apiPath.productVariation}/`, {
       params
     })
     .then((res) => {
       const results : ItemOverviewInfo[] = res.data.results
-      results.forEach((result : ItemOverviewInfo) => { result.stock = 0 })
       return Promise.resolve({ itemOverviewInfo: results, totalItems: res.data.count })
     })
     .catch(() => {
