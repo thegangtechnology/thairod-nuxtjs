@@ -95,8 +95,13 @@
           >
             พิมพ์ใบจัดส่งสินค้า
           </a-button>
-          <a-select v-else v-model="updateOption" class="overview-select__cta">
-            <a-select-option value="default">
+          <a-select
+            v-else
+            v-model="updateOption"
+            class="overview-select__cta"
+            @change="handleOptionChange"
+          >
+            <a-select-option style="display: none;" class="default-option" value="default">
               อัปเดตข้อมูลรายการจัดส่ง
             </a-select-option>
             <a-select-option v-if="canUpdatePrint" value="updatePrint">
@@ -119,7 +124,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import ShipmentModule from '~/store/shipment.module'
 
 @Component
@@ -127,7 +132,7 @@ export default class OrderOverview extends Vue {
   @Prop({ required: true }) search!: string
 
   tabKey: string = 'wait'
-  // updateOption: string = 'default'
+  showDefault: boolean = false
   updateOption: string = 'default'
 
   get isLoading () {
@@ -150,6 +155,11 @@ export default class OrderOverview extends Vue {
     return this.tabKey !== 'wait' && this.tabKey !== 'print'
   }
 
+  @Emit('onUpdate')
+  handleOptionChange (value: string) {
+    return value
+  }
+
   mounted () {
     ShipmentModule.initialiseShipment({
       label_printed: false,
@@ -159,6 +169,7 @@ export default class OrderOverview extends Vue {
 
   handleCancelUpdate () {
     this.updateOption = 'default'
+    this.handleOptionChange('default')
   }
 
   getTabContentAmount (tabKey: string): number {
@@ -203,6 +214,7 @@ export default class OrderOverview extends Vue {
     }
     this.tabKey = key
     this.updateOption = 'default'
+    this.handleOptionChange('default')
   }
 
   toPrint () {
