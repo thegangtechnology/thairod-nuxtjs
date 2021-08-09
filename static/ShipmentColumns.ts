@@ -27,6 +27,7 @@ export const columns: IColumns[] = [
   {
     title: 'หมายเลขติดตาม',
     dataIndex: 'tracking_code',
+    scopedSlots: { customRender: 'trackingCode' },
   },
   {
     title: 'สถานะการจัดส่ง',

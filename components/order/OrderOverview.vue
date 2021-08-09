@@ -1,112 +1,120 @@
 <template>
-  <div class="overview-tab__container">
-    <a-tabs
-      :default-active-key="tabKey"
-      :animated="false"
-      @change="onTabChange"
-    >
-      <a-tab-pane key="all">
-        <span slot="tab"> ทั้งหมด ({{ getTabContentAmount('all') }})</span>
-        <OverviewTable
-          :original-data="originalData"
-          :search="search"
-          :tab-key="tabKey"
-          :option="updateOption"
-          :loading="isLoading"
-          :amount="getTabContentAmount('all')"
-          @pageChange="handlePageChange"
-        />
-      </a-tab-pane>
-      <a-tab-pane key="wait">
-        <span slot="tab">
-          ที่ต้องจัดส่ง ({{ getTabContentAmount('wait') }})
-        </span>
-        <OverviewTable
-          :original-data="originalData"
-          :search="search"
-          :tab-key="tabKey"
-          :option="updateOption"
-          :loading="isLoading"
-          :amount="getTabContentAmount('wait')"
-          @pageChange="handlePageChange"
-        />
-      </a-tab-pane>
-      <a-tab-pane key="print">
-        <span slot="tab">
-          พิมพ์ใบจัดส่งแล้ว ({{ getTabContentAmount('print') }})
-        </span>
-        <OverviewTable
-          :original-data="originalData"
-          :search="search"
-          :tab-key="tabKey"
-          :option="updateOption"
-          :loading="isLoading"
-          :amount="getTabContentAmount('print')"
-          @pageChange="handlePageChange"
-          @update="handleCancelUpdate"
-        />
-      </a-tab-pane>
-      <a-tab-pane key="out">
-        <span slot="tab">
-          ดำเนินการส่งแล้ว ({{ getTabContentAmount('out') }})
-        </span>
-        <OverviewTable
-          :original-data="originalData"
-          :search="search"
-          :tab-key="tabKey"
-          :option="updateOption"
-          :loading="isLoading"
-          :amount="getTabContentAmount('out')"
-          @pageChange="handlePageChange"
-          @update="handleCancelUpdate"
-        />
-      </a-tab-pane>
-      <a-tab-pane key="received">
-        <span slot="tab">
-          ส่งมอบสำเร็จ ({{ getTabContentAmount('received') }})
-        </span>
-        <OverviewTable
-          :original-data="originalData"
-          :search="search"
-          :tab-key="tabKey"
-          :option="updateOption"
-          :loading="isLoading"
-          :amount="getTabContentAmount('received')"
-          @pageChange="handlePageChange"
-          @update="handleCancelUpdate"
-        />
-      </a-tab-pane>
-      <div
-        v-if="tabKey !== 'all'"
-        slot="tabBarExtraContent"
-        class="overview-tab__buttons"
+  <div>
+    <div>
+      <div class="page-header__title">
+        ภาพรวมรายการจัดส่ง
+        --- {{ tabKey }}
+      </div>
+    </div>
+    <div class="overview-tab__container">
+      <a-tabs
+        :default-active-key="tabKey"
+        :animated="false"
+        @change="onTabChange"
       >
-        <a-button
-          v-if="tabKey === 'wait'"
-          class="overview-button__cta"
-          @click="toPrint"
+        <a-tab-pane key="all">
+          <span slot="tab"> ทั้งหมด ({{ getTabContentAmount('all') }})</span>
+          <OverviewTable
+            :original-data="originalData"
+            :search="search"
+            :tab-key="tabKey"
+            :option="updateOption"
+            :loading="isLoading"
+            :amount="getTabContentAmount('all')"
+            @pageChange="handlePageChange"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="wait">
+          <span slot="tab">
+            ที่ต้องจัดส่ง ({{ getTabContentAmount('wait') }})
+          </span>
+          <OverviewTable
+            :original-data="originalData"
+            :search="search"
+            :tab-key="tabKey"
+            :option="updateOption"
+            :loading="isLoading"
+            :amount="getTabContentAmount('wait')"
+            @pageChange="handlePageChange"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="print">
+          <span slot="tab">
+            พิมพ์ใบจัดส่งแล้ว ({{ getTabContentAmount('print') }})
+          </span>
+          <OverviewTable
+            :original-data="originalData"
+            :search="search"
+            :tab-key="tabKey"
+            :option="updateOption"
+            :loading="isLoading"
+            :amount="getTabContentAmount('print')"
+            @pageChange="handlePageChange"
+            @update="handleCancelUpdate"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="out">
+          <span slot="tab">
+            ดำเนินการส่งแล้ว ({{ getTabContentAmount('out') }})
+          </span>
+          <OverviewTable
+            :original-data="originalData"
+            :search="search"
+            :tab-key="tabKey"
+            :option="updateOption"
+            :loading="isLoading"
+            :amount="getTabContentAmount('out')"
+            @pageChange="handlePageChange"
+            @update="handleCancelUpdate"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="received">
+          <span slot="tab">
+            ส่งมอบสำเร็จ ({{ getTabContentAmount('received') }})
+          </span>
+          <OverviewTable
+            :original-data="originalData"
+            :search="search"
+            :tab-key="tabKey"
+            :option="updateOption"
+            :loading="isLoading"
+            :amount="getTabContentAmount('received')"
+            @pageChange="handlePageChange"
+            @update="handleCancelUpdate"
+          />
+        </a-tab-pane>
+        <div
+          v-if="tabKey !== 'all'"
+          slot="tabBarExtraContent"
+          class="overview-tab__buttons"
         >
-          อัปเดตการพิมพ์ใบจัดส่ง
-        </a-button>
-        <a-select v-else v-model="updateOption" class="overview-select__cta">
-          <a-select-option value="default">
-            อัปเดตข้อมูลรายการจัดส่ง
-          </a-select-option>
-          <a-select-option v-if="canUpdatePrint" value="updatePrint">
-            อัปเดตการพิมพ์ใบจัดส่ง
-          </a-select-option>
-          <a-select-option
-            v-if="canUpdateOutForDelivery"
-            value="updateDelivery"
+          <a-button
+            v-if="tabKey === 'wait'"
+            class="assign-button__cta primary"
+            @click="toPrint"
           >
-            อัปเดตการจัดส่ง
-          </a-select-option>
+            พิมพ์ใบจัดส่งสินค้า
+          </a-button>
+          <a-select v-else v-model="updateOption" class="overview-select__cta">
+            <a-select-option value="default">
+              อัปเดตข้อมูลรายการจัดส่ง
+            </a-select-option>
+            <a-select-option v-if="canUpdatePrint" value="updatePrint">
+              อัปเดตการพิมพ์ใบจัดส่ง
+            </a-select-option>
+            <a-select-option
+              v-if="canUpdateOutForDelivery"
+              value="updateDelivery"
+            >
+              อัปเดตการจัดส่ง
+            </a-select-option>
           <!-- <a-select-option v-if="canUpdateReceived" value="updateReceived">
             อัปเดตการส่งมอบ
           </a-select-option> -->
-        </a-select>
-      </div>
-    </a-tabs>
+          </a-select>
+        </div>
+      </a-tabs>
+    </div>
   </div>
 </template>
 
@@ -119,6 +127,7 @@ export default class OrderOverview extends Vue {
   @Prop({ required: true }) search!: string
 
   tabKey: string = 'wait'
+  // updateOption: string = 'default'
   updateOption: string = 'default'
 
   get isLoading () {
@@ -174,7 +183,8 @@ export default class OrderOverview extends Vue {
       ShipmentModule.initialiseShipment({
         label_printed: false,
         deliver: false,
-        page
+        page,
+        page_size: 100
       })
     }
     if (key === 'print') {

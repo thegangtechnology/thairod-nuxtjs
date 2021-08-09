@@ -26,7 +26,8 @@ export const getShipments = async (
   label_printed: CheckBoolean = null,
   deliver: CheckBoolean = null,
   batch_isnull: CheckBoolean = null,
-  page: number = 1
+  page: number = 1,
+  page_size: number = 100
 ): Promise<ShipmentsResult> => {
   try {
     const response = await $axios.get(
@@ -36,7 +37,8 @@ export const getShipments = async (
           batch_isnull,
           label_printed,
           deliver,
-          search: null
+          search: null,
+          page_size
         }
       })
     const responseResult: ShipmentResponse[] = response.data.results

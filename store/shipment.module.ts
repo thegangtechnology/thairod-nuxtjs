@@ -111,7 +111,8 @@ class ShipmentModule extends VuexModule {
     label_printed?: CheckBoolean,
     deliver?: CheckBoolean,
     batch_isnull?: CheckBoolean,
-    page?: number
+    page?: number,
+    page_size?: number,
   }
   ) {
     this.SET_LOADING(true)
@@ -124,7 +125,7 @@ class ShipmentModule extends VuexModule {
         getShipments(),
         getShipments(null, null, false),
         getShipments(null, null, true),
-        getShipments(payload.label_printed, payload.deliver, payload.batch_isnull, payload.page)
+        getShipments(payload.label_printed, payload.deliver, payload.batch_isnull, payload.page, payload.page_size)
       ])
       this.SET_TOTAL_AMOUNT(res[0].count)
       this.SET_WAIT_AMOUNT(res[1].count)

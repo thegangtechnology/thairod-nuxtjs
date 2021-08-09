@@ -62,6 +62,15 @@
       </div>
       <div class="overview-table__container">
         <div class="overview-table__table">
+          --{{ amount }}
+          <a-pagination
+            v-model="currentPage"
+            show-size-changer
+            :total="amount"
+            :page-size-options="['100','200', '300', '400', 'All']"
+            :default-page-size="pageSize"
+            @change="onPageChange"
+          />
           <a-table
             row-key="id"
             :row-selection="
@@ -74,18 +83,22 @@
             "
             :pagination="{
               total: amount,
+              position:'top',
+              showSizeChanger:true,
+              pageSize:pageSize,
+              pageSizeOptions:['100','200', '300', '400', 'All']
             }"
             :loading="loading"
             :columns="tableColumns"
             :data-source="data"
-            :custom-row="option === 'default' ? customRow : null"
             @change="onPageChange"
           >
+            <!--            :custom-row="option === 'default' ? customRow : null"-->
             <div slot="id" slot-scope="text, record" class="table-form__input">
               <div>
                 {{ record.id }}
               </div>
-              <div>
+              <div class="sub-detail__info">
                 {{ record.created_date | date }}
               </div>
             </div>
@@ -104,7 +117,7 @@
               class="table-form__input"
             >
               <div v-for="item in record.shipmentItem" :key="item.id">
-                x{{ item.quantity }} {{ item.unit }}
+                x{{ item.quantity }}
               </div>
             </div>
             <div
@@ -115,8 +128,16 @@
               <div>
                 {{ text }}
               </div>
-              <div>
+              <div class="sub-detail__info">
                 {{ record.cid }}
+              </div>
+            </div>
+            <div
+              slot="trackingCode"
+              slot-scope="text"
+            >
+              <div>
+                <a :href="`https://www.shippop.com/tracking?typeid=domestic&tracking_code=${text}`" target="_blank">{{ text }}</a>
               </div>
             </div>
             <div
@@ -157,7 +178,9 @@
               </div>
             </div>
             <div slot="operation" class="table-form__input">
-              <img :src="RightIcon" alt="RightIcon">
+              <div>
+                <img :src="RightIcon" alt="RightIcon">
+              </div>
             </div>
           </a-table>
         </div>
@@ -233,7 +256,6 @@ import {
 import { ShipmentFilter, ShipmentLine } from '~/types/shipment.type'
 
 type Status = 'wait' | 'print' | 'out' | 'received'
-
 @Component
 export default class OverviewTable extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
@@ -249,6 +271,8 @@ export default class OverviewTable extends Vue {
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
 
+  pageSize:number = 100
+  currentPage:number = 1
   data: ShipmentLine[] = []
   selectedRowKeys: number[] = []
   originalSelectedRowKeys: number[] = []
@@ -486,10 +510,12 @@ export default class OverviewTable extends Vue {
   }
 
   onSelectChange (selectedRowKeys: number[]) {
+    console.log()
     this.selectedRowKeys = selectedRowKeys
   }
 
   onPageChange (page: {current: number}) {
+    console.log('page', page)
     this.handlePageChange(page.current)
   }
 
