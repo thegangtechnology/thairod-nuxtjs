@@ -63,13 +63,27 @@
       <div class="overview-table__container">
         <div class="overview-table__table">
           --{{ amount }}
+          <!--          <a-select-->
+          <!--            v-model="pageSize"-->
+          <!--            label-in-value-->
+          <!--            :default-value="{ key: '100' }"-->
+          <!--            @change="onPageSizeChange"-->
+          <!--          >-->
+          <!--            <a-select-option-->
+          <!--              v-for="pageSize in pageSizeOptions"-->
+          <!--              :key="pageSize.value"-->
+          <!--              :value="pageSize.value"-->
+          <!--            >-->
+          <!--              {{ pageSize.name }}-->
+          <!--            </a-select-option>-->
+          <!--          </a-select>-->
           <a-pagination
             v-model="currentPage"
-            show-size-changer
             :total="amount"
             :page-size-options="['100','200', '300', '400', 'All']"
             :default-page-size="pageSize"
-            @change="onPageChange"
+            show-size-changer
+            @change="onPageSizeChange"
           />
           <a-table
             row-key="id"
@@ -82,11 +96,12 @@
                 }
             "
             :pagination="{
+              value:pageSize,
               total: amount,
               position:'top',
               showSizeChanger:true,
               pageSize:pageSize,
-              pageSizeOptions:['100','200', '300', '400', 'All']
+              pageSizeOptions:['100','200', '300', '400', 'All'],
             }"
             :loading="loading"
             :columns="tableColumns"
@@ -137,7 +152,7 @@
               slot-scope="text"
             >
               <div>
-                <a :href="`https://www.shippop.com/tracking?typeid=domestic&tracking_code=${text}`" target="_blank">{{ text }}</a>
+                <a class="tracking-code__link" :href="`https://www.shippop.com/tracking?typeid=domestic&tracking_code=${text}`" target="_blank">{{ text }}</a>
               </div>
             </div>
             <div
@@ -177,8 +192,8 @@
                 </div>
               </div>
             </div>
-            <div slot="operation" class="table-form__input">
-              <div>
+            <div slot="operation" slot-scope="record" class="table-form__input">
+              <div class="table-cursor__pointer" @click="customRowTo(record)">
                 <img :src="RightIcon" alt="RightIcon">
               </div>
             </div>
@@ -291,7 +306,7 @@ export default class OverviewTable extends Vue {
   }
 
   @Emit('pageChange')
-  handlePageChange (page: number) {
+  handlePageChange (page: number, page_size:number) {
     return page
   }
 
@@ -505,7 +520,7 @@ export default class OverviewTable extends Vue {
   onSave () {
     if (this.option === 'updatePrint') { this.handleUpdatePrint() }
     if (this.option === 'updateDelivery') { this.handleUpdateDelievery() }
-    this.onPageChange({ current: 1 })
+    this.onPageChange({ current: 1, page_size: this.pageSize })
     this.visibleSubmitDialog = false
   }
 
@@ -514,9 +529,14 @@ export default class OverviewTable extends Vue {
     this.selectedRowKeys = selectedRowKeys
   }
 
-  onPageChange (page: {current: number}) {
+  onPageChange (page: {current: number, page_size:number}) {
     console.log('page', page)
-    this.handlePageChange(page.current)
+    this.handlePageChange(page.current, page.page_size)
+  }
+
+  onPageSizeChange (page: {current: number, page_size:number}) {
+    console.log('page', page)
+    this.handlePageChange(page.current, page.page_size)
   }
 
   customRow (record: ShipmentLine) {
@@ -527,6 +547,10 @@ export default class OverviewTable extends Vue {
         }
       }
     }
+  }
+
+  customRowTo (record: ShipmentLine) {
+    this.$router.push(`/order-overview/${record.id}`)
   }
 }
 </script>

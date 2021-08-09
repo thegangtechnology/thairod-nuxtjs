@@ -514,15 +514,31 @@
 
 .overview-table__container{
   .overview-table__table{
+    .tracking-code__link{
+      color: #5A92E5;
+      text-decoration: underline;
+    }
+    .ant-table-row{
+      cursor:default;
+    }
     .ant-pagination{
       position:relative;
       text-align:right;
       margin-bottom: 20px;
+      width:100%
     }
-    .ant-pagination-options{
-      position:absolute;
-      left:0;
-      margin-left: 0;
+    ul.ant-pagination li:nth-last-child(1) {
+      order: 1!important;
+      float:left;
     }
+    //.ant-pagination-options{
+    //  position:absolute;
+    //  left:0;
+    //  margin-left: 0;
+    //}
+    .table-cursor__pointer{
+      cursor:pointer;
+    }
+
   }
 }

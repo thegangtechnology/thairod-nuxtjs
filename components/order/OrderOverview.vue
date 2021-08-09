@@ -169,14 +169,19 @@ export default class OrderOverview extends Vue {
     return ShipmentModule.totalShipment
   }
 
-  handlePageChange (page: number) {
-    this.onTabChange(this.tabKey, page)
+  handlePageChange (
+    page: number,
+    page_size: number
+  ) {
+    console.log(page, page_size)
+    this.onTabChange(this.tabKey, page, page_size)
   }
 
-  onTabChange (key: string, page: number = 1) {
+  onTabChange (key: string, page: number = 1, page_size:number) {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
-        page
+        page,
+        page_size
       })
     }
     if (key === 'wait') {
@@ -184,21 +189,23 @@ export default class OrderOverview extends Vue {
         label_printed: false,
         deliver: false,
         page,
-        page_size: 100
+        page_size
       })
     }
     if (key === 'print') {
       ShipmentModule.initialiseShipment({
         label_printed: true,
         deliver: false,
-        page
+        page,
+        page_size
       })
     }
     if (key === 'out') {
       ShipmentModule.initialiseShipment({
         label_printed: true,
         deliver: true,
-        page
+        page,
+        page_size
       })
     }
     this.tabKey = key
