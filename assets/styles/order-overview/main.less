@@ -202,6 +202,33 @@
         color: #01173e;
       }
     }
+    .overview-filter__form-column{
+      .date,
+      .batch,
+      .package,
+      .search{
+        label {
+          font-style: normal;
+          font-weight: normal;
+          font-size: 16px;
+          line-height: 24px;
+          color: #001740;
+        }
+      }
+      .detail-form__info {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 22px;
+        line-height: 24px;
+        color: #01173e;
+      }
+      .ant-calendar-picker-icon{
+        &.date-picker__custom{
+          right: 16px!important;
+        }
+      }
+
+    }
     .overview-item__form {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -511,8 +538,9 @@
     }
   }
 }
-
+//pui
 .overview-table__container{
+
   .overview-table__table{
     .tracking-code__link{
       color: #5A92E5;

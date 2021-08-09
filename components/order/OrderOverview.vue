@@ -93,7 +93,7 @@
             class="assign-button__cta primary"
             @click="toPrint"
           >
-            พิมพ์ใบจัดส่งสินค้า
+            พิมพ์ใบจัดส่งสินค้า *
           </a-button>
           <a-select v-else v-model="updateOption" class="overview-select__cta">
             <a-select-option value="default">
@@ -169,43 +169,35 @@ export default class OrderOverview extends Vue {
     return ShipmentModule.totalShipment
   }
 
-  handlePageChange (
-    page: number,
-    page_size: number
-  ) {
-    console.log(page, page_size)
-    this.onTabChange(this.tabKey, page, page_size)
+  handlePageChange (page: number) {
+    this.onTabChange(this.tabKey, page)
   }
 
-  onTabChange (key: string, page: number = 1, page_size:number) {
+  onTabChange (key: string, page: number = 1) {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
-        page,
-        page_size
+        page
       })
     }
     if (key === 'wait') {
       ShipmentModule.initialiseShipment({
         label_printed: false,
         deliver: false,
-        page,
-        page_size
+        page
       })
     }
     if (key === 'print') {
       ShipmentModule.initialiseShipment({
         label_printed: true,
         deliver: false,
-        page,
-        page_size
+        page
       })
     }
     if (key === 'out') {
       ShipmentModule.initialiseShipment({
         label_printed: true,
         deliver: true,
-        page,
-        page_size
+        page
       })
     }
     this.tabKey = key

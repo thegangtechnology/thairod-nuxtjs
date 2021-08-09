@@ -2,89 +2,89 @@
   <div class="overview-body">
     <div class="overview-body__container">
       <div class="overview-filter__container">
-        <div class="overview-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon">
-          <span> ตัวกรองข้อมูล </span>
-        </div>
-        <a-form layout="vertical">
-          <div class="overview-filter__form">
-            <div class="date">
-              <a-form-item label="วันและเวลาที่สั่ง">
-                <a-date-picker @change="onDateFilterChange">
-                  <div slot="suffixIcon">
-                    <img :src="CalendarIcon" alt="CalendarIcon">
-                  </div>
-                </a-date-picker>
-              </a-form-item>
-            </div>
-            <div class="batch">
-              <a-form-item label="ล็อตการจัดส่ง">
-                <a-select
-                  label-in-value
-                  :default-value="{ key: '' }"
-                  @change="handleBatchFilterChange"
-                >
-                  <a-select-option value="">
-                    All
-                  </a-select-option>
-                  <a-select-option
-                    v-for="batch in exportBatchSelect"
-                    :key="batch"
-                    :value="batch"
+        <a-form>
+          <div class="overview-filter__form-column">
+            <a-row :gutter="16">
+              <a-col :md="4" :sm="24">
+                <div class="date">
+                  <a-form-item label="วันและเวลาที่สั่ง">
+                    <a-date-picker @change="onDateFilterChange">
+                      <div slot="suffixIcon" class="date-picker__custom">
+                        <img :src="CalendarIcon" alt="CalendarIcon">
+                      </div>
+                    </a-date-picker>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <div class="batch">
+                  <a-form-item label="ล็อตการจัดส่ง" block>
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      style="width: 100%"
+                      @change="handleBatchFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option
+                        v-for="batch in exportBatchSelect"
+                        :key="batch"
+                        :value="batch"
+                      >
+                        {{ batch }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <div class="package">
+                  <a-form-item
+                    label="สินค้าในรายการสั่งซื้อ"
                   >
-                    {{ batch }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </div>
-            <div class="package">
-              <a-form-item label="สินค้าในรายการสั่งซื้อ">
-                <a-select
-                  label-in-value
-                  :default-value="{ key: '' }"
-                  @change="handleOrderedItemFilterChange"
-                >
-                  <a-select-option value="">
-                    All
-                  </a-select-option>
-                  <a-select-option
-                    v-for="item in shipmentItemSelect"
-                    :key="item"
-                    :value="item"
-                  >
-                    {{ item }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </div>
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      style="width: 100%"
+                      @change="handleOrderedItemFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option
+                        v-for="item in shipmentItemSelect"
+                        :key="item"
+                        :value="item"
+                      >
+                        {{ item }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <div class="search">
+                  <a-form-item label="ค้นหารายการสั่งซื้อ">
+                    <a-input
+                      v-model="search"
+                      class="page-header__search"
+                      placeholder="ค้นหา"
+                    >
+                      <a-icon slot="prefix" type="search" />
+                    </a-input>
+                  </a-form-item>
+                </div>
+              </a-col>
+            </a-row>
           </div>
         </a-form>
       </div>
       <div class="overview-table__container">
         <div class="overview-table__table">
           --{{ amount }}
-          <!--          <a-select-->
-          <!--            v-model="pageSize"-->
-          <!--            label-in-value-->
-          <!--            :default-value="{ key: '100' }"-->
-          <!--            @change="onPageSizeChange"-->
-          <!--          >-->
-          <!--            <a-select-option-->
-          <!--              v-for="pageSize in pageSizeOptions"-->
-          <!--              :key="pageSize.value"-->
-          <!--              :value="pageSize.value"-->
-          <!--            >-->
-          <!--              {{ pageSize.name }}-->
-          <!--            </a-select-option>-->
-          <!--          </a-select>-->
-          <a-pagination
-            v-model="currentPage"
-            :total="amount"
-            :page-size-options="['100','200', '300', '400', 'All']"
-            :default-page-size="pageSize"
-            show-size-changer
-            @change="onPageSizeChange"
-          />
+          ** {{ pageSize }}
           <a-table
             row-key="id"
             :row-selection="
@@ -96,12 +96,11 @@
                 }
             "
             :pagination="{
-              value:pageSize,
               total: amount,
               position:'top',
               showSizeChanger:true,
               pageSize:pageSize,
-              pageSizeOptions:['100','200', '300', '400', 'All'],
+              pageSizeOptions:['100','200', '300', '400', 'All']
             }"
             :loading="loading"
             :columns="tableColumns"
@@ -271,6 +270,10 @@ import {
 import { ShipmentFilter, ShipmentLine } from '~/types/shipment.type'
 
 type Status = 'wait' | 'print' | 'out' | 'received'
+type PageSize = {
+  name:string,
+  value:number
+}
 @Component
 export default class OverviewTable extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
@@ -285,6 +288,33 @@ export default class OverviewTable extends Vue {
   private CorrectIcon = CorrectSvg
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
+
+  // pageSizeOptions: PageSize[] = [
+  //   {
+  //     name: '100',
+  //     value: 100
+  //   },
+  //   {
+  //     name: '200',
+  //     value: 200
+  //   },
+  //   {
+  //     name: '300',
+  //     value: 300
+  //   },
+  //   {
+  //     name: '400',
+  //     value: 400
+  //   },
+  //   {
+  //     name: '500',
+  //     value: 500
+  //   },
+  //   {
+  //     name: 'All',
+  //     value: -1
+  //   }
+  // ]
 
   pageSize:number = 100
   currentPage:number = 1
@@ -306,7 +336,7 @@ export default class OverviewTable extends Vue {
   }
 
   @Emit('pageChange')
-  handlePageChange (page: number, page_size:number) {
+  handlePageChange (page: number) {
     return page
   }
 
@@ -520,7 +550,7 @@ export default class OverviewTable extends Vue {
   onSave () {
     if (this.option === 'updatePrint') { this.handleUpdatePrint() }
     if (this.option === 'updateDelivery') { this.handleUpdateDelievery() }
-    this.onPageChange({ current: 1, page_size: this.pageSize })
+    this.onPageChange({ current: 1 })
     this.visibleSubmitDialog = false
   }
 
@@ -529,14 +559,14 @@ export default class OverviewTable extends Vue {
     this.selectedRowKeys = selectedRowKeys
   }
 
-  onPageChange (page: {current: number, page_size:number}) {
+  onPageChange (page: {current: number}) {
     console.log('page', page)
-    this.handlePageChange(page.current, page.page_size)
+    this.handlePageChange(page.current)
   }
 
-  onPageSizeChange (page: {current: number, page_size:number}) {
-    console.log('page', page)
-    this.handlePageChange(page.current, page.page_size)
+  onPageSizeChange (page_size: {current: number}) {
+    console.log('page', page_size)
+    this.handlePageChange(page_size.current)
   }
 
   customRow (record: ShipmentLine) {
