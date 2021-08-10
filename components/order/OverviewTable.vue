@@ -99,7 +99,7 @@
               showSizeChanger:true,
               pageSize:pageSize,
               current:currentPage,
-              pageSizeOptions:['100','200', '300', '400', String(amount)]
+              pageSizeOptions:['10','200', '300', '400', String(amount)]
             }"
             :loading="loading"
             :columns="tableColumns"
@@ -284,7 +284,7 @@ export default class OverviewTable extends Vue {
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
 
-  pageSize:number = 100
+  pageSize:number = 10
   currentPage:number = 1
   data: ShipmentLine[] = []
   selectedRowKeys: number[] = []
