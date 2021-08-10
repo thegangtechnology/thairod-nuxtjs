@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import ShipmentModule from '~/store/shipment.module'
 
 @Component
@@ -74,8 +74,14 @@ export default class AssignOverview extends Vue {
     return ShipmentModule.batchShipment
   }
 
+  @Emit('sendTabKey')
+  handleSendTab (value: string) {
+    return value
+  }
+
   mounted () {
     ShipmentModule.initialiseShipment({})
+    this.handleSendTab('all')
   }
 
   handlePageChange (payload: {page: number; page_size: number}) {
@@ -103,6 +109,7 @@ export default class AssignOverview extends Vue {
         page_size
       })
     }
+    this.handleSendTab(key)
     this.tabKey = key
   }
 }

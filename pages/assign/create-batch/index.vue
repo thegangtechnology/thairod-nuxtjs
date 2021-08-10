@@ -6,19 +6,16 @@
           {{ title }}
         </div>
         <div class="overview-button__container top">
-          <!-- <a-button class="assign-button__cta cancel" @click="goBack"> -->
-          <a-button class="overview-button__cta  no-border-btn cancel">
+          <a-button class="overview-button__cta  no-border-btn cancel" @click="goBack">
             <span> ยกเลิก </span>
           </a-button>
           <a-button
             class="overview-button__cta  no-border-btn submit"
+            :disabled="selectedRowKeys.length === 0"
+            @click="onSave"
           >
-            <!-- :disabled="selectedRowKeys.length === 0"
-        @click="visibleSubmitDialog = true" -->
-            <!-- <span v-if="type"> บันทึก ({{ selectedRowKeys.length }}) </span>
-        <span v-else> สร้าง ({{ selectedRowKeys.length }}) </span> -->
-            <span v-if="type"> บันทึก </span>
-            <span v-else> สร้าง  </span>
+            <span v-if="type"> บันทึก ({{ selectedRowKeys.length }})</span>
+            <span v-else> สร้าง  ({{ selectedRowKeys.length }})</span>
           </a-button>
         </div>
       </div>
@@ -26,7 +23,10 @@
         :original-data="originalData"
         :loading="isLoading"
         :amount="amount"
+        :save="isSave"
         @pageChange="handlePageChange"
+        @selectedKeys="handleSelectedKeys"
+        @saveSelection="handleConvertSave"
       />
     </div>
   </div>
@@ -40,6 +40,8 @@ import ShipmentModule from '~/store/shipment.module'
 export default class Main extends Vue {
   search: string = ''
   amount: number = 0
+  isSave: boolean = false
+  selectedRowKeys: number[] = []
 
   get isLoading () {
     return ShipmentModule.loading
@@ -63,8 +65,25 @@ export default class Main extends Vue {
     this.onQueryChange(1)
   }
 
+  goBack () {
+    this.$router.go(-1)
+  }
+
+  handleSelectedKeys (selectedRowKeys: number[]) {
+    this.selectedRowKeys = selectedRowKeys
+  }
+
+  handleConvertSave (value: boolean) {
+    this.isSave = value
+    this.selectedRowKeys = []
+  }
+
   handlePageChange (payload: {page: number; page_size: number}) {
     this.onQueryChange(payload.page, payload.page_size)
+  }
+
+  onSave () {
+    this.isSave = true
   }
 
   onQueryChange (page: number = 1, page_size: number = 100) {

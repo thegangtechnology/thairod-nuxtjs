@@ -70,7 +70,8 @@
             position:'top',
             showSizeChanger:true,
             pageSize:pageSize,
-            pageSizeOptions:['100','200', '300', '400', String(amount)]
+            current:currentPage,
+            pageSizeOptions:['10','200', '300', '400', String(amount)]
           }"
           :loading="loading"
           :columns="tableColumns"
@@ -148,19 +149,6 @@
         </a-table>
       </div>
     </div>
-    <div class="assign-button__container">
-      <a-button class="assign-button__cta cancel" @click="goBack">
-        <span> ยกเลิก </span>
-      </a-button>
-      <a-button
-        class="assign-button__cta submit"
-        :disabled="selectedRowKeys.length === 0"
-        @click="visibleSubmitDialog = true"
-      >
-        <span v-if="queryType"> บันทึก ({{ selectedRowKeys.length }}) </span>
-        <span v-else> สร้าง ({{ selectedRowKeys.length }}) </span>
-      </a-button>
-    </div>
     <!-- visibleSubmitDialog -->
     <a-modal
       v-model="visibleSubmitDialog"
@@ -224,6 +212,7 @@ export default class AssignForm extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
   @Prop({ required: true }) loading!: boolean
   @Prop({ required: true }) amount!: number
+  @Prop({ required: true }) save!: boolean
 
   private FilterIcon = FilterSvg
   private BoxImg = BoxSvg
@@ -243,21 +232,37 @@ export default class AssignForm extends Vue {
 
   search: string = ''
 
-  pageSize:number = 100
+  currentPage: number = 1
+  pageSize:number = 10
 
-    @Emit('pageChange')
+  @Emit('pageChange')
   handlePageChange (page: number, page_size: number) {
     return { page, page_size }
   }
 
+  @Emit('saveSelection')
+  onSaveSelection () {
+    return false
+  }
+
+  @Emit('selectedKeys')
+  sendKeysChange (selectedRowKeys: number[]) {
+    return selectedRowKeys
+  }
+
   @Watch('filterForm', { immediate: true, deep: true })
-    onFilterChange () {
-      this.filterData()
-    }
+  onFilterChange () {
+    this.filterData()
+  }
 
   @Watch('originalData', { immediate: true, deep: true })
   onOriginalChange () {
     this.data = this.originalData
+  }
+
+  @Watch('save', { immediate: true, deep: true })
+  onSaveChange () {
+    this.visibleSubmitDialog = this.save
   }
 
   get recordsLength (): number {
@@ -330,10 +335,12 @@ export default class AssignForm extends Vue {
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+    this.sendKeysChange(selectedRowKeys)
   }
 
   onPageChange (page: {current: number; pageSize: number}) {
     this.pageSize = page.pageSize
+    this.currentPage = page.current
     this.handlePageChange(page.current, page.pageSize)
   }
 
@@ -346,6 +353,7 @@ export default class AssignForm extends Vue {
       batchNo: this.batchNo,
       selectedRowKeys: this.selectedRowKeys
     })
+    this.currentPage = 1
     this.$router.push('/assign')
   }
 }

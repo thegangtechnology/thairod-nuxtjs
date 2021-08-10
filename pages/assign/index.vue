@@ -22,7 +22,10 @@
           </a-button>
         </div>
       </div>
-      <AssignOverview :search="search" />
+      <AssignOverview
+        :search="search"
+        @sendTabKey="onTabChange"
+      />
     </div>
   </div>
 </template>
@@ -33,6 +36,11 @@ import { Vue, Component } from 'vue-property-decorator'
 @Component
 export default class Main extends Vue {
   search: string = ''
+  tabKey: string = ''
+
+  onTabChange (key: string) {
+    this.tabKey = key
+  }
 
   toCreateBatch () {
     this.$router.push('/assign/create-batch')

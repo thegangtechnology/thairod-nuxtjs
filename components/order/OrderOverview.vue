@@ -193,8 +193,10 @@ export default class OrderOverview extends Vue {
         page
       })
     }
+    if (this.tabKey !== key) {
+      this.handleSendTab(key)
+    }
     this.tabKey = key
-    this.handleSendTab(key)
     if (isSave) {
       this.handleOptionChange('default')
       this.onSaveChange()

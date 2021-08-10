@@ -24,14 +24,14 @@
               v-model="updateOption"
               class="overview-select__cta"
             >
-              <a-select-option style="display: none;" class="default-option" value="default">
+              <a-select-option class="default-option" value="default">
                 อัปเดตข้อมูลรายการจัดส่ง
               </a-select-option>
               <a-select-option
                 v-if="canUpdateOutForDelivery"
                 value="updateDelivery"
               >
-                บันทึกการจัดส่ง
+                {{ updateDeliveryTitle }}
               </a-select-option>
               <a-select-option v-if="canUpdatePrint" value="updatePrint">
                 แก้ไขสถานะการพิมพ์ใบจัดส่ง
@@ -117,7 +117,6 @@ export default class Main extends Vue {
   printConfirm: boolean = false
   updateOption: string = 'default'
   title: string = 'ภาพรวมรายการจัดส่ง'
-  visibleSubmitDialog: boolean = false
   isSave: boolean = false
   selectedRowKeys: number[] = []
 
@@ -133,31 +132,6 @@ export default class Main extends Vue {
     return this.tabKey !== 'wait' && this.tabKey !== 'print'
   }
 
-  get getModalDescription () {
-    if (this.updateOption === 'updatePrint') {
-      if (this.tabKey === 'wait') {
-        return { from: 'รอพิมพ์ใบจัดส่ง', to: 'รอจัดส่ง' }
-      } else {
-        return { from: 'รอจัดส่ง', to: 'รอพิมพ์ใบจัดส่ง' }
-      }
-    }
-    if (this.updateOption === 'updateDelivery') {
-      if (this.tabKey === 'print') {
-        return { from: 'รอจัดส่ง', to: 'รอรับสินค้า' }
-      } else {
-        return { from: 'รอรับสินค้า', to: 'รอจัดส่ง' }
-      }
-    }
-    if (this.updateOption === 'updateReceived') {
-      if (this.tabKey === 'out') {
-        return { from: 'รอรับสินค้า', to: 'ได้รับเรียบร้อย' }
-      } else {
-        return { from: 'ได้รับเรียบร้อย', to: 'รอรับสินค้า' }
-      }
-    }
-    return { from: '', to: '' }
-  }
-
   get amount () {
     return this.selectedRowKeys.length
   }
@@ -165,6 +139,11 @@ export default class Main extends Vue {
   get getButtonTitle () {
     if (this.updateOption === 'updateDelivery') { return 'บันทึก' }
     return 'แก้ไข'
+  }
+
+  get updateDeliveryTitle () {
+    if (this.tabKey === 'print') { return 'บันทึกการจัดส่ง' }
+    return 'แก้ไขการจัดส่ง'
   }
 
   @Watch('updateOption', { immediate: true, deep: true })
@@ -179,12 +158,13 @@ export default class Main extends Vue {
   getSelectOptionValue (value: string): string {
     if (value === 'default') { return 'ภาพรวมรายการจัดส่ง' }
     if (value === 'updatePrint') { return 'แก้ไขสถานะการพิมพ์ใบจัดส่ง' }
-    if (value === 'updateDelivery') { return 'บันทึกการจัดส่ง' }
+    if (value === 'updateDelivery') { return this.updateDeliveryTitle }
     return ''
   }
 
   onTabChange (key: string) {
     this.tabKey = key
+    this.cancelUpdate()
   }
 
   handleSelectedKeys (selectedRowKeys: number[]) {
