@@ -15,8 +15,10 @@
             :update="isUpdate"
             :loading="isLoading"
             :amount="getTotalLength"
+            :save="save"
             @pageChange="handlePageChange"
-            @cancel="handleCancelUpdate"
+            @cancel="onSaveChange"
+            @selectChange="onSelectChange"
           />
         </a-tab-pane>
         <a-tab-pane key="unprinted">
@@ -28,7 +30,9 @@
             :update="false"
             :loading="isLoading"
             :amount="getUnprintedLength"
+            :save="save"
             @pageChange="handlePageChange"
+            @cancel="onSaveChange"
             @selectChange="onSelectChange"
           />
         </a-tab-pane>
@@ -41,8 +45,9 @@
             :update="isUpdate"
             :loading="isLoading"
             :amount="getPrintedLength"
+            :save="save"
             @pageChange="handlePageChange"
-            @cancel="handleCancelUpdate"
+            @cancel="onSaveChange"
             @selectChange="onSelectChange"
           />
         </a-tab-pane>
@@ -79,6 +84,7 @@ import ShipmentModule from '~/store/shipment.module'
 export default class PrintOverview extends Vue {
   @Prop({ required: true }) search!: string
   @Prop({ required: true }) option!: boolean
+  @Prop({ required: true }) save!: boolean
 
   tabKey: string = 'all'
   isUpdate: boolean = false
@@ -106,6 +112,11 @@ export default class PrintOverview extends Vue {
   @Emit('sendCancelTabUpdate')
   handleCancelTabUpdate (value: boolean) {
     return value
+  }
+
+  @Emit('saveSelection')
+  onSaveChange (isSave: boolean = false) {
+    return { savable: false, isSave }
   }
 
   get isLoading () {
@@ -139,7 +150,7 @@ export default class PrintOverview extends Vue {
 
   handlePageChange (payload: {page: number; page_size: number, isUpdate: boolean}) {
     this.onTabChange(this.tabKey, payload.page, payload.page_size, payload.isUpdate)
-    this.handleSendTabUpdate(false)
+    // this.handleSendTabUpdate(false)
   }
 
   toCreatePrint () {
@@ -169,10 +180,13 @@ export default class PrintOverview extends Vue {
         page_size
       })
     }
+    if (this.tabKey !== key) {
+      this.handleSendTab(key)
+    }
     this.tabKey = key
-    this.handleSendTab(key)
-    this.handleSendTabUpdate(false)
-    this.isUpdate = isUpdate
+    if (isUpdate) {
+      this.onSaveChange(true)
+    }
   }
 }
 </script>

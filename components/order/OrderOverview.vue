@@ -139,8 +139,8 @@ export default class OrderOverview extends Vue {
   }
 
   @Emit('saveSelection')
-  onSaveChange () {
-    return false
+  onSaveChange (isSave: boolean = false) {
+    return { savable: false, isSave }
   }
 
   mounted () {
@@ -199,7 +199,7 @@ export default class OrderOverview extends Vue {
     this.tabKey = key
     if (isSave) {
       this.handleOptionChange('default')
-      this.onSaveChange()
+      this.onSaveChange(true)
     }
   }
 }

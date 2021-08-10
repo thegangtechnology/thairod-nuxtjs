@@ -148,6 +148,7 @@ export default class Main extends Vue {
 
   @Watch('updateOption', { immediate: true, deep: true })
   onOptionChange () {
+    this.selectedRowKeys = []
     this.handleOnUpdate(this.updateOption)
   }
 
@@ -175,10 +176,12 @@ export default class Main extends Vue {
     this.title = this.getSelectOptionValue(value)
   }
 
-  handleConvertSave (value: boolean) {
-    this.isSave = value
-    this.selectedRowKeys = []
-    this.cancelUpdate()
+  handleConvertSave (payload: {savable: boolean, isSave: boolean}) {
+    this.isSave = payload.savable
+    if (payload.isSave) {
+      this.selectedRowKeys = []
+      this.cancelUpdate()
+    }
   }
 
   cancelUpdate () {

@@ -97,7 +97,8 @@
             position:'top',
             showSizeChanger:true,
             pageSize:pageSize,
-            pageSizeOptions:['100','200', '300', '400', String(amount)]
+            current:currentPage,
+            pageSizeOptions:['10','200', '300', '400', String(amount)]
           }"
           :loading="loading"
           :columns="tableColumns"
@@ -219,7 +220,7 @@
           <a-button
             key="back"
             class="print-button__cta cancel"
-            @click="visibleSubmitDialog = false"
+            @click="onCancelUpdate"
           >
             ยกเลิก
           </a-button>
@@ -264,6 +265,7 @@ export default class PrintTable extends Vue {
   @Prop({ required: true }) update!: boolean
   @Prop({ required: true }) loading!: boolean
   @Prop({ required: true }) amount!: number
+  @Prop({ required: true }) save!: boolean
   @Prop({ required: true }) originalData!: ShipmentLine[]
 
   private CalendarIcon = CalendarSvg
@@ -279,7 +281,8 @@ export default class PrintTable extends Vue {
 
   visibleSubmitDialog: boolean = false
 
-  pageSize:number = 100
+  currentPage:number = 1
+  pageSize:number = 10
 
   search: string = ''
 
@@ -291,18 +294,28 @@ export default class PrintTable extends Vue {
 
   @Emit('cancel')
   onCancelUpdate () {
-    this.importData()
+    // this.importData()
     return false
   }
 
   @Emit('pageChange')
-  handlePageChange (page: number, page_size: number) {
-    return { page, page_size, isUpdate: this.update }
+  handlePageChange (page: number, page_size: number, isUpdate: boolean = false) {
+    return { page, page_size, isUpdate }
+  }
+
+  @Emit('selectChange')
+  sendKeysChange (selectedRowKeys: number[]) {
+    return selectedRowKeys
   }
 
   @Watch('search', { immediate: true, deep: true })
   onSearchChange () {
     this.filterForm.shipmentItem = this.search
+  }
+
+  @Watch('save', { immediate: true, deep: true })
+  onSaveChange () {
+    this.visibleSubmitDialog = this.save
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
@@ -360,10 +373,17 @@ export default class PrintTable extends Vue {
 
   importData () {
     this.data = this.originalData
-    this.selectedRowKeys = this.originalData
-      .filter(line => line.label_printed)
-      .map(line => line.id)
-    this.changedRows = []
+    if (this.changedRows.length < 1) {
+      this.selectedRowKeys = this.originalData
+        .filter(line => line.label_printed)
+        .map(line => line.id)
+      this.changedRows = []
+    } else {
+      const deselected = this.changedRows.filter(line => !line.status).map(line => line.id)
+      this.selectedRowKeys = this.originalData
+        .filter(line => line.label_printed && !deselected.includes(line.id))
+        .map(line => line.id)
+    }
   }
 
   onDateFilterChange (_date: object, dateString: string) {
@@ -457,6 +477,7 @@ export default class PrintTable extends Vue {
     } else {
       this.changedRows.push(newSelect)
     }
+    this.sendKeysChange(this.changedRows.map(item => item.id))
   }
 
   goBack () {
@@ -472,13 +493,17 @@ export default class PrintTable extends Vue {
       selectedRowKeys: this.filterStatus(false),
       printStatus: false
     })
-    this.visibleSubmitDialog = false
     this.onPageChange({ current: 1, pageSize: this.pageSize })
+    this.handlePageChange(1, this.pageSize, true)
+    this.currentPage = 1
+    this.visibleSubmitDialog = false
     this.onCancelUpdate()
+    this.changedRows = []
   }
 
   onPageChange (page: {current: number; pageSize: number}) {
     this.pageSize = page.pageSize
+    this.currentPage = page.current
     this.handlePageChange(page.current, page.pageSize)
   }
 

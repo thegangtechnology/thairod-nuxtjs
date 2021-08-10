@@ -75,7 +75,6 @@ export default class Main extends Vue {
 
   handleConvertSave (value: boolean) {
     this.isSave = value
-    this.selectedRowKeys = []
   }
 
   handlePageChange (payload: {page: number; page_size: number}) {

@@ -173,7 +173,7 @@
           <a-button
             key="back"
             class="assign-button__cta cancel"
-            @click="visibleSubmitDialog = false"
+            @click="onSaveSelection"
           >
             ยกเลิก
           </a-button>
@@ -218,7 +218,6 @@ export default class AssignForm extends Vue {
   private BoxImg = BoxSvg
   private CalendarIcon = CalendarSvg
 
-  tabKey: string = 'All'
   batchNo: string = ''
   data: ShipmentLine[] = this.originalData ? this.originalData : []
   visibleSubmitDialog: boolean = false
@@ -283,10 +282,6 @@ export default class AssignForm extends Vue {
 
   async created () {
     this.batchNo = await getBatchNumber()
-  }
-
-  onTabChange (key: string) {
-    this.tabKey = key
   }
 
   onDateFilterChange (_date: object, dateString: string) {
@@ -354,6 +349,7 @@ export default class AssignForm extends Vue {
       selectedRowKeys: this.selectedRowKeys
     })
     this.currentPage = 1
+    this.onSaveSelection()
     this.$router.push('/assign')
   }
 }

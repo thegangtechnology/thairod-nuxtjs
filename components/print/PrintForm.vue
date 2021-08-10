@@ -91,6 +91,7 @@
             position:'top',
             showSizeChanger:true,
             pageSize:pageSize,
+            current:currentPage,
             pageSizeOptions:['100','200', '300', '400', String(amount)]
           }"
           :loading="loading"
@@ -169,18 +170,6 @@
         </a-table>
       </div>
     </div>
-    <div class="print-button__container">
-      <a-button class="print-button__cta cancel" @click="goBack">
-        <span> ยกเลิก </span>
-      </a-button>
-      <a-button
-        class="print-button__cta submit"
-        :disabled="updateAmount === 0"
-        @click="visibleSubmitDialog = true"
-      >
-        <span> พิมพ์ ({{ updateAmount }}) </span>
-      </a-button>
-    </div>
     <a-modal
       v-model="visibleSubmitDialog"
       class="print-modal__container"
@@ -202,7 +191,7 @@
           <a-button
             key="back"
             class="print-button__cta cancel"
-            @click="visibleSubmitDialog = false"
+            @click="onSaveSelection"
           >
             ยกเลิก
           </a-button>
@@ -242,6 +231,7 @@ export default class PrintForm extends Vue {
   @Prop({ required: true }) loading!: boolean
   @Prop({ required: true }) amount!: number
   @Prop({ required: true }) originalData!: ShipmentLine[]
+  @Prop({ required: true }) save!: boolean
 
   private BoxImg = BoxSvg
   private CalendarIcon = CalendarSvg
@@ -262,11 +252,22 @@ export default class PrintForm extends Vue {
 
   search: string = ''
 
+  currentPage: number = 1
   pageSize:number = 100
 
   @Emit('pageChange')
   handlePageChange (page: number, page_size: number) {
     return { page, page_size }
+  }
+
+  @Emit('saveSelection')
+  onSaveSelection () {
+    return false
+  }
+
+  @Emit('selectedKeys')
+  sendKeysChange (selectedRowKeys: number[]) {
+    return selectedRowKeys
   }
 
   @Watch('search', { immediate: true, deep: true })
@@ -282,6 +283,11 @@ export default class PrintForm extends Vue {
   @Watch('originalData', { immediate: true, deep: true })
   onOriginalChange () {
     this.importData()
+  }
+
+  @Watch('save', { immediate: true, deep: true })
+  onSaveChange () {
+    this.visibleSubmitDialog = this.save
   }
 
   get recordsLength (): number {
@@ -370,6 +376,7 @@ export default class PrintForm extends Vue {
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+    this.sendKeysChange(selectedRowKeys)
   }
 
   goBack () {
@@ -379,6 +386,8 @@ export default class PrintForm extends Vue {
   onSave () {
     ShipmentModule.printLabel(this.selectedRowKeys)
     this.visibleSubmitDialog = false
+    this.currentPage = 1
+    this.onSaveSelection()
     this.$router.push('/print')
   }
 

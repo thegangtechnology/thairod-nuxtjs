@@ -30,16 +30,29 @@
                 พิมพ์ใบจัดส่งสินค้า
               </a-button>
             </div>
+            <div v-else class="overview-button__container top">
+              <a-button class="overview-button__cta no-border-btn cancel" @click="isUpdate = false">
+                <span> ยกเลิก </span>
+              </a-button>
+              <a-button
+                class="overview-button__cta no-border-btn submit"
+                @click="onSave"
+              >
+                <span> บันทึก ({{ selectedRowKeys.length }}) </span>
+              </a-button>
+            </div>
           </div>
         </div>
       </div>
       <PrintOverview
         :search="search"
         :option="isUpdate"
+        :save="isSave"
         @sendTabKey="onTabChange"
         @sendTabUpdate="onTabUpdate"
         @sendCancelTabUpdate="onCancelTabUpdate"
         @selectedKeys="handleSelectedKeys"
+        @saveSelection="handleConvertSave"
       />
     </div>
   </div>
@@ -53,22 +66,39 @@ export default class Main extends Vue {
   search: string = ''
   tabKey: string = ''
   updateOption: string = 'default'
-  title: string = 'พิมพ์ใบจัดส่งสินค้า'
   isUpdate:boolean= false
   selectedRowKeys: number[] = []
+  isSave: boolean = false
 
   // @Watch('isTabUpdate', { isUpdate: false })
   @Watch('isUpdate', { immediate: true, deep: true })
-  onOptionChange () {
+  onOptionChange (newValue: boolean, oldValue: boolean) {
+    if (oldValue !== newValue) {
+      this.selectedRowKeys = []
+    }
     this.onTabUpdate(this.isUpdate)
+  }
+
+  get title () {
+    if (this.isUpdate) { return 'แก้ไขการพิมพ์ใบจัดส่งสินค้า' }
+    return 'พิมพ์ใบจัดส่งสินค้า'
   }
 
   mounted () {
     this.updateOption = 'default'
   }
 
+  handleConvertSave (payload: {savable: boolean, isSave: boolean}) {
+    this.isSave = payload.savable
+    if (payload.isSave) {
+      this.selectedRowKeys = []
+      this.isUpdate = false
+    }
+  }
+
   onTabChange (key: string) {
     this.tabKey = key
+    this.isUpdate = false
   }
 
   onTabUpdate (isUpdate:boolean) {
@@ -85,6 +115,10 @@ export default class Main extends Vue {
 
   handleSelectedKeys (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+  }
+
+  onSave () {
+    this.isSave = true
   }
 }
 </script>
