@@ -124,7 +124,7 @@ export default Vue.extend({
     },
     checkOrder () {
       if (this.doctorOrder.length > 0) {
-        this.$router.push({ path: '/order-successed/', query: { doctor: this.$route.query.doctor as string } })
+        this.$router.push({ path: '/order-completed/', query: { doctor: this.$route.query.doctor as string } })
       }
     }
   }
