@@ -48,15 +48,16 @@ export default class Main extends Vue {
     this.onQueryChange(1)
   }
 
-  handlePageChange (page: number) {
-    this.onQueryChange(page)
+  handlePageChange (payload: {page: number; page_size: number}) {
+    this.onQueryChange(payload.page, payload.page_size)
   }
 
-  onQueryChange (page: number = 1) {
+  onQueryChange (page: number = 1, page_size: number = 10) {
     ShipmentModule.initialiseShipment({
       label_printed: false,
       deliver: false,
-      page
+      page,
+      page_size
     })
   }
 }

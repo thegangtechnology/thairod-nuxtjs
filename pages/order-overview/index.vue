@@ -5,13 +5,13 @@
         <div class="page-header__title">
           {{ title }}
         </div>
-        <a-input
-          v-model="search"
-          class="page-header__search"
-          placeholder="ค้นหา"
-        >
-          <a-icon slot="prefix" type="search" />
-        </a-input>
+        <!--        <a-input-->
+        <!--          v-model="search"-->
+        <!--          class="page-header__search"-->
+        <!--          placeholder="ค้นหา"-->
+        <!--        >-->
+        <!--          <a-icon slot="prefix" type="search" />-->
+        <!--        </a-input>-->
       </div>
       <OrderOverview :search="search" @onUpdate="handleOnUpdate" />
     </div>

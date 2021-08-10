@@ -1,12 +1,12 @@
 <template>
   <div class="overview-body">
-    <div class="overview-body__container">
-      <div class="overview-filter__container">
+    <div class="shipment-body__container">
+      <div class="shipment-filter__container">
         <a-form>
-          <div class="overview-filter__form-column">
+          <div class="shipment-filter__form">
             <a-row :gutter="16">
               <a-col :md="4" :sm="24">
-                <div class="date">
+                <div class="filter-input__container">
                   <a-form-item label="วันและเวลาที่สั่ง">
                     <a-date-picker @change="onDateFilterChange">
                       <div slot="suffixIcon" class="date-picker__custom">
@@ -17,7 +17,7 @@
                 </div>
               </a-col>
               <a-col :md="6" :sm="24">
-                <div class="batch">
+                <div class="filter-input__container">
                   <a-form-item label="ล็อตการจัดส่ง" block>
                     <a-select
                       label-in-value
@@ -40,7 +40,7 @@
                 </div>
               </a-col>
               <a-col :md="6" :sm="24">
-                <div class="package">
+                <div class="filter-input__container">
                   <a-form-item
                     label="สินค้าในรายการสั่งซื้อ"
                   >
@@ -65,11 +65,11 @@
                 </div>
               </a-col>
               <a-col :md="8" :sm="24">
-                <div class="search">
+                <div class="filter-input__container">
                   <a-form-item label="ค้นหารายการสั่งซื้อ">
                     <a-input
                       v-model="search"
-                      class="page-header__search"
+                      class="input__search"
                       placeholder="ค้นหา"
                     >
                       <a-icon slot="prefix" type="search" />
@@ -83,8 +83,6 @@
       </div>
       <div class="overview-table__container">
         <div class="overview-table__table">
-          --{{ amount }}
-          ** {{ pageSize }}
           <a-table
             row-key="id"
             :row-selection="
@@ -100,7 +98,7 @@
               position:'top',
               showSizeChanger:true,
               pageSize:pageSize,
-              pageSizeOptions:['100','200', '300', '400', 'All']
+              pageSizeOptions:['100','200', '300', '400', String(amount)]
             }"
             :loading="loading"
             :columns="tableColumns"
@@ -270,10 +268,7 @@ import {
 import { ShipmentFilter, ShipmentLine } from '~/types/shipment.type'
 
 type Status = 'wait' | 'print' | 'out' | 'received'
-type PageSize = {
-  name:string,
-  value:number
-}
+
 @Component
 export default class OverviewTable extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
@@ -288,33 +283,6 @@ export default class OverviewTable extends Vue {
   private CorrectIcon = CorrectSvg
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
-
-  // pageSizeOptions: PageSize[] = [
-  //   {
-  //     name: '100',
-  //     value: 100
-  //   },
-  //   {
-  //     name: '200',
-  //     value: 200
-  //   },
-  //   {
-  //     name: '300',
-  //     value: 300
-  //   },
-  //   {
-  //     name: '400',
-  //     value: 400
-  //   },
-  //   {
-  //     name: '500',
-  //     value: 500
-  //   },
-  //   {
-  //     name: 'All',
-  //     value: -1
-  //   }
-  // ]
 
   pageSize:number = 100
   currentPage:number = 1
@@ -336,8 +304,8 @@ export default class OverviewTable extends Vue {
   }
 
   @Emit('pageChange')
-  handlePageChange (page: number) {
-    return page
+  handlePageChange (page: number, page_size: number) {
+    return { page, page_size }
   }
 
   @Watch('search', { immediate: true, deep: true })
@@ -550,23 +518,17 @@ export default class OverviewTable extends Vue {
   onSave () {
     if (this.option === 'updatePrint') { this.handleUpdatePrint() }
     if (this.option === 'updateDelivery') { this.handleUpdateDelievery() }
-    this.onPageChange({ current: 1 })
+    this.onPageChange({ current: 1, pageSize: this.pageSize })
     this.visibleSubmitDialog = false
   }
 
   onSelectChange (selectedRowKeys: number[]) {
-    console.log()
     this.selectedRowKeys = selectedRowKeys
   }
 
-  onPageChange (page: {current: number}) {
-    console.log('page', page)
-    this.handlePageChange(page.current)
-  }
-
-  onPageSizeChange (page_size: {current: number}) {
-    console.log('page', page_size)
-    this.handlePageChange(page_size.current)
+  onPageChange (page: { current: number; pageSize: number }) {
+    this.pageSize = page.pageSize
+    this.handlePageChange(page.current, page.pageSize)
   }
 
   customRow (record: ShipmentLine) {

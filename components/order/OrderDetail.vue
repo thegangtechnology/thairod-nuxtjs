@@ -1,6 +1,6 @@
 <template>
   <div class="overview-body">
-    <div class="overview-body__container">
+    <div class="shipment-body__container">
       <div class="detail-header__container">
         <div class="detail-header__left">
           เลขที่รายการสั่งซื้อ: {{ detail.id }}
@@ -31,7 +31,7 @@
       </div>
       <div class="detail-body__container">
         <div class="detail-left__container">
-          <div class="overview-filter__container">
+          <div class="detail-info__container">
             <div class="overview-filter__header">
               <img :src="UserIcon" alt="UserIcon">
               <span> ข้อมูลการรักษา </span>
@@ -44,9 +44,7 @@
                     label="ชื่อผู้รับการรักษา"
                   >
                     <span class="detail-form__info">
-                      {{
-                        detail.patientName
-                      }}
+                      {{ detail.patientName }}
                     </span>
                   </a-form-item>
                 </div>
@@ -86,7 +84,7 @@
               </div>
             </a-form>
           </div>
-          <div class="overview-filter__container">
+          <div class="detail-info__container">
             <div class="overview-filter__header">
               <img :src="BoxIcon" alt="BoxIcon">
               <span> รายการสินค้า </span>
@@ -107,7 +105,7 @@
               </div>
             </a-form>
           </div>
-          <div class="overview-filter__container">
+          <div class="detail-info__container">
             <div class="overview-filter__header">
               <img :src="BoxIcon" alt="BoxIcon">
               <span> ข้อมูลการจัดส่งสินค้า </span>
@@ -168,7 +166,7 @@
           </div>
         </div>
         <div class="detail-right__container">
-          <div class="overview-filter__container">
+          <div class="detail-info__container">
             <div class="overview-filter__header">
               <img :src="PinIcon" alt="PinIcon">
               <span> ข้อมูลที่อยู่จัดส่ง </span>
@@ -184,9 +182,9 @@
             <div class="detail-note__info">
               {{ detail.note }}
             </div>
-            <div class="detail-map">
-              <img :src="MapImg" alt="MapImg">
-            </div>
+            <!--            <div class="detail-map">-->
+            <!--              <img :src="MapImg" alt="MapImg">-->
+            <!--            </div>-->
           </div>
         </div>
       </div>

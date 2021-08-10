@@ -5,13 +5,13 @@
         <div class="page-header__title">
           สร้างล็อตการจัดส่งใหม่
         </div>
-        <a-input
-          v-model="search"
-          class="page-header__search"
-          placeholder="ค้นหา"
-        >
-          <a-icon slot="prefix" type="search" />
-        </a-input>
+        <!--        <a-input-->
+        <!--          v-model="search"-->
+        <!--          class="page-header__search"-->
+        <!--          placeholder="ค้นหา"-->
+        <!--        >-->
+        <!--          <a-icon slot="prefix" type="search" />-->
+        <!--        </a-input>-->
       </div>
       <AssignForm
         :original-data="originalData"
@@ -41,25 +41,27 @@ export default class Main extends Vue {
   }
 
   mounted () {
-    this.handlePageChange(1)
+    this.onQueryChange(1)
   }
 
-  handlePageChange (page: number) {
-    this.onQueryChange(page)
+  handlePageChange (payload: {page: number; page_size: number}) {
+    this.onQueryChange(payload.page, payload.page_size)
   }
 
-  onQueryChange (page: number = 1) {
+  onQueryChange (page: number = 1, page_size: number = 10) {
     const type = this.$route.query.type
     if (type && type === 'assign') {
       ShipmentModule.initialiseShipment({
         batch_isnull: false,
-        page
+        page,
+        page_size
       })
       this.amount = ShipmentModule.totalShipment
     } else {
       ShipmentModule.initialiseShipment({
         batch_isnull: true,
-        page
+        page,
+        page_size
       })
       this.amount = ShipmentModule.nonbatchShipment
     }

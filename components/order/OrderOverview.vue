@@ -1,11 +1,5 @@
 <template>
   <div>
-    <div>
-      <div class="page-header__title">
-        ภาพรวมรายการจัดส่ง
-        --- {{ tabKey }}
-      </div>
-    </div>
     <div class="overview-tab__container">
       <a-tabs
         :default-active-key="tabKey"
@@ -93,7 +87,7 @@
             class="assign-button__cta primary"
             @click="toPrint"
           >
-            พิมพ์ใบจัดส่งสินค้า *
+            พิมพ์ใบจัดส่งสินค้า
           </a-button>
           <a-select
             v-else
@@ -128,7 +122,7 @@
       :width="480"
     >
       <div class="overview-modal__img">
-        <img :src="BoxImg" alt="BoxImg">
+        <img :src="require('@/assets/images/print/box.svg')" alt="BoxImg">
       </div>
       <div class="overview-modal__title">
         พิมพ์ใบจัดส่งสินค้า
@@ -217,28 +211,31 @@ export default class OrderOverview extends Vue {
     return ShipmentModule.totalShipment
   }
 
-  handlePageChange (page: number) {
-    this.onTabChange(this.tabKey, page)
+  handlePageChange (payload: {page: number; page_size: number}) {
+    this.onTabChange(this.tabKey, payload.page, payload.page_size)
   }
 
-  onTabChange (key: string, page: number = 1) {
+  onTabChange (key: string, page: number = 1, page_size: number = 100) {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
-        page
+        page,
+        page_size
       })
     }
     if (key === 'wait') {
       ShipmentModule.initialiseShipment({
         label_printed: false,
         deliver: false,
-        page
+        page,
+        page_size
       })
     }
     if (key === 'print') {
       ShipmentModule.initialiseShipment({
         label_printed: true,
         deliver: false,
-        page
+        page,
+        page_size
       })
     }
     if (key === 'out') {

@@ -1,6 +1,6 @@
 <template>
   <div class="overview-body">
-    <div class="overview-body__container">
+    <div class="shipment-body__container">
       <div class="detail-header__container">
         <div class="detail-header__left">
           เลขที่รายการสั่งซื้อ: {{ detail.id }}
@@ -21,7 +21,7 @@
       </div>
       <div class="detail-body__container">
         <div class="detail-left__container">
-          <div class="overview-filter__container">
+          <div class="detail-info__container">
             <div class="overview-filter__header">
               <img :src="UserIcon" alt="UserIcon">
               <span> ข้อมูลการรักษา </span>
@@ -56,7 +56,7 @@
               </div>
             </a-form>
           </div>
-          <div class="overview-filter__container">
+          <div class="detail-info__container">
             <div class="overview-filter__header">
               <img :src="BoxIcon" alt="BoxIcon">
               <span> รายการสินค้า </span>
@@ -77,7 +77,7 @@
               </div>
             </a-form>
           </div>
-          <div class="overview-filter__container">
+          <div class="detail-info__container">
             <div class="overview-filter__header">
               <img :src="BoxIcon" alt="BoxIcon">
               <span> ข้อมูลการจัดส่งสินค้า </span>
@@ -118,7 +118,7 @@
           </div>
         </div>
         <div class="detail-right__container">
-          <div class="overview-filter__container">
+          <div class="detail-info__container">
             <div class="overview-filter__header">
               <img :src="PinIcon" alt="PinIcon">
               <span> ข้อมูลที่อยู่จัดส่ง </span>
@@ -223,20 +223,20 @@
                 </div>
               </div>
             </a-form>
-            <a-form layout="vertical">
-              <div class="detail-body__container">
-                <div class="detail-full__container">
-                  <a-form-item
-                    class="detail-form__item"
-                    label="แผนที่"
-                  >
-                    <div class="detail-map">
-                      <img :src="MapImg" alt="MapImg">
-                    </div>
-                  </a-form-item>
-                </div>
-              </div>
-            </a-form>
+            <!--            <a-form layout="vertical">-->
+            <!--              <div class="detail-body__container">-->
+            <!--                <div class="detail-full__container">-->
+            <!--                  <a-form-item-->
+            <!--                    class="detail-form__item"-->
+            <!--                    label="แผนที่"-->
+            <!--                  >-->
+            <!--                    <div class="detail-map">-->
+            <!--                      <img :src="MapImg" alt="MapImg">-->
+            <!--                    </div>-->
+            <!--                  </a-form-item>-->
+            <!--                </div>-->
+            <!--              </div>-->
+            <!--            </a-form>-->
           </div>
         </div>
       </div>
@@ -250,7 +250,7 @@
         class="overview-button__cta submit"
         @click="visibleSaveModal = true"
       >
-        Save
+        บันทึก
       </a-button>
     </div>
 

@@ -5,27 +5,60 @@
         กรุณาเลือกรายการสั่งซื้อเพื่อเพิ่มลงในล็อตการจัดส่ง
         <span>{{ batchNo }}</span>
       </div>
-      <div class="assign-filter__container">
-        <div class="assign-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon">
-          <span> ตัวกรองข้อมูล </span>
-        </div>
+      <div class="shipment-filter__container">
         <a-form layout="vertical">
-          <div class="assign-filter__form">
-            <div class="date">
-              <a-form-item label="วันและเวลาที่สั่ง">
-                <a-input placeholder="input search text" />
-              </a-form-item>
-            </div>
-            <div class="package">
-              <a-form-item label="สินค้าในรายการสั่งซื้อ">
-                <a-input placeholder="input search text" />
-              </a-form-item>
-            </div>
+          <div class="shipment-filter__form">
+            <a-row :gutter="16">
+              <a-col :md="4" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="วันและเวลาที่สั่ง">
+                    <a-date-picker @change="onDateFilterChange">
+                      <div slot="suffixIcon">
+                        <img :src="CalendarIcon" alt="CalendarIcon">
+                      </div>
+                    </a-date-picker>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="สินค้าในรายการสั่งซื้อ">
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      @change="handleOrderedItemFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option value="Green Package">
+                        Green Package
+                      </a-select-option>
+                      <a-select-option value="Yellow Package">
+                        Yellow Package
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="ค้นหารายการสั่งซื้อ">
+                    <a-input
+                      v-model="search"
+                      class="page-header__search"
+                      placeholder="ค้นหา"
+                    >
+                      <a-icon slot="prefix" type="search" />
+                    </a-input>
+                  </a-form-item>
+                </div>
+              </a-col>
+            </a-row>
           </div>
         </a-form>
       </div>
-      <div class="assign-table__container">
+      <div class="shipment-table__container">
         <a-table
           row-key="id"
           :row-selection="{
@@ -34,6 +67,10 @@
           }"
           :pagination="{
             total: amount,
+            position:'top',
+            showSizeChanger:true,
+            pageSize:pageSize,
+            pageSizeOptions:['100','200', '300', '400', String(amount)]
           }"
           :loading="loading"
           :columns="tableColumns"
@@ -169,6 +206,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import moment from 'moment'
+import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
 import ShipmentModule from '~/store/shipment.module'
@@ -176,13 +214,9 @@ import { ShipmentLine } from '~/types/shipment.type'
 import { IColumns, columns } from '~/static/ShipmentColumns'
 import { getBatchNumber } from '~/services/shipment.service'
 
-interface IMain {
-  [key: string]: string
-}
-
-interface IFilter extends IMain {
-  orderedDateStart: string
-  orderedDateEnd: string
+interface IFilter {
+  created_date: string
+  shipmentItem: string
 }
 
 @Component
@@ -193,6 +227,7 @@ export default class AssignForm extends Vue {
 
   private FilterIcon = FilterSvg
   private BoxImg = BoxSvg
+  private CalendarIcon = CalendarSvg
 
   tabKey: string = 'All'
   batchNo: string = ''
@@ -200,15 +235,19 @@ export default class AssignForm extends Vue {
   visibleSubmitDialog: boolean = false
 
   filterForm: IFilter = {
-    orderedDateStart: '',
-    orderedDateEnd: ''
+    created_date: '',
+    shipmentItem: ''
   }
 
   selectedRowKeys: number[] = []
 
+  search: string = ''
+
+  pageSize:number = 100
+
     @Emit('pageChange')
-  handlePageChange (page: number) {
-    return page
+  handlePageChange (page: number, page_size: number) {
+    return { page, page_size }
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
@@ -245,28 +284,57 @@ export default class AssignForm extends Vue {
     this.tabKey = key
   }
 
-  onDateFilterChange (_date: moment.Moment[], dateString: string[]) {
-    this.filterForm.orderedDateStart = dateString[0]
-    this.filterForm.orderedDateEnd = dateString[1]
+  onDateFilterChange (_date: object, dateString: string) {
+    this.filterForm.created_date = dateString
+  }
+
+  handleOrderedItemFilterChange (value: { key: string; value: string }) {
+    this.filterForm.shipmentItem = value.key
   }
 
   filterData () {
     this.data = this.originalData.filter((row) => {
-      return moment(row.created_date).isBetween(
-        this.filterForm.orderedDateStart,
-        this.filterForm.orderedDateEnd,
-        'day',
-        '[]'
-      )
+      const result: boolean[] = []
+      Object.keys(this.filterForm).forEach((key) => {
+        result.push(
+          this.filterForm[key as keyof IFilter] !== ''
+            ? this.filterFields(key, row)
+            : true
+        )
+      })
+      return result.every(Boolean)
     })
+  }
+
+  filterFields (key: string, row: ShipmentLine): boolean {
+    if (key === 'orderedDate') {
+      return (
+        moment(row.created_date).format('YYYY-MM-DD') ===
+        this.filterForm.created_date
+      )
+    }
+    if (key === 'searchRecord') {
+      const columsDataIndex = this.tableColumns
+        .filter(column => column.dataIndex)
+        .map(column => column.dataIndex)
+      const searchedArray = columsDataIndex.map(col =>
+        String(row[col as keyof ShipmentLine]).includes(
+          this.filterForm.shipmentItem
+        )
+      )
+      return searchedArray.some(Boolean)
+    }
+    return false
+    // return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
   }
 
-  onPageChange (page: {current: number}) {
-    this.handlePageChange(page.current)
+  onPageChange (page: {current: number; pageSize: number}) {
+    this.pageSize = page.pageSize
+    this.handlePageChange(page.current, page.pageSize)
   }
 
   goBack () {
