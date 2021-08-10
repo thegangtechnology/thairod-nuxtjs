@@ -207,7 +207,7 @@
         class="overview-button__cta submit"
         @click="visibleSubmitDialog = true"
       >
-        <span> อัปเดตข้อมูล ({{ updateIdList.length }}) </span>
+        <span> บันทึก ({{ updateIdList.length }}) </span>
       </a-button>
     </div> -->
     <a-modal

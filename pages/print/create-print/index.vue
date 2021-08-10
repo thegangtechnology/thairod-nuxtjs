@@ -52,7 +52,7 @@ export default class Main extends Vue {
     this.onQueryChange(payload.page, payload.page_size)
   }
 
-  onQueryChange (page: number = 1, page_size: number = 10) {
+  onQueryChange (page: number = 1, page_size: number = 100) {
     ShipmentModule.initialiseShipment({
       label_printed: false,
       deliver: false,

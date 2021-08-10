@@ -116,7 +116,7 @@ export default class PrintOverview extends Vue {
     this.$router.push('/print/create-print')
   }
 
-  onTabChange (key: string, page: number = 1, page_size: number = 10, isUpdate: boolean = false) {
+  onTabChange (key: string, page: number = 1, page_size: number = 100, isUpdate: boolean = false) {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
         page,
