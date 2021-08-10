@@ -68,7 +68,6 @@
             :pagination="{
               total: amount,
             }"
-            :custom-row="customRow"
             :loading="loading"
             @change="onPageChange"
           >
@@ -76,7 +75,7 @@
               <div>
                 {{ record.id }}
               </div>
-              <div>
+              <div class="sub-detail__info">
                 {{ record.created_date | date }}
               </div>
             </div>
@@ -106,8 +105,16 @@
               <div>
                 {{ text }}
               </div>
-              <div>
+              <div class="sub-detail__info">
                 {{ record.cid }}
+              </div>
+            </div>
+            <div
+              slot="trackingCode"
+              slot-scope="text"
+            >
+              <div>
+                <a class="tracking-code__link" :href="`https://www.shippop.com/tracking?typeid=domestic&tracking_code=${text}`" target="_blank">{{ text }}</a>
               </div>
             </div>
             <div
@@ -144,8 +151,10 @@
                 </div>
               </div>
             </div>
-            <div slot="operation" class="table-form__input">
-              <img :src="RightIcon" alt="RightIcon">
+            <div slot="operation" slot-scope="record" class="table-form__input">
+              <div class="table-cursor__pointer" @click="customRowTo(record)">
+                <img :src="RightIcon" alt="RightIcon">
+              </div>
             </div>
           </a-table>
         </div>
@@ -291,6 +300,10 @@ export default class AssignOverview extends Vue {
         }
       }
     }
+  }
+
+  customRowTo (record: ShipmentLine) {
+    this.$router.push(`/order-overview/${record.id}`)
   }
 }
 </script>

@@ -120,6 +120,42 @@
         </div>
       </a-tabs>
     </div>
+    <a-modal
+      v-model="printConfirm"
+      class="overview-modal__container"
+      centered
+      :closable="false"
+      :width="480"
+    >
+      <div class="overview-modal__img">
+        <img :src="BoxImg" alt="BoxImg">
+      </div>
+      <div class="overview-modal__title">
+        พิมพ์ใบจัดส่งสินค้า
+      </div>
+      <div class="overview-modal__subtitle">
+        ท่านกำลังจะถูกนำไปที่หน้า “พิมพ์ใบจัดส่งสินค้า” เพื่อจัดการพิมพ์
+      </div>
+      <template slot="footer">
+        <div class="overview-modal__footer">
+          <a-button
+            key="back"
+            class="overview-button__cta cancel"
+            @click="printConfirm = false"
+          >
+            ยกเลิก
+          </a-button>
+          <a-button
+            key="submit"
+            class="overview-button__cta submit"
+            type="primary"
+            @click="isConfirm"
+          >
+            ยืนยัน
+          </a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
@@ -134,6 +170,7 @@ export default class OrderOverview extends Vue {
   tabKey: string = 'wait'
   showDefault: boolean = false
   updateOption: string = 'default'
+  printConfirm: boolean = false
 
   get isLoading () {
     return ShipmentModule.loading
@@ -217,6 +254,10 @@ export default class OrderOverview extends Vue {
   }
 
   toPrint () {
+    this.printConfirm = true
+  }
+
+  isConfirm () {
     this.$router.push('/print')
   }
 }

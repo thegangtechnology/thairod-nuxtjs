@@ -149,8 +149,8 @@
     justify-content: center;
     align-items: center;
     .assign-row__status {
-      border-radius: 20px;
-      padding: 5px 12px;
+      border-radius: 4px;
+      padding: 2px 12px;
       font-style: normal;
       font-weight: bold;
       font-size: 14px;
@@ -158,9 +158,13 @@
       display: flex;
       &.wait {
         background: #fab752;
+        //border: 1px solid #fab752;
+        //background: rgba(250, 183, 82 , 0.20);
       }
       &.print {
         background: #ffe458;
+        //background: rgb(255 228 88 / 40%);
+        //border: 1px solid #ffe458;
       }
       &.out {
         background: #87eb7e;
@@ -273,5 +277,24 @@
         }
       }
     }
+  }
+}
+
+.assign-table__container{
+  .assign-table__table{
+    .sub-detail__info{
+      color: #999999;
+    }
+    .tracking-code__link{
+      color: #5A92E5;
+      text-decoration: underline;
+    }
+    .ant-table-row{
+      cursor:default;
+    }
+    .table-cursor__pointer{
+      cursor:pointer;
+    }
+
   }
 }

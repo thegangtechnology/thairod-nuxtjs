@@ -85,7 +85,7 @@
             <div>
               {{ record.id }}
             </div>
-            <div>
+            <div class="sub-detail__info">
               {{ record.created_date | date }}
             </div>
           </div>
@@ -115,8 +115,16 @@
             <div>
               {{ text }}
             </div>
-            <div>
+            <div class="sub-detail__info">
               {{ record.cid }}
+            </div>
+          </div>
+          <div
+            slot="trackingCode"
+            slot-scope="text"
+          >
+            <div>
+              <a class="tracking-code__link" :href="`https://www.shippop.com/tracking?typeid=domestic&tracking_code=${text}`" target="_blank">{{ text }}</a>
             </div>
           </div>
           <div slot="batch" slot-scope="text, record" class="table-form__input">
