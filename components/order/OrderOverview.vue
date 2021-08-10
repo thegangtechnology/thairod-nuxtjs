@@ -12,8 +12,9 @@
             :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
-            :option="updateOption"
+            :option="option"
             :loading="isLoading"
+            :save="save"
             :amount="getTabContentAmount('all')"
             @pageChange="handlePageChange"
           />
@@ -26,10 +27,12 @@
             :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
-            :option="updateOption"
+            :option="option"
             :loading="isLoading"
+            :save="save"
             :amount="getTabContentAmount('wait')"
             @pageChange="handlePageChange"
+            @selectChange="onSelectChange"
           />
         </a-tab-pane>
         <a-tab-pane key="print">
@@ -40,11 +43,13 @@
             :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
-            :option="updateOption"
+            :option="option"
             :loading="isLoading"
+            :save="save"
             :amount="getTabContentAmount('print')"
             @pageChange="handlePageChange"
-            @update="handleCancelUpdate"
+            @cancelSubmit="onSaveChange"
+            @selectChange="onSelectChange"
           />
         </a-tab-pane>
         <a-tab-pane key="out">
@@ -55,11 +60,12 @@
             :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
-            :option="updateOption"
+            :option="option"
             :loading="isLoading"
+            :save="save"
             :amount="getTabContentAmount('out')"
             @pageChange="handlePageChange"
-            @update="handleCancelUpdate"
+            @selectChange="onSelectChange"
           />
         </a-tab-pane>
         <a-tab-pane key="received">
@@ -70,86 +76,16 @@
             :original-data="originalData"
             :search="search"
             :tab-key="tabKey"
-            :option="updateOption"
+            :option="option"
             :loading="isLoading"
+            :save="save"
             :amount="getTabContentAmount('received')"
             @pageChange="handlePageChange"
-            @update="handleCancelUpdate"
+            @selectChange="onSelectChange"
           />
         </a-tab-pane>
-        <div
-          v-if="tabKey !== 'all'"
-          slot="tabBarExtraContent"
-          class="overview-tab__buttons"
-        >
-          <a-button
-            v-if="tabKey === 'wait'"
-            class="assign-button__cta primary"
-            @click="toPrint"
-          >
-            พิมพ์ใบจัดส่งสินค้า
-          </a-button>
-          <a-select
-            v-else
-            v-model="updateOption"
-            class="overview-select__cta"
-            @change="handleOptionChange"
-          >
-            <a-select-option style="display: none;" class="default-option" value="default">
-              อัปเดตข้อมูลรายการจัดส่ง
-            </a-select-option>
-            <a-select-option v-if="canUpdatePrint" value="updatePrint">
-              อัปเดตการพิมพ์ใบจัดส่ง
-            </a-select-option>
-            <a-select-option
-              v-if="canUpdateOutForDelivery"
-              value="updateDelivery"
-            >
-              อัปเดตการจัดส่ง
-            </a-select-option>
-          <!-- <a-select-option v-if="canUpdateReceived" value="updateReceived">
-            อัปเดตการส่งมอบ
-          </a-select-option> -->
-          </a-select>
-        </div>
       </a-tabs>
     </div>
-    <a-modal
-      v-model="printConfirm"
-      class="overview-modal__container"
-      centered
-      :closable="false"
-      :width="480"
-    >
-      <div class="overview-modal__img">
-        <img :src="require('@/assets/images/print/box.svg')" alt="BoxImg">
-      </div>
-      <div class="overview-modal__title">
-        พิมพ์ใบจัดส่งสินค้า
-      </div>
-      <div class="overview-modal__subtitle">
-        ท่านกำลังจะถูกนำไปที่หน้า “พิมพ์ใบจัดส่งสินค้า” เพื่อจัดการพิมพ์
-      </div>
-      <template slot="footer">
-        <div class="overview-modal__footer">
-          <a-button
-            key="back"
-            class="overview-button__cta cancel"
-            @click="printConfirm = false"
-          >
-            ยกเลิก
-          </a-button>
-          <a-button
-            key="submit"
-            class="overview-button__cta submit"
-            type="primary"
-            @click="isConfirm"
-          >
-            ยืนยัน
-          </a-button>
-        </div>
-      </template>
-    </a-modal>
   </div>
 </template>
 
@@ -160,10 +96,11 @@ import ShipmentModule from '~/store/shipment.module'
 @Component
 export default class OrderOverview extends Vue {
   @Prop({ required: true }) search!: string
+  @Prop({ required: true }) option!: string
+  @Prop({ required: true }) save!: boolean
 
   tabKey: string = 'wait'
   showDefault: boolean = false
-  updateOption: string = 'default'
   printConfirm: boolean = false
 
   get isLoading () {
@@ -191,16 +128,27 @@ export default class OrderOverview extends Vue {
     return value
   }
 
+  @Emit('sendTabKey')
+  handleSendTab (value: string) {
+    return value
+  }
+
+  @Emit('selectedKeys')
+  onSelectChange (selectedKeys: number[]) {
+    return selectedKeys
+  }
+
+  @Emit('saveSelection')
+  onSaveChange () {
+    return false
+  }
+
   mounted () {
     ShipmentModule.initialiseShipment({
       label_printed: false,
       deliver: false
     })
-  }
-
-  handleCancelUpdate () {
-    this.updateOption = 'default'
-    this.handleOptionChange('default')
+    this.handleSendTab('wait')
   }
 
   getTabContentAmount (tabKey: string): number {
@@ -211,11 +159,11 @@ export default class OrderOverview extends Vue {
     return ShipmentModule.totalShipment
   }
 
-  handlePageChange (payload: {page: number; page_size: number}) {
-    this.onTabChange(this.tabKey, payload.page, payload.page_size)
+  handlePageChange (payload: {page: number; page_size: number, isSave: boolean}): void {
+    this.onTabChange(this.tabKey, payload.page, payload.page_size, payload.isSave)
   }
 
-  onTabChange (key: string, page: number = 1, page_size: number = 100) {
+  onTabChange (key: string, page: number = 1, page_size: number = 100, isSave: boolean = false): void {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
         page,
@@ -246,16 +194,11 @@ export default class OrderOverview extends Vue {
       })
     }
     this.tabKey = key
-    this.updateOption = 'default'
-    this.handleOptionChange('default')
-  }
-
-  toPrint () {
-    this.printConfirm = true
-  }
-
-  isConfirm () {
-    this.$router.push('/print')
+    this.handleSendTab(key)
+    if (isSave) {
+      this.handleOptionChange('default')
+      this.onSaveChange()
+    }
   }
 }
 </script>
