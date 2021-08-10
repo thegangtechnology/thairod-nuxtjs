@@ -41,24 +41,44 @@
       align-items: center;
       height: 100%;
     }
-    // .overview-button__cta {
-    //   border: 1.5px solid #001740;
-    //   box-sizing: border-box;
-    //   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
-    //   border-radius: 25px;
-    //   font-weight: 700;
-    //   font-size: 18px;
-    //   color: #001740;
-    //   display: flex;
-    //   justify-content: center;
-    //   align-items: center;
-    //   &:not(:last-child) {
-    //     margin-right: 1rem;
-    //   }
-    //   img {
-    //     margin-right: 0.6rem;
-    //   }
-    // }
+    .overview-button__cta {
+      border: 1.5px solid #001740;
+      box-sizing: border-box;
+      box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 18px;
+      color: #001740;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:not(:last-child) {
+        margin-right: 1rem;
+      }
+      img {
+        margin-right: 0.6rem;
+      }
+    }
+    .overview-select__cta > .ant-select-selection {
+      height: 2rem;
+      min-width: 14rem;
+      border: 1.5px solid #001740;
+      box-sizing: border-box;
+      box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 18px;
+      color: #001740;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:not(:last-child) {
+        margin-right: 1rem;
+      }
+      img {
+        margin-right: 0.6rem;
+      }
+    }
 
     .assign-button__cta {
       border: 1.5px solid #001740;
@@ -116,36 +136,15 @@
   }
   .ant-tabs-extra-content {
     height: 3.5rem;
-    .overview-tab__buttons {
-      padding: 0.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-    }
   }
 }
 
-.overview-button__cta,
-.overview-select__cta > .ant-select-selection {
-  height: 2rem;
-  min-width: 14rem;
-  border: 1.5px solid #001740;
-  box-sizing: border-box;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 25px;
-  font-weight: 700;
-  font-size: 18px;
-  color: #001740;
+.overview-tab__buttons {
+  padding: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  &:not(:last-child) {
-    margin-right: 1rem;
-  }
-  img {
-    margin-right: 0.6rem;
-  }
+  height: 100%;
 }
 
 .shipment-body__container {
@@ -609,4 +608,8 @@
 
 .sub-detail__info {
   color: #999999;
+}
+
+.no-border-btn {
+  border: 0 solid #001740 !important;
 }

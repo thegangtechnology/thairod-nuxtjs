@@ -199,17 +199,6 @@
         </div>
       </div>
     </div>
-    <!-- <div v-if="option !== 'default'" class="overview-button__container">
-      <a-button class="overview-button__cta cancel" @click="cancelUpdate">
-        <span> ยกเลิก </span>
-      </a-button>
-      <a-button
-        class="overview-button__cta submit"
-        @click="visibleSubmitDialog = true"
-      >
-        <span> บันทึก ({{ updateIdList.length }}) </span>
-      </a-button>
-    </div> -->
     <a-modal
       v-model="visibleSubmitDialog"
       class="overview-modal__container"
@@ -233,14 +222,14 @@
         <div class="overview-modal__footer">
           <a-button
             key="back"
-            class="overview-button__cta cancel"
+            class="overview-button__cta no-border-btn cancel"
             @click="onCancelSubmit"
           >
             ยกเลิก
           </a-button>
           <a-button
             key="submit"
-            class="overview-button__cta submit"
+            class="overview-button__cta no-border-btn submit"
             type="primary"
             @click="onSave"
           >

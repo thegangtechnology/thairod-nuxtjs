@@ -39,22 +39,6 @@
             @pageChange="handlePageChange"
           />
         </a-tab-pane>
-        <div slot="tabBarExtraContent" class="assign-tab__buttons">
-          <a-button
-            v-if="tabKey !== 'unassign'"
-            class="assign-button__cta"
-            @click="toAssignBatch"
-          >
-            แก้ไขล็อตการจัดส่ง
-          </a-button>
-          <a-button
-            v-if="tabKey !== 'assign'"
-            class="assign-button__cta primary"
-            @click="toCreateBatch"
-          >
-            สร้างล็อตการจัดส่งใหม่
-          </a-button>
-        </div>
       </a-tabs>
     </div>
   </div>
@@ -92,19 +76,6 @@ export default class AssignOverview extends Vue {
 
   mounted () {
     ShipmentModule.initialiseShipment({})
-  }
-
-  toCreateBatch () {
-    this.$router.push('/assign/create-batch')
-  }
-
-  toAssignBatch () {
-    this.$router.push({
-      path: '/assign/create-batch',
-      query: {
-        type: 'assign'
-      }
-    })
   }
 
   handlePageChange (payload: {page: number; page_size: number}) {

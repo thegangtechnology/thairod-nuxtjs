@@ -190,7 +190,7 @@
       </div>
     </div>
     <div class="overview-button__container">
-      <a-button class="overview-button__cta cancel" @click="goBack">
+      <a-button class="overview-button__cta no-border-btn cancel" @click="goBack">
         กลับ
       </a-button>
     </div>

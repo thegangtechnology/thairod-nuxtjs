@@ -42,11 +42,11 @@
             </a-select>
           </div>
           <div v-else class="overview-button__container top">
-            <a-button class="overview-button__cta cancel" @click="cancelUpdate">
+            <a-button class="overview-button__cta no-border-btn cancel" @click="cancelUpdate">
               <span> ยกเลิก </span>
             </a-button>
             <a-button
-              class="overview-button__cta submit"
+              class="overview-button__cta no-border-btn submit"
               @click="onSave"
             >
               <span> {{ getButtonTitle }} ({{ amount }}) </span>
@@ -85,14 +85,14 @@
         <div class="overview-modal__footer">
           <a-button
             key="back"
-            class="overview-button__cta cancel"
+            class="overview-button__cta no-border-btn cancel"
             @click="printConfirm = false"
           >
             ยกเลิก
           </a-button>
           <a-button
             key="submit"
-            class="overview-button__cta submit"
+            class="overview-button__cta no-border-btn submit"
             type="primary"
             @click="isConfirm"
           >
@@ -101,46 +101,6 @@
         </div>
       </template>
     </a-modal>
-    <!-- visibleSubmitDialog -->
-    <!-- <a-modal
-      v-model="visibleSubmitDialog"
-      class="overview-modal__container"
-      centered
-      :closable="false"
-      :width="480"
-    >
-      <div class="overview-modal__img">
-        <img :src="BoxImg" alt="BoxImg">
-      </div>
-      <div class="overview-modal__title">
-        ยืนยันการอัปเดตข้อมูล
-      </div>
-      <div class="overview-modal__subtitle">
-        รายการสั่งซื้อจำนวน ({{ amount }})
-        รายการกำลังจะถูกอัปเดตข้อมูลการพิมพ์ใบจัดส่งจาก
-        {{ getModalDescription.from }} เป็น
-        <span>{{ getModalDescription.to }} </span>
-      </div>
-      <template slot="footer">
-        <div class="overview-modal__footer">
-          <a-button
-            key="back"
-            class="overview-button__cta cancel"
-            @click="visibleSubmitDialog = false"
-          >
-            ยกเลิก
-          </a-button>
-          <a-button
-            key="submit"
-            class="overview-button__cta submit"
-            type="primary"
-            @click="onSave"
-          >
-            ยืนยัน
-          </a-button>
-        </div>
-      </template>
-    </a-modal> -->
   </div>
 </template>
 

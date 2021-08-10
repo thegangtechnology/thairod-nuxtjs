@@ -242,12 +242,12 @@
       </div>
     </div>
     <div class="overview-button__container">
-      <a-button class="overview-button__cta cancel" @click="onEditChange">
+      <a-button class="overview-button__cta no-border-btn cancel" @click="onEditChange">
         กลับ
       </a-button>
       <a-button
         :disabled="!canSave"
-        class="overview-button__cta submit"
+        class="overview-button__cta no-border-btn submit"
         @click="visibleSaveModal = true"
       >
         บันทึก
@@ -275,14 +275,14 @@
         <div class="overview-modal__footer">
           <a-button
             key="back"
-            class="overview-button__cta cancel"
+            class="overview-button__cta no-border-btn cancel"
             @click="visibleSaveModal = false"
           >
             ยกเลิก
           </a-button>
           <a-button
             key="submit"
-            class="overview-button__cta submit"
+            class="overview-button__cta no-border-btn submit"
             type="primary"
             @click="onSave"
           >

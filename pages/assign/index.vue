@@ -5,13 +5,22 @@
         <div class="page-header__title">
           จัดการล็อตรายการจัดส่ง
         </div>
-        <a-input
-          v-model="search"
-          class="page-header__search"
-          placeholder="ค้นหา"
-        >
-          <a-icon slot="prefix" type="search" />
-        </a-input>
+        <div class="overview-tab__buttons">
+          <a-button
+            v-if="tabKey !== 'unassign'"
+            class="overview-button__cta "
+            @click="toAssignBatch"
+          >
+            แก้ไขล็อตการจัดส่ง
+          </a-button>
+          <a-button
+            v-if="tabKey !== 'assign'"
+            class="assign-button__cta primary"
+            @click="toCreateBatch"
+          >
+            สร้างล็อตการจัดส่งใหม่
+          </a-button>
+        </div>
       </div>
       <AssignOverview :search="search" />
     </div>
@@ -24,6 +33,19 @@ import { Vue, Component } from 'vue-property-decorator'
 @Component
 export default class Main extends Vue {
   search: string = ''
+
+  toCreateBatch () {
+    this.$router.push('/assign/create-batch')
+  }
+
+  toAssignBatch () {
+    this.$router.push({
+      path: '/assign/create-batch',
+      query: {
+        type: 'assign'
+      }
+    })
+  }
 }
 </script>
 

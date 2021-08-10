@@ -3,15 +3,24 @@
     <div class="page-card__container">
       <div class="page-card__header">
         <div class="page-header__title">
-          สร้างล็อตการจัดส่งใหม่
+          {{ title }}
         </div>
-        <!--        <a-input-->
-        <!--          v-model="search"-->
-        <!--          class="page-header__search"-->
-        <!--          placeholder="ค้นหา"-->
-        <!--        >-->
-        <!--          <a-icon slot="prefix" type="search" />-->
-        <!--        </a-input>-->
+        <div class="overview-button__container top">
+          <!-- <a-button class="assign-button__cta cancel" @click="goBack"> -->
+          <a-button class="overview-button__cta  no-border-btn cancel">
+            <span> ยกเลิก </span>
+          </a-button>
+          <a-button
+            class="overview-button__cta  no-border-btn submit"
+          >
+            <!-- :disabled="selectedRowKeys.length === 0"
+        @click="visibleSubmitDialog = true" -->
+            <!-- <span v-if="type"> บันทึก ({{ selectedRowKeys.length }}) </span>
+        <span v-else> สร้าง ({{ selectedRowKeys.length }}) </span> -->
+            <span v-if="type"> บันทึก </span>
+            <span v-else> สร้าง  </span>
+          </a-button>
+        </div>
       </div>
       <AssignForm
         :original-data="originalData"
@@ -38,6 +47,16 @@ export default class Main extends Vue {
 
   get originalData () {
     return ShipmentModule.getShipmentList
+  }
+
+  get type () {
+    return this.$route.query.type
+  }
+
+  get title () {
+    const type = this.$route.query.type
+    if (type && type === 'assign') { return 'แก้ไขล็อตการจัดส่ง' }
+    return 'สร้างล็อตการจัดส่งใหม่'
   }
 
   mounted () {
