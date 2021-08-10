@@ -139,6 +139,7 @@ export default class PrintOverview extends Vue {
 
   handlePageChange (payload: {page: number; page_size: number, isUpdate: boolean}) {
     this.onTabChange(this.tabKey, payload.page, payload.page_size, payload.isUpdate)
+    this.handleSendTabUpdate(false)
   }
 
   toCreatePrint () {
@@ -170,7 +171,7 @@ export default class PrintOverview extends Vue {
     }
     this.tabKey = key
     this.handleSendTab(key)
-    this.handleSendTabUpdate(this.isUpdate)
+    this.handleSendTabUpdate(false)
     this.isUpdate = isUpdate
   }
 }

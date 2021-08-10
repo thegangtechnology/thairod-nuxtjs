@@ -68,7 +68,6 @@ export default class Main extends Vue {
   }
 
   onTabChange (key: string) {
-    console.log('tabKey', key)
     this.tabKey = key
   }
 
