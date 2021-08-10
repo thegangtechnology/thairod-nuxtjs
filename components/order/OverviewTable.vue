@@ -98,6 +98,7 @@
               position:'top',
               showSizeChanger:true,
               pageSize:pageSize,
+              current:currentPage,
               pageSizeOptions:['100','200', '300', '400', String(amount)]
             }"
             :loading="loading"
@@ -198,7 +199,7 @@
         </div>
       </div>
     </div>
-    <div v-if="option !== 'default'" class="overview-button__container">
+    <!-- <div v-if="option !== 'default'" class="overview-button__container">
       <a-button class="overview-button__cta cancel" @click="cancelUpdate">
         <span> ยกเลิก </span>
       </a-button>
@@ -208,7 +209,7 @@
       >
         <span> อัปเดตข้อมูล ({{ updateIdList.length }}) </span>
       </a-button>
-    </div>
+    </div> -->
     <a-modal
       v-model="visibleSubmitDialog"
       class="overview-modal__container"
@@ -233,7 +234,7 @@
           <a-button
             key="back"
             class="overview-button__cta cancel"
-            @click="visibleSubmitDialog = false"
+            @click="onCancelSubmit"
           >
             ยกเลิก
           </a-button>
@@ -267,12 +268,11 @@ import {
 } from '~/static/ShipmentColumns'
 import { ShipmentFilter, ShipmentLine } from '~/types/shipment.type'
 
-type Status = 'wait' | 'print' | 'out' | 'received'
-
 @Component
 export default class OverviewTable extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
   @Prop({ required: true }) loading!: boolean
+  @Prop({ required: true }) save!: boolean
   @Prop({ required: true }) option!: string
   @Prop({ required: true }) search!: string
   @Prop({ required: true }) amount!: number
@@ -304,13 +304,28 @@ export default class OverviewTable extends Vue {
   }
 
   @Emit('pageChange')
-  handlePageChange (page: number, page_size: number) {
-    return { page, page_size }
+  handlePageChange (page: number, page_size: number, isSave: boolean = false) {
+    return { page, page_size, isSave }
+  }
+
+  @Emit('selectChange')
+  sendKeysChange (selectedRowKeys: number[]) {
+    return selectedRowKeys
+  }
+
+  @Emit('cancelSubmit')
+  onCancelSubmit () {
+    return false
   }
 
   @Watch('search', { immediate: true, deep: true })
   onSearchChange () {
     this.filterForm.search = this.search
+  }
+
+  @Watch('save', { immediate: true, deep: true })
+  onSaveChange () {
+    this.visibleSubmitDialog = this.save
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
@@ -345,12 +360,6 @@ export default class OverviewTable extends Vue {
     return this.$itemSelection(this.originalData)
   }
 
-  get unselectedIds () {
-    return this.data
-      .filter(item => !this.selectedRowKeys.includes(item.id))
-      .map(filtered => filtered.id)
-  }
-
   get getModalDescription () {
     if (this.option === 'updatePrint') {
       if (this.tabKey === 'wait') {
@@ -377,24 +386,7 @@ export default class OverviewTable extends Vue {
   }
 
   get updateIdList (): number[] {
-    if (this.option === 'updatePrint') {
-      return this.unselectedIds
-    }
-    if (this.option === 'updateDelivery') {
-      if (this.tabKey === 'print') {
-        return this.selectedRowKeys
-      } else {
-        return this.unselectedIds
-      }
-    }
-    if (this.option === 'updateReceived') {
-      if (this.tabKey === 'out') {
-        return this.selectedRowKeys
-      } else {
-        return this.unselectedIds
-      }
-    }
-    return []
+    return this.selectedRowKeys
   }
 
   get tableColumns (): IColumns[] {
@@ -411,25 +403,7 @@ export default class OverviewTable extends Vue {
   }
 
   initSelect () {
-    this.originalSelectedRowKeys = this.originalData
-      .filter((item) => {
-        return this.handleCondition(item.status)
-      })
-      .map(filtered => filtered.id)
-    this.selectedRowKeys = this.originalSelectedRowKeys
-  }
-
-  handleCondition (status: Status) {
-    if (this.option === 'updatePrint') {
-      return status === 'print'
-    }
-    if (this.option === 'updateDelivery') {
-      return status === 'out'
-    }
-    if (this.option === 'updateReceived') {
-      return status === 'received'
-    }
-    return true
+    this.selectedRowKeys = []
   }
 
   onDateFilterChange (_date: object, dateString: string) {
@@ -479,7 +453,7 @@ export default class OverviewTable extends Vue {
 
   handleUpdatePrint () {
     ShipmentModule.setPrintStatus({
-      selectedRowKeys: this.unselectedIds,
+      selectedRowKeys: this.selectedRowKeys,
       printStatus: false
     })
   }
@@ -489,17 +463,10 @@ export default class OverviewTable extends Vue {
      * If tab === 'print' => change selected to 'out' status
      * If tab === 'out' => change unselected to 'print' status
      */
-    if (this.tabKey === 'print') {
-      ShipmentModule.setDeliverStatus({
-        selectedRowKeys: this.selectedRowKeys,
-        deliverStatus: true
-      })
-    } else {
-      ShipmentModule.setDeliverStatus({
-        selectedRowKeys: this.unselectedIds,
-        deliverStatus: false
-      })
-    }
+    ShipmentModule.setDeliverStatus({
+      selectedRowKeys: this.selectedRowKeys,
+      deliverStatus: this.tabKey === 'print'
+    })
   }
 
   // handleUpdateReceived() {
@@ -519,15 +486,20 @@ export default class OverviewTable extends Vue {
     if (this.option === 'updatePrint') { this.handleUpdatePrint() }
     if (this.option === 'updateDelivery') { this.handleUpdateDelievery() }
     this.onPageChange({ current: 1, pageSize: this.pageSize })
+    this.handlePageChange(1, this.pageSize, true)
+    this.currentPage = 1
     this.visibleSubmitDialog = false
+    this.initSelect()
   }
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+    this.sendKeysChange(selectedRowKeys)
   }
 
   onPageChange (page: { current: number; pageSize: number }) {
     this.pageSize = page.pageSize
+    this.currentPage = page.current
     this.handlePageChange(page.current, page.pageSize)
   }
 

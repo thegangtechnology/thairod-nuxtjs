@@ -165,6 +165,7 @@ class ShipmentModule extends VuexModule {
     selectedRowKeys: number[]
     printStatus: boolean
   }) {
+    console.log('payload.selectedRowKeys :>> ', payload.selectedRowKeys)
     await setPrintStatus(payload.selectedRowKeys, payload.printStatus)
   }
 
