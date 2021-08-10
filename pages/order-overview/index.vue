@@ -218,8 +218,8 @@ export default class Main extends Vue {
 
   getSelectOptionValue (value: string): string {
     if (value === 'default') { return 'ภาพรวมรายการจัดส่ง' }
-    if (value === 'updatePrint') { return 'อัปเดตการพิมพ์ใบจัดส่ง' }
-    if (value === 'updateDelivery') { return 'อัปเดตการจัดส่ง' }
+    if (value === 'updatePrint') { return 'แก้ไขสถานะการพิมพ์ใบจัดส่ง' }
+    if (value === 'updateDelivery') { return 'บันทึกการจัดส่ง' }
     return ''
   }
 
