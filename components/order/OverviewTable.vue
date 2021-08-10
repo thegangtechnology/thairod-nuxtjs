@@ -1,12 +1,12 @@
 <template>
   <div class="overview-body">
-    <div class="overview-body__container">
-      <div class="overview-filter__container">
+    <div class="shipment-body__container">
+      <div class="shipment-filter__container">
         <a-form>
-          <div class="overview-filter__form-column">
+          <div class="shipment-filter__form">
             <a-row :gutter="16">
               <a-col :md="4" :sm="24">
-                <div class="date">
+                <div class="filter-input__container">
                   <a-form-item label="วันและเวลาที่สั่ง">
                     <a-date-picker @change="onDateFilterChange">
                       <div slot="suffixIcon" class="date-picker__custom">
@@ -17,7 +17,7 @@
                 </div>
               </a-col>
               <a-col :md="6" :sm="24">
-                <div class="batch">
+                <div class="filter-input__container">
                   <a-form-item label="ล็อตการจัดส่ง" block>
                     <a-select
                       label-in-value
@@ -40,7 +40,7 @@
                 </div>
               </a-col>
               <a-col :md="6" :sm="24">
-                <div class="package">
+                <div class="filter-input__container">
                   <a-form-item
                     label="สินค้าในรายการสั่งซื้อ"
                   >
@@ -65,7 +65,7 @@
                 </div>
               </a-col>
               <a-col :md="8" :sm="24">
-                <div class="search">
+                <div class="filter-input__container">
                   <a-form-item label="ค้นหารายการสั่งซื้อ">
                     <a-input
                       v-model="search"

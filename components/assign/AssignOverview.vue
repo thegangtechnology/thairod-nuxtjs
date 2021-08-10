@@ -107,26 +107,29 @@ export default class AssignOverview extends Vue {
     })
   }
 
-  handlePageChange (page: number) {
-    this.onTabChange(this.tabKey, page)
+  handlePageChange (payload: {page: number; page_size: number}) {
+    this.onTabChange(this.tabKey, payload.page, payload.page_size)
   }
 
-  onTabChange (key: string, page: number = 1) {
+  onTabChange (key: string, page: number = 1, page_size: number = 10) {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
-        page
+        page,
+        page_size
       })
     }
     if (key === 'unassign') {
       ShipmentModule.initialiseShipment({
         batch_isnull: true,
-        page
+        page,
+        page_size
       })
     }
     if (key === 'assign') {
       ShipmentModule.initialiseShipment({
         batch_isnull: false,
-        page
+        page,
+        page_size
       })
     }
     this.tabKey = key

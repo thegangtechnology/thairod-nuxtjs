@@ -27,7 +27,7 @@ export const getShipments = async (
   deliver: CheckBoolean = null,
   batch_isnull: CheckBoolean = null,
   page: number = 1,
-  page_size: number = 100
+  page_size: number = 10
 ): Promise<ShipmentsResult> => {
   try {
     const response = await $axios.get(

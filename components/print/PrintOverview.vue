@@ -108,33 +108,35 @@ export default class PrintOverview extends Vue {
     this.isUpdate = false
   }
 
-  handlePageChange (page: number) {
-    this.onTabChange(this.tabKey, page, true)
-    this.isUpdate = true
+  handlePageChange (payload: {page: number; page_size: number, isUpdate: boolean}) {
+    this.onTabChange(this.tabKey, payload.page, payload.page_size, payload.isUpdate)
   }
 
   toCreatePrint () {
     this.$router.push('/print/create-print')
   }
 
-  onTabChange (key: string, page: number = 1, isUpdate: boolean = false) {
+  onTabChange (key: string, page: number = 1, page_size: number = 10, isUpdate: boolean = false) {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
-        page
+        page,
+        page_size
       })
     }
     if (key === 'unprinted') {
       ShipmentModule.initialiseShipment({
         label_printed: false,
         deliver: false,
-        page
+        page,
+        page_size
       })
     }
     if (key === 'printed') {
       ShipmentModule.initialiseShipment({
         label_printed: true,
         deliver: false,
-        page
+        page,
+        page_size
       })
     }
     this.tabKey = key

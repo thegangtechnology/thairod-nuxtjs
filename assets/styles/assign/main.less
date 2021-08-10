@@ -68,19 +68,6 @@
     background: rgba(0, 23, 64, 0.05);
     border-radius: 12px;
     margin-bottom: 1.25rem;
-    .assign-filter__header {
-      font-style: normal;
-      font-weight: bold;
-      font-size: 18px;
-      line-height: 24px;
-      color: #001740;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      img {
-        margin-right: 0.5rem;
-      }
-    }
     .assign-filter__form {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -174,6 +161,31 @@
     }
   }
 }
+
+.shipment-table__container{
+
+  .tracking-code__link{
+    color: #5A92E5;
+    text-decoration: underline;
+  }
+  .ant-table-row{
+    cursor:default;
+  }
+  .ant-pagination{
+    position:relative;
+    text-align:right;
+    margin-bottom: 20px;
+    width:100%
+  }
+  ul.ant-pagination li:nth-last-child(1) {
+    order: 1!important;
+    float:left;
+  }
+  .table-cursor__pointer{
+    cursor:pointer;
+  }
+}
+
 .assign-button__container {
   border-top: 1px solid #e8eaee;
   display: flex;
