@@ -81,7 +81,7 @@
             <div>
               {{ record.id }}
             </div>
-            <div>
+            <div class="sub-detail__info">
               {{ record.created_date | date }}
             </div>
           </div>
@@ -111,7 +111,7 @@
             <div>
               {{ text }}
             </div>
-            <div>
+            <div class="sub-detail__info">
               {{ record.cid }}
             </div>
           </div>
@@ -157,7 +157,7 @@
         :disabled="selectedRowKeys.length === 0"
         @click="visibleSubmitDialog = true"
       >
-        <span v-if="queryType"> อัปเดต ({{ selectedRowKeys.length }}) </span>
+        <span v-if="queryType"> บันทึก ({{ selectedRowKeys.length }}) </span>
         <span v-else> สร้าง ({{ selectedRowKeys.length }}) </span>
       </a-button>
     </div>

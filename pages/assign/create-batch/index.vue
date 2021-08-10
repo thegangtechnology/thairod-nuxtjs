@@ -48,7 +48,7 @@ export default class Main extends Vue {
     this.onQueryChange(payload.page, payload.page_size)
   }
 
-  onQueryChange (page: number = 1, page_size: number = 10) {
+  onQueryChange (page: number = 1, page_size: number = 100) {
     const type = this.$route.query.type
     if (type && type === 'assign') {
       ShipmentModule.initialiseShipment({

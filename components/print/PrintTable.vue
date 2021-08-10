@@ -194,7 +194,7 @@
         class="print-button__cta submit"
         @click="visibleSubmitDialog = true"
       >
-        <span> อัปเดตข้อมูล ({{ changedRows.length }}) </span>
+        <span> บันทึก ({{ changedRows.length }}) </span>
       </a-button>
     </div>
     <a-modal

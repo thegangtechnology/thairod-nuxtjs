@@ -173,7 +173,7 @@ export const setDeliverStatus = async (
 
 export const getBatchNumber = async () => {
   try {
-    const res = await $axios.get('/api/batch-shipments/next_generated_name/')
+    const res = await $axios.get('/api/batch-shipments/next-generated-name/')
     return Promise.resolve(res.data.name)
   } catch (error) {
     return Promise.reject(new Error(error))
