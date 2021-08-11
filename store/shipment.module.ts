@@ -215,7 +215,7 @@ class ShipmentModule extends VuexModule {
 
   @Action({ rawError: true })
   public printLabel (selectedRowKeys: number[]) {
-    const printURL = new URL('https://backend.mall.dev.thairod.care/api/printlabel/')
+    const printURL = new URL(`${process.env.server_url}api/printlabel/`)
     selectedRowKeys.forEach((rowKey) => {
       printURL.searchParams.append('shipments', `${rowKey}`)
     })

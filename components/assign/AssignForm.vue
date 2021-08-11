@@ -71,7 +71,7 @@
             showSizeChanger:true,
             pageSize:pageSize,
             current:currentPage,
-            pageSizeOptions:['10','200', '300', '400', String(amount)]
+            pageSizeOptions:['100','200', '300', '400', String(amount)]
           }"
           :loading="loading"
           :columns="tableColumns"
@@ -232,7 +232,7 @@ export default class AssignForm extends Vue {
   search: string = ''
 
   currentPage: number = 1
-  pageSize:number = 10
+  pageSize:number = 100
 
   @Emit('pageChange')
   handlePageChange (page: number, page_size: number) {
