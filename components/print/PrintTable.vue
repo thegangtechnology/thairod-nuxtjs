@@ -181,8 +181,10 @@
               </div>
             </div>
           </div>
-          <div slot="operation" class="table-form__input">
-            <img :src="RightIcon" alt="RightIcon">
+          <div slot="operation" slot-scope="record" class="table-form__input">
+            <div class="table-cursor__pointer" @click="printRow(record)">
+              <img :src="PrintImg" alt="PrintIcon">
+            </div>
           </div>
         </a-table>
       </div>
@@ -247,6 +249,8 @@ import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import RightSvg from '~/assets/icons/right-table.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
+import PrintSvg from '~/assets/images/print/print.svg'
+
 import {
   IColumns,
   columns,
@@ -272,6 +276,7 @@ export default class PrintTable extends Vue {
   private FilterIcon = FilterSvg
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
+  private PrintImg = PrintSvg
 
   data: ShipmentLine[] = this.originalData ? this.originalData : []
 
@@ -511,6 +516,12 @@ export default class PrintTable extends Vue {
     return this.changedRows
       .filter(row => row.status === status)
       .map(filtered => filtered.id)
+  }
+
+  printRow (record: ShipmentLine) {
+    if (record.tracking_code) {
+      ShipmentModule.printLabel([record.id])
+    }
   }
 }
 </script>
