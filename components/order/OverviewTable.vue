@@ -440,22 +440,24 @@ export default class OverviewTable extends Vue {
     return row[key as keyof ShipmentLine] === this.filterForm[key as keyof ShipmentFilter]
   }
 
-  handleUpdatePrint () {
-    ShipmentModule.setPrintStatus({
-      selectedRowKeys: this.selectedRowKeys,
+  async handleUpdatePrint () {
+    await ShipmentModule.setPrintStatus({
+      selectedRowKeys: ShipmentModule.getSelectedKeys,
       printStatus: false
     })
+    ShipmentModule.setSelectedKeys([])
   }
 
-  handleUpdateDelievery () {
+  async handleUpdateDelievery () {
     /**
      * If tab === 'print' => change selected to 'out' status
      * If tab === 'out' => change unselected to 'print' status
      */
-    ShipmentModule.setDeliverStatus({
-      selectedRowKeys: this.selectedRowKeys,
+    await ShipmentModule.setDeliverStatus({
+      selectedRowKeys: ShipmentModule.getSelectedKeys,
       deliverStatus: this.tabKey === 'print'
     })
+    ShipmentModule.setSelectedKeys([])
   }
 
   // handleUpdateReceived() {
@@ -471,9 +473,9 @@ export default class OverviewTable extends Vue {
   // }
 
   // if (this.option === 'updateReceived') this.handleUpdateReceived()
-  onSave () {
-    if (this.option === 'updatePrint') { this.handleUpdatePrint() }
-    if (this.option === 'updateDelivery') { this.handleUpdateDelievery() }
+  async onSave () {
+    if (this.option === 'updatePrint') { await this.handleUpdatePrint() }
+    if (this.option === 'updateDelivery') { await this.handleUpdateDelievery() }
     this.onPageChange({ current: 1, pageSize: this.pageSize })
     this.handlePageChange(1, this.pageSize, true)
     this.currentPage = 1
@@ -483,6 +485,7 @@ export default class OverviewTable extends Vue {
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+    ShipmentModule.setSelectedKeys(selectedRowKeys)
     this.sendKeysChange(selectedRowKeys)
   }
 

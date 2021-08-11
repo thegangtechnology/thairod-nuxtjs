@@ -187,7 +187,7 @@
         </a-table>
       </div>
     </div>
-    <div v-if="update" class="print-button__container">
+    <!-- <div v-if="update" class="print-button__container">
       <a-button class="print-button__cta cancel" @click="onCancelUpdate">
         <span> ยกเลิก </span>
       </a-button>
@@ -197,7 +197,7 @@
       >
         <span> บันทึก ({{ changedRows.length }}) </span>
       </a-button>
-    </div>
+    </div> -->
     <a-modal
       v-model="visibleSubmitDialog"
       class="print-modal__container"
@@ -477,6 +477,7 @@ export default class PrintTable extends Vue {
     } else {
       this.changedRows.push(newSelect)
     }
+    ShipmentModule.setChangedRows(this.changedRows)
     this.sendKeysChange(this.changedRows.map(item => item.id))
   }
 
@@ -499,6 +500,7 @@ export default class PrintTable extends Vue {
     this.visibleSubmitDialog = false
     this.onCancelUpdate()
     this.changedRows = []
+    ShipmentModule.setChangedRows([])
   }
 
   onPageChange (page: {current: number; pageSize: number}) {
@@ -508,7 +510,7 @@ export default class PrintTable extends Vue {
   }
 
   filterStatus (status: boolean) {
-    return this.changedRows
+    return ShipmentModule.getChangedRows
       .filter(row => row.status === status)
       .map(filtered => filtered.id)
   }

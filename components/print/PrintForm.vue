@@ -376,6 +376,7 @@ export default class PrintForm extends Vue {
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+    ShipmentModule.setSelectedKeys(selectedRowKeys)
     this.sendKeysChange(selectedRowKeys)
   }
 
@@ -384,11 +385,12 @@ export default class PrintForm extends Vue {
   }
 
   onSave () {
-    ShipmentModule.printLabel(this.selectedRowKeys)
+    ShipmentModule.printLabel(ShipmentModule.getSelectedKeys)
     this.visibleSubmitDialog = false
     this.currentPage = 1
     this.onSaveSelection()
     this.$router.push('/print')
+    ShipmentModule.setSelectedKeys([])
   }
 
   onPageChange (page: {current: number; pageSize: number}) {

@@ -20,6 +20,11 @@ if (store.state[name]) {
 
 type CheckBoolean = boolean | null
 
+interface IChangeRow {
+  id: number
+  status: boolean
+}
+
 @Module({
   name,
   store,
@@ -29,6 +34,10 @@ type CheckBoolean = boolean | null
 })
 class ShipmentModule extends VuexModule {
   shipmentList: ShipmentLine[] = []
+
+  selectedKeys: number[] = []
+
+  changedRows: IChangeRow[] = []
 
   // Amount of shipments => show in tabs
   totalShipment: number = 0
@@ -51,6 +60,14 @@ class ShipmentModule extends VuexModule {
 
   public get getShipmentLength (): number {
     return this.shipmentList.length
+  }
+
+  public get getSelectedKeys (): number[] {
+    return this.selectedKeys
+  }
+
+  public get getChangedRows (): IChangeRow[] {
+    return this.changedRows
   }
 
   @Mutation
@@ -103,6 +120,26 @@ class ShipmentModule extends VuexModule {
   @Mutation
   SET_NONBATCH_AMOUNT (value: number) {
     this.nonbatchShipment = value
+  }
+
+  @Mutation
+  SET_SELECTED_KEYS (payload: number[]) {
+    this.selectedKeys = payload
+  }
+
+  @Mutation
+  SET_CHANGED_ROWS (payload: IChangeRow[]) {
+    this.changedRows = payload
+  }
+
+  @Action({ rawError: true })
+  public setSelectedKeys (payload: number[]) {
+    this.SET_SELECTED_KEYS(payload)
+  }
+
+  @Action({ rawError: true })
+  public setChangedRows (payload: IChangeRow[]) {
+    this.SET_CHANGED_ROWS(payload)
   }
 
   @Action({ rawError: true })
@@ -178,7 +215,7 @@ class ShipmentModule extends VuexModule {
 
   @Action({ rawError: true })
   public printLabel (selectedRowKeys: number[]) {
-    const printURL = new URL('https://thairod.charity.dev.thegang.tech/api/printlabel/')
+    const printURL = new URL('https://backend.mall.dev.thairod.care/api/printlabel/')
     selectedRowKeys.forEach((rowKey) => {
       printURL.searchParams.append('shipments', `${rowKey}`)
     })

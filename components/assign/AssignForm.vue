@@ -330,6 +330,7 @@ export default class AssignForm extends Vue {
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+    ShipmentModule.setSelectedKeys(selectedRowKeys)
     this.sendKeysChange(selectedRowKeys)
   }
 
@@ -346,11 +347,12 @@ export default class AssignForm extends Vue {
   async onSave () {
     await ShipmentModule.updateBatch({
       batchNo: this.batchNo,
-      selectedRowKeys: this.selectedRowKeys
+      selectedRowKeys: ShipmentModule.getSelectedKeys
     })
     this.currentPage = 1
     this.onSaveSelection()
     this.$router.push('/assign')
+    ShipmentModule.setSelectedKeys([])
   }
 }
 </script>
