@@ -5,27 +5,60 @@
         กรุณาเลือกรายการสั่งซื้อเพื่อเพิ่มลงในล็อตการจัดส่ง
         <span>{{ batchNo }}</span>
       </div>
-      <div class="assign-filter__container">
-        <div class="assign-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon">
-          <span> ตัวกรองข้อมูล </span>
-        </div>
+      <div class="shipment-filter__container">
         <a-form layout="vertical">
-          <div class="assign-filter__form">
-            <div class="date">
-              <a-form-item label="วันและเวลาที่สั่ง">
-                <a-input placeholder="input search text" />
-              </a-form-item>
-            </div>
-            <div class="package">
-              <a-form-item label="สินค้าในรายการสั่งซื้อ">
-                <a-input placeholder="input search text" />
-              </a-form-item>
-            </div>
+          <div class="shipment-filter__form">
+            <a-row :gutter="16">
+              <a-col :md="4" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="วันและเวลาที่สั่ง">
+                    <a-date-picker @change="onDateFilterChange">
+                      <div slot="suffixIcon">
+                        <img :src="CalendarIcon" alt="CalendarIcon">
+                      </div>
+                    </a-date-picker>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="สินค้าในรายการสั่งซื้อ">
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      @change="handleOrderedItemFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option value="Green Package">
+                        Green Package
+                      </a-select-option>
+                      <a-select-option value="Yellow Package">
+                        Yellow Package
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="ค้นหารายการสั่งซื้อ">
+                    <a-input
+                      v-model="search"
+                      class="page-header__search"
+                      placeholder="ค้นหา"
+                    >
+                      <a-icon slot="prefix" type="search" />
+                    </a-input>
+                  </a-form-item>
+                </div>
+              </a-col>
+            </a-row>
           </div>
         </a-form>
       </div>
-      <div class="assign-table__container">
+      <div class="shipment-table__container">
         <a-table
           row-key="id"
           :row-selection="{
@@ -34,6 +67,11 @@
           }"
           :pagination="{
             total: amount,
+            position:'top',
+            showSizeChanger:true,
+            pageSize:pageSize,
+            current:currentPage,
+            pageSizeOptions:['100','200', '300', '400', String(amount)]
           }"
           :loading="loading"
           :columns="tableColumns"
@@ -44,7 +82,7 @@
             <div>
               {{ record.id }}
             </div>
-            <div>
+            <div class="sub-detail__info">
               {{ record.created_date | date }}
             </div>
           </div>
@@ -74,7 +112,7 @@
             <div>
               {{ text }}
             </div>
-            <div>
+            <div class="sub-detail__info">
               {{ record.cid }}
             </div>
           </div>
@@ -111,19 +149,6 @@
         </a-table>
       </div>
     </div>
-    <div class="assign-button__container">
-      <a-button class="assign-button__cta cancel" @click="goBack">
-        <span> ยกเลิก </span>
-      </a-button>
-      <a-button
-        class="assign-button__cta submit"
-        :disabled="selectedRowKeys.length === 0"
-        @click="visibleSubmitDialog = true"
-      >
-        <span v-if="queryType"> อัปเดต ({{ selectedRowKeys.length }}) </span>
-        <span v-else> สร้าง ({{ selectedRowKeys.length }}) </span>
-      </a-button>
-    </div>
     <!-- visibleSubmitDialog -->
     <a-modal
       v-model="visibleSubmitDialog"
@@ -148,7 +173,7 @@
           <a-button
             key="back"
             class="assign-button__cta cancel"
-            @click="visibleSubmitDialog = false"
+            @click="onSaveSelection"
           >
             ยกเลิก
           </a-button>
@@ -169,6 +194,7 @@
 <script lang="ts">
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import moment from 'moment'
+import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
 import ShipmentModule from '~/store/shipment.module'
@@ -176,13 +202,9 @@ import { ShipmentLine } from '~/types/shipment.type'
 import { IColumns, columns } from '~/static/ShipmentColumns'
 import { getBatchNumber } from '~/services/shipment.service'
 
-interface IMain {
-  [key: string]: string
-}
-
-interface IFilter extends IMain {
-  orderedDateStart: string
-  orderedDateEnd: string
+interface IFilter {
+  created_date: string
+  shipmentItem: string
 }
 
 @Component
@@ -190,35 +212,56 @@ export default class AssignForm extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
   @Prop({ required: true }) loading!: boolean
   @Prop({ required: true }) amount!: number
+  @Prop({ required: true }) save!: boolean
 
   private FilterIcon = FilterSvg
   private BoxImg = BoxSvg
+  private CalendarIcon = CalendarSvg
 
-  tabKey: string = 'All'
   batchNo: string = ''
   data: ShipmentLine[] = this.originalData ? this.originalData : []
   visibleSubmitDialog: boolean = false
 
   filterForm: IFilter = {
-    orderedDateStart: '',
-    orderedDateEnd: ''
+    created_date: '',
+    shipmentItem: ''
   }
 
   selectedRowKeys: number[] = []
 
-    @Emit('pageChange')
-  handlePageChange (page: number) {
-    return page
+  search: string = ''
+
+  currentPage: number = 1
+  pageSize:number = 100
+
+  @Emit('pageChange')
+  handlePageChange (page: number, page_size: number) {
+    return { page, page_size }
+  }
+
+  @Emit('saveSelection')
+  onSaveSelection () {
+    return false
+  }
+
+  @Emit('selectedKeys')
+  sendKeysChange (selectedRowKeys: number[]) {
+    return selectedRowKeys
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
-    onFilterChange () {
-      this.filterData()
-    }
+  onFilterChange () {
+    this.filterData()
+  }
 
   @Watch('originalData', { immediate: true, deep: true })
   onOriginalChange () {
     this.data = this.originalData
+  }
+
+  @Watch('save', { immediate: true, deep: true })
+  onSaveChange () {
+    this.visibleSubmitDialog = this.save
   }
 
   get recordsLength (): number {
@@ -241,32 +284,60 @@ export default class AssignForm extends Vue {
     this.batchNo = await getBatchNumber()
   }
 
-  onTabChange (key: string) {
-    this.tabKey = key
+  onDateFilterChange (_date: object, dateString: string) {
+    this.filterForm.created_date = dateString
   }
 
-  onDateFilterChange (_date: moment.Moment[], dateString: string[]) {
-    this.filterForm.orderedDateStart = dateString[0]
-    this.filterForm.orderedDateEnd = dateString[1]
+  handleOrderedItemFilterChange (value: { key: string; value: string }) {
+    this.filterForm.shipmentItem = value.key
   }
 
   filterData () {
     this.data = this.originalData.filter((row) => {
-      return moment(row.created_date).isBetween(
-        this.filterForm.orderedDateStart,
-        this.filterForm.orderedDateEnd,
-        'day',
-        '[]'
-      )
+      const result: boolean[] = []
+      Object.keys(this.filterForm).forEach((key) => {
+        result.push(
+          this.filterForm[key as keyof IFilter] !== ''
+            ? this.filterFields(key, row)
+            : true
+        )
+      })
+      return result.every(Boolean)
     })
+  }
+
+  filterFields (key: string, row: ShipmentLine): boolean {
+    if (key === 'orderedDate') {
+      return (
+        moment(row.created_date).format('YYYY-MM-DD') ===
+        this.filterForm.created_date
+      )
+    }
+    if (key === 'searchRecord') {
+      const columsDataIndex = this.tableColumns
+        .filter(column => column.dataIndex)
+        .map(column => column.dataIndex)
+      const searchedArray = columsDataIndex.map(col =>
+        String(row[col as keyof ShipmentLine]).includes(
+          this.filterForm.shipmentItem
+        )
+      )
+      return searchedArray.some(Boolean)
+    }
+    return false
+    // return row[key as keyof ShipmentLine] === this.filterForm[key]
   }
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+    ShipmentModule.setSelectedKeys(selectedRowKeys)
+    this.sendKeysChange(selectedRowKeys)
   }
 
-  onPageChange (page: {current: number}) {
-    this.handlePageChange(page.current)
+  onPageChange (page: {current: number; pageSize: number}) {
+    this.pageSize = page.pageSize
+    this.currentPage = page.current
+    this.handlePageChange(page.current, page.pageSize)
   }
 
   goBack () {
@@ -276,9 +347,12 @@ export default class AssignForm extends Vue {
   async onSave () {
     await ShipmentModule.updateBatch({
       batchNo: this.batchNo,
-      selectedRowKeys: this.selectedRowKeys
+      selectedRowKeys: ShipmentModule.getSelectedKeys
     })
+    this.currentPage = 1
+    this.onSaveSelection()
     this.$router.push('/assign')
+    ShipmentModule.setSelectedKeys([])
   }
 }
 </script>

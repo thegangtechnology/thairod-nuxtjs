@@ -39,29 +39,13 @@
             @pageChange="handlePageChange"
           />
         </a-tab-pane>
-        <div slot="tabBarExtraContent" class="assign-tab__buttons">
-          <a-button
-            v-if="tabKey !== 'unassign'"
-            class="assign-button__cta"
-            @click="toAssignBatch"
-          >
-            แก้ไขล็อตการจัดส่ง
-          </a-button>
-          <a-button
-            v-if="tabKey !== 'assign'"
-            class="assign-button__cta primary"
-            @click="toCreateBatch"
-          >
-            สร้างล็อตการจัดส่งใหม่
-          </a-button>
-        </div>
       </a-tabs>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Emit } from 'vue-property-decorator'
 import ShipmentModule from '~/store/shipment.module'
 
 @Component
@@ -90,45 +74,42 @@ export default class AssignOverview extends Vue {
     return ShipmentModule.batchShipment
   }
 
+  @Emit('sendTabKey')
+  handleSendTab (value: string) {
+    return value
+  }
+
   mounted () {
     ShipmentModule.initialiseShipment({})
+    this.handleSendTab('all')
   }
 
-  toCreateBatch () {
-    this.$router.push('/assign/create-batch')
+  handlePageChange (payload: {page: number; page_size: number}) {
+    this.onTabChange(this.tabKey, payload.page, payload.page_size)
   }
 
-  toAssignBatch () {
-    this.$router.push({
-      path: '/assign/create-batch',
-      query: {
-        type: 'assign'
-      }
-    })
-  }
-
-  handlePageChange (page: number) {
-    this.onTabChange(this.tabKey, page)
-  }
-
-  onTabChange (key: string, page: number = 1) {
+  onTabChange (key: string, page: number = 1, page_size: number = 100) {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
-        page
+        page,
+        page_size
       })
     }
     if (key === 'unassign') {
       ShipmentModule.initialiseShipment({
         batch_isnull: true,
-        page
+        page,
+        page_size
       })
     }
     if (key === 'assign') {
       ShipmentModule.initialiseShipment({
         batch_isnull: false,
-        page
+        page,
+        page_size
       })
     }
+    this.handleSendTab(key)
     this.tabKey = key
   }
 }

@@ -1,66 +1,85 @@
 <template>
   <div class="print-body">
     <div class="print-body__container">
-      <div class="print-filter__container">
-        <div class="print-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon">
-          <span> ตัวกรองข้อมูล </span>
-        </div>
+      <div class="shipment-filter__container">
         <a-form layout="vertical">
-          <div class="print-filter__form">
-            <div class="date">
-              <a-form-item label="วันและเวลาที่สั่ง">
-                <a-date-picker @change="onDateFilterChange">
-                  <div slot="suffixIcon">
-                    <img :src="CalendarIcon" alt="CalendarIcon">
-                  </div>
-                </a-date-picker>
-              </a-form-item>
-            </div>
-            <div class="batch">
-              <a-form-item label="ล็อตการจัดส่ง">
-                <a-select
-                  label-in-value
-                  :default-value="{ key: '' }"
-                  @change="handleBatchFilterChange"
-                >
-                  <a-select-option value="">
-                    All
-                  </a-select-option>
-                  <a-select-option
-                    v-for="batch in exportBatchSelect"
-                    :key="batch"
-                    :value="batch"
-                  >
-                    {{ batch }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </div>
-            <div class="package">
-              <a-form-item label="สินค้าในรายการสั่งซื้อ">
-                <a-select
-                  label-in-value
-                  :default-value="{ key: '' }"
-                  @change="handleOrderedItemFilterChange"
-                >
-                  <a-select-option value="">
-                    All
-                  </a-select-option>
-                  <a-select-option
-                    v-for="item in shipmentItemSelect"
-                    :key="item"
-                    :value="item"
-                  >
-                    {{ item }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </div>
+          <div class="shipment-filter__form">
+            <a-row :gutter="16">
+              <a-col :md="4" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="วันและเวลาที่สั่ง">
+                    <a-date-picker @change="onDateFilterChange">
+                      <div slot="suffixIcon">
+                        <img :src="CalendarIcon" alt="CalendarIcon">
+                      </div>
+                    </a-date-picker>
+                  </a-form-item>
+                </div>
+              </a-col>
+
+              <a-col :md="6" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="ล็อตการจัดส่ง">
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      @change="handleBatchFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option
+                        v-for="batch in exportBatchSelect"
+                        :key="batch.id"
+                        :value="batch.name"
+                      >
+                        {{ batch.name }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+
+              <a-col :md="6" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="สินค้าในรายการสั่งซื้อ">
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      @change="handleOrderedItemFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option value="Green Package">
+                        Green Package
+                      </a-select-option>
+                      <a-select-option value="Yellow Package">
+                        Yellow Package
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+
+              <a-col :md="8" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="ค้นหารายการสั่งซื้อ">
+                    <a-input
+                      v-model="search"
+                      class="page-header__search"
+                      placeholder="ค้นหา"
+                    >
+                      <a-icon slot="prefix" type="search" />
+                    </a-input>
+                  </a-form-item>
+                </div>
+              </a-col>
+            </a-row>
           </div>
         </a-form>
       </div>
-      <div class="print-table__container">
+      <div class="shipment-table__container">
         <a-table
           row-key="id"
           :row-selection="
@@ -75,6 +94,11 @@
           "
           :pagination="{
             total: amount,
+            position:'top',
+            showSizeChanger:true,
+            pageSize:pageSize,
+            current:currentPage,
+            pageSizeOptions:['100','200', '300', '400', String(amount)]
           }"
           :loading="loading"
           :columns="tableColumns"
@@ -85,7 +109,7 @@
             <div>
               {{ record.id }}
             </div>
-            <div>
+            <div class="sub-detail__info">
               {{ record.created_date | date }}
             </div>
           </div>
@@ -115,8 +139,16 @@
             <div>
               {{ text }}
             </div>
-            <div>
+            <div class="sub-detail__info">
               {{ record.cid }}
+            </div>
+          </div>
+          <div
+            slot="trackingCode"
+            slot-scope="text"
+          >
+            <div>
+              <a class="tracking-code__link" :href="`https://www.shippop.com/tracking?typeid=domestic&tracking_code=${text}`" target="_blank">{{ text }}</a>
             </div>
           </div>
           <div slot="batch" slot-scope="text, record" class="table-form__input">
@@ -149,13 +181,15 @@
               </div>
             </div>
           </div>
-          <div slot="operation" class="table-form__input">
-            <img :src="RightIcon" alt="RightIcon">
+          <div slot="operation" slot-scope="record" class="table-form__input">
+            <div class="table-cursor__pointer" @click="printRow(record)">
+              <img :src="PrintImg" alt="PrintIcon">
+            </div>
           </div>
         </a-table>
       </div>
     </div>
-    <div v-if="update" class="print-button__container">
+    <!-- <div v-if="update" class="print-button__container">
       <a-button class="print-button__cta cancel" @click="onCancelUpdate">
         <span> ยกเลิก </span>
       </a-button>
@@ -163,9 +197,9 @@
         class="print-button__cta submit"
         @click="visibleSubmitDialog = true"
       >
-        <span> อัปเดตข้อมูล ({{ changedRows.length }}) </span>
+        <span> บันทึก ({{ changedRows.length }}) </span>
       </a-button>
-    </div>
+    </div> -->
     <a-modal
       v-model="visibleSubmitDialog"
       class="print-modal__container"
@@ -188,7 +222,7 @@
           <a-button
             key="back"
             class="print-button__cta cancel"
-            @click="visibleSubmitDialog = false"
+            @click="onCancelUpdate"
           >
             ยกเลิก
           </a-button>
@@ -215,6 +249,8 @@ import CalendarSvg from '~/assets/icons/calendar.svg'
 import FilterSvg from '~/assets/icons/filter.svg'
 import RightSvg from '~/assets/icons/right-table.svg'
 import BoxSvg from '~/assets/images/print/box.svg'
+import PrintSvg from '~/assets/images/print/print.svg'
+
 import {
   IColumns,
   columns,
@@ -231,20 +267,29 @@ interface IFilter {
 @Component
 export default class PrintTable extends Vue {
   @Prop({ required: true }) update!: boolean
-  @Prop({ required: true }) search!: string
   @Prop({ required: true }) loading!: boolean
   @Prop({ required: true }) amount!: number
+  @Prop({ required: true }) save!: boolean
   @Prop({ required: true }) originalData!: ShipmentLine[]
 
   private CalendarIcon = CalendarSvg
   private FilterIcon = FilterSvg
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
+  private PrintImg = PrintSvg
 
   data: ShipmentLine[] = this.originalData ? this.originalData : []
+
   selectedRowKeys: number[] = []
+
   changedRows: { id: number; status: boolean }[] = []
+
   visibleSubmitDialog: boolean = false
+
+  currentPage:number = 1
+  pageSize:number = 100
+
+  search: string = ''
 
   filterForm: IFilter = {
     created_date: '',
@@ -254,18 +299,28 @@ export default class PrintTable extends Vue {
 
   @Emit('cancel')
   onCancelUpdate () {
-    this.importData()
+    // this.importData()
     return false
   }
 
   @Emit('pageChange')
-  handlePageChange (page: number) {
-    return page
+  handlePageChange (page: number, page_size: number, isUpdate: boolean = false) {
+    return { page, page_size, isUpdate }
+  }
+
+  @Emit('selectChange')
+  sendKeysChange (selectedRowKeys: number[]) {
+    return selectedRowKeys
   }
 
   @Watch('search', { immediate: true, deep: true })
   onSearchChange () {
     this.filterForm.shipmentItem = this.search
+  }
+
+  @Watch('save', { immediate: true, deep: true })
+  onSaveChange () {
+    this.visibleSubmitDialog = this.save
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
@@ -323,10 +378,17 @@ export default class PrintTable extends Vue {
 
   importData () {
     this.data = this.originalData
-    this.selectedRowKeys = this.originalData
-      .filter(line => line.label_printed)
-      .map(line => line.id)
-    this.changedRows = []
+    if (this.changedRows.length < 1) {
+      this.selectedRowKeys = this.originalData
+        .filter(line => line.label_printed)
+        .map(line => line.id)
+      this.changedRows = []
+    } else {
+      const deselected = this.changedRows.filter(line => !line.status).map(line => line.id)
+      this.selectedRowKeys = this.originalData
+        .filter(line => line.label_printed && !deselected.includes(line.id))
+        .map(line => line.id)
+    }
   }
 
   onDateFilterChange (_date: object, dateString: string) {
@@ -420,6 +482,8 @@ export default class PrintTable extends Vue {
     } else {
       this.changedRows.push(newSelect)
     }
+    ShipmentModule.setChangedRows(this.changedRows)
+    this.sendKeysChange(this.changedRows.map(item => item.id))
   }
 
   goBack () {
@@ -435,19 +499,31 @@ export default class PrintTable extends Vue {
       selectedRowKeys: this.filterStatus(false),
       printStatus: false
     })
+    this.onPageChange({ current: 1, pageSize: this.pageSize })
+    this.handlePageChange(1, this.pageSize, true)
+    this.currentPage = 1
     this.visibleSubmitDialog = false
-    this.onPageChange({ current: 1 })
     this.onCancelUpdate()
+    this.changedRows = []
+    ShipmentModule.setChangedRows([])
   }
 
-  onPageChange (page: {current: number}) {
-    this.handlePageChange(page.current)
+  onPageChange (page: {current: number; pageSize: number}) {
+    this.pageSize = page.pageSize
+    this.currentPage = page.current
+    this.handlePageChange(page.current, page.pageSize)
   }
 
   filterStatus (status: boolean) {
-    return this.changedRows
+    return ShipmentModule.getChangedRows
       .filter(row => row.status === status)
       .map(filtered => filtered.id)
+  }
+
+  printRow (record: ShipmentLine) {
+    if (record.tracking_code) {
+      ShipmentModule.printLabel([record.id])
+    }
   }
 }
 </script>

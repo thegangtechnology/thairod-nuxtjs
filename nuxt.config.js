@@ -123,7 +123,11 @@ export default {
     axios: {
       // proxy: true
       baseURL:
-        process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
-    },
+        process.env.SERVER_URL || 'https://backend.mall.dev.thairod.care/'
+    }
+  },
+  env: {
+    server_url:
+      process.env.SERVER_URL || 'https://backend.mall.dev.thairod.care/'
   }
 }
