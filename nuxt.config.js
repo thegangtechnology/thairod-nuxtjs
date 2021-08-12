@@ -91,7 +91,7 @@ export default {
     },
     redirect: {
       logout: '/',
-      home: '/print',
+      home: '/dashboard',
       login: '/'
     }
   },

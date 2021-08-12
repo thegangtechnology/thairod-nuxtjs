@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-layout>
-      <sidebar :collapsed="collapsed" />
+      <sidebar :collapsed="collapsed" :default-selected-menu="'procurement'" />
       <a-layout>
         <a-layout-header>
           <main-header :title="'คลังสินค้า'" :on-button-click="triggerSidebar" :sidebar-collapsed="collapsed" />
@@ -18,6 +18,7 @@
           </a-row>
           <a-row class="pagination-row">
             <a-pagination
+              id="pagination"
               v-model="currentPage"
               show-size-changer
               show-quick-jumper
@@ -36,8 +37,8 @@ import Vue from 'vue'
 import MainHeader from '~/components/procurement/headers/MainHeader.vue'
 import ItemOverview from '~/components/procurement/ItemOverview.vue'
 import ProcurementModule from '~/store/procurement.module'
-import { ItemOverviewInfo, StockInfo } from '~/types/procurement.type'
-import Sidebar from '~/components/procurement/ProcurementSidebar.vue'
+import { ItemOverviewInfo, StockInfo } from '~/types/procurement/procurement.type'
+import Sidebar from '~/components/layout/Sidebar.vue'
 
 export default Vue.extend({
   components: { MainHeader, ItemOverview, Sidebar },
@@ -45,9 +46,9 @@ export default Vue.extend({
   data () {
     return {
       currentPage: 1,
-      pageSize: 4,
+      pageSize: 1,
       search: '',
-      collapsed: false
+      collapsed: true
     }
   },
   computed: {
@@ -124,23 +125,29 @@ export default Vue.extend({
 </style>
 
 <style>
-.ant-pagination-item {
+#pagination > .ant-pagination-item {
   font-size: 14px;
 }
 
-.ant-select, .ant-icon, .ant-pagination-options, .ant-select-selection, .ant-select-dropdown-menu-item, input {
-  font-size: 16px !important;
+#pagination > li.ant-pagination-options > div.ant-select.ant-select-enabled.ant-pagination-options-size-changer > div,
+#pagination > li.ant-pagination-options > div.ant-pagination-options-quick-jumper > input[type=text] {
+  font-size: 17px;
 }
 
-.ant-pagination-item-active, .ant-pagination-item-active:focus, .ant-pagination-item-active:hover  {
-  border-color: #F9B7B7;
+#pagination > li.ant-pagination-item:active,
+#pagination > li.ant-pagination-item:focus,
+#pagination > li.ant-pagination-item-focus:focus,
+#pagination > li.ant-pagination-item:hover,
+#pagination  .ant-pagination-item-active {
+  border-color: #001740;
+  color: #001740;
 }
 
-.ant-pagination-item-active:focus a, .ant-pagination-item-active:hover a, .ant-pagination-item-active a{
-  color: #F9B7B7;
+#pagination > li.ant-pagination-item.ant-pagination-item-active:focus a,
+#pagination > .ant-pagination-item-active:hover a,
+#pagination > li.ant-pagination-item.ant-pagination-item-active a,
+#pagination > .ant-pagination-item:hover a{
+  color: #001740;
 }
 
-.ant-input-affix-wrapper .ant-input:not(:first-child) {
-  padding-left: 40px;
-}
 </style>

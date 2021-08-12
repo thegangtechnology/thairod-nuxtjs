@@ -14,7 +14,7 @@ import Vue from 'vue'
 import ProcurementHeader from '~/components/procurement/headers/ProcurementHeader.vue'
 import ItemDetailComponent from '~/components/procurement/ItemDetail.vue'
 import ProcurementModule from '~/store/procurement.module'
-import { ItemDetail, Stock } from '~/types/procurement.type'
+import { ItemDetail, Stock } from '~/types/procurement/procurement.type'
 
 export default Vue.extend({
   components: { ProcurementHeader, ItemDetailComponent },

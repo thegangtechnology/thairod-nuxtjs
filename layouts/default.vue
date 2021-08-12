@@ -49,6 +49,13 @@
           <span>จัดการคลังสินค้า</span>
         </a-menu-item>
         <a-menu-item
+          :class="{'sidebar-item-active': selectedMenu === 'dashboard'}"
+          @click="goToPage('/dashboard')"
+        >
+          <a-icon type="bar-chart" />
+          <span>ภาพรวมคลังสินค้าและการจัดส่ง</span>
+        </a-menu-item>
+        <a-menu-item
           :class="{'sidebar-item-active': selectedMenu === 'order-overview'}"
           @click="goToPage('/order-overview')"
         >
@@ -83,13 +90,13 @@
 
 <script lang='ts'>
 import Vue from 'vue'
-import { UserInfo } from '~/types/procurement.type'
+import { UserInfo } from '~/types/procurement/procurement.type'
 
 export default Vue.extend({
   data () {
     return {
       collapsed: false,
-      menuPaths: ['procurement', 'order-overview', 'assign', 'print']
+      menuPaths: ['procurement', 'dashboard', 'order-overview', 'assign', 'print']
     }
   },
   computed: {

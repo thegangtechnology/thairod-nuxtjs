@@ -1,6 +1,6 @@
 <template>
   <a-col :xs="{span: 12}" :sm="{span: 8}" :lg="{span: 4}">
-    <a-card>
+    <a-card id="item-overview-card">
       <img
         slot="cover"
         alt="item-image"
@@ -21,9 +21,9 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
-import { ItemOverviewInfo, Stock } from '~/types/procurement.type'
+import { ItemOverviewInfo, Stock } from '~/types/procurement/procurement.type'
 import { productImageMap } from '~/data/image-map'
-import { defaultItemOverviewInfo, defaultStock } from '~/types/procurement.default'
+import { defaultItemOverviewInfo, defaultStock } from '~/types/procurement/procurement.default'
 
 export default Vue.extend({
   components: { SecondaryButton },
@@ -54,9 +54,8 @@ export default Vue.extend({
 </script>
 
 <style>
-.ant-card-body {
-  padding-top: 0;
-  padding-bottom: 12px;
+#item-overview-card > div.ant-card-body {
+  padding: 12px 24px;
 }
 </style>
 

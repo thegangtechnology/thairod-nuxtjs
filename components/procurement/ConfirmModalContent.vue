@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import { UpdateInventoryFormData, Warehouse } from '~/types/procurement.type'
+import { UpdateInventoryFormData, Warehouse } from '~/types/procurement/procurement.type'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
 

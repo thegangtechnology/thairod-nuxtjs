@@ -7,7 +7,7 @@
     collapsed-width="0"
     width="300px"
   >
-    <sidebar-content />
+    <sidebar-content :default-selected-menu="defaultSelectedMenu" />
   </a-layout-sider>
 </template>
 
@@ -21,13 +21,16 @@ export default Vue.extend({
   props: {
     collapsed: {
       type: Boolean,
-      default: false
+      default: true
+    },
+    defaultSelectedMenu: {
+      type: String,
+      default: 'dashboard'
     }
   },
   data () {
     return {
-      sidebarCollapsed: false,
-      userInfo: [{ firstName: 'เติมศิริ', lastName: 'ธัยยามาตย์', role: 'Admin' }]
+      sidebarCollapsed: true
     }
   },
   watch: {

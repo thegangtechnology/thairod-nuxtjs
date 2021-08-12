@@ -6,7 +6,7 @@ export interface ProductVariationsParam {
   search: string
 }
 
-export interface ProductVariationsReturn {
+export interface ProductVariationsResponse {
   itemOverviewInfo: ItemOverviewInfo[],
   totalItems: number
 }

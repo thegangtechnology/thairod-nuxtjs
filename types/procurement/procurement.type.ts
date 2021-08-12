@@ -48,8 +48,10 @@ export interface Stock {
   fulfilled: number,
   procured: number,
   adjustment: number,
+  ordered: number,
   pending: number,
   currentTotal: number
+  toBeShipped: number
 }
 
 export interface StockInfo {
