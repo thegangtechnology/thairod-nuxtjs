@@ -1,65 +1,85 @@
 <template>
   <div class="print-body">
     <div class="print-body__container">
-      <div class="print-filter__container">
-        <div class="print-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon">
-          <span> ตัวกรองข้อมูล </span>
-        </div>
+      <div class="shipment-filter__container">
         <a-form layout="vertical">
-          <div class="print-filter__form">
-            <div class="date">
-              <a-form-item label="วันและเวลาที่สั่ง">
-                <a-date-picker @change="onDateFilterChange">
-                  <div slot="suffixIcon">
-                    <img :src="CalendarIcon" alt="CalendarIcon">
-                  </div>
-                </a-date-picker>
-              </a-form-item>
-            </div>
-            <div class="batch">
-              <a-form-item label="ล็อตการจัดส่ง">
-                <a-select
-                  label-in-value
-                  :default-value="{ key: '' }"
-                  @change="handleBatchFilterChange"
-                >
-                  <a-select-option value="">
-                    All
-                  </a-select-option>
-                  <a-select-option
-                    v-for="batch in exportBatchSelect"
-                    :key="batch.id"
-                    :value="batch.name"
-                  >
-                    {{ batch.name }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </div>
-            <div class="package">
-              <a-form-item label="สินค้าในรายการสั่งซื้อ">
-                <a-select
-                  label-in-value
-                  :default-value="{ key: '' }"
-                  @change="handleOrderedItemFilterChange"
-                >
-                  <a-select-option value="">
-                    All
-                  </a-select-option>
-                  <a-select-option value="Green Package">
-                    Green Package
-                  </a-select-option>
-                  <a-select-option value="Yellow Package">
-                    Yellow Package
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </div>
+          <div class="shipment-filter__form">
+            <a-row :gutter="16">
+              <a-col :md="4" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="วันและเวลาที่สั่ง">
+                    <a-date-picker @change="onDateFilterChange">
+                      <div slot="suffixIcon">
+                        <img :src="CalendarIcon" alt="CalendarIcon">
+                      </div>
+                    </a-date-picker>
+                  </a-form-item>
+                </div>
+              </a-col>
+
+              <a-col :md="6" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="ล็อตการจัดส่ง">
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      @change="handleBatchFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option
+                        v-for="batch in exportBatchSelect"
+                        :key="batch.id"
+                        :value="batch.name"
+                      >
+                        {{ batch.name }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+
+              <a-col :md="6" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="สินค้าในรายการสั่งซื้อ">
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      @change="handleOrderedItemFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option value="Green Package">
+                        Green Package
+                      </a-select-option>
+                      <a-select-option value="Yellow Package">
+                        Yellow Package
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+
+              <a-col :md="8" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="ค้นหารายการสั่งซื้อ">
+                    <a-input
+                      v-model="search"
+                      class="page-header__search"
+                      placeholder="ค้นหา"
+                    >
+                      <a-icon slot="prefix" type="search" />
+                    </a-input>
+                  </a-form-item>
+                </div>
+              </a-col>
+            </a-row>
           </div>
         </a-form>
       </div>
-      <div class="print-table__container">
+      <div class="shipment-table__container">
         <a-table
           row-key="id"
           :row-selection="{
@@ -68,6 +88,11 @@
           }"
           :pagination="{
             total: amount,
+            position:'top',
+            showSizeChanger:true,
+            pageSize:pageSize,
+            current:currentPage,
+            pageSizeOptions:['100','200', '300', '400', String(amount)]
           }"
           :loading="loading"
           :columns="tableColumns"
@@ -145,18 +170,6 @@
         </a-table>
       </div>
     </div>
-    <div class="print-button__container">
-      <a-button class="print-button__cta cancel" @click="goBack">
-        <span> ยกเลิก </span>
-      </a-button>
-      <a-button
-        class="print-button__cta submit"
-        :disabled="updateAmount === 0"
-        @click="visibleSubmitDialog = true"
-      >
-        <span> พิมพ์ ({{ updateAmount }}) </span>
-      </a-button>
-    </div>
     <a-modal
       v-model="visibleSubmitDialog"
       class="print-modal__container"
@@ -178,7 +191,7 @@
           <a-button
             key="back"
             class="print-button__cta cancel"
-            @click="visibleSubmitDialog = false"
+            @click="onSaveSelection"
           >
             ยกเลิก
           </a-button>
@@ -215,10 +228,10 @@ interface IFilter {
 
 @Component
 export default class PrintForm extends Vue {
-  @Prop({ required: true }) search!: string
-    @Prop({ required: true }) loading!: boolean
+  @Prop({ required: true }) loading!: boolean
   @Prop({ required: true }) amount!: number
   @Prop({ required: true }) originalData!: ShipmentLine[]
+  @Prop({ required: true }) save!: boolean
 
   private BoxImg = BoxSvg
   private CalendarIcon = CalendarSvg
@@ -237,9 +250,24 @@ export default class PrintForm extends Vue {
 
   visibleSubmitDialog: boolean = false
 
+  search: string = ''
+
+  currentPage: number = 1
+  pageSize:number = 100
+
   @Emit('pageChange')
-  handlePageChange (page: number) {
-    return page
+  handlePageChange (page: number, page_size: number) {
+    return { page, page_size }
+  }
+
+  @Emit('saveSelection')
+  onSaveSelection () {
+    return false
+  }
+
+  @Emit('selectedKeys')
+  sendKeysChange (selectedRowKeys: number[]) {
+    return selectedRowKeys
   }
 
   @Watch('search', { immediate: true, deep: true })
@@ -255,6 +283,11 @@ export default class PrintForm extends Vue {
   @Watch('originalData', { immediate: true, deep: true })
   onOriginalChange () {
     this.importData()
+  }
+
+  @Watch('save', { immediate: true, deep: true })
+  onSaveChange () {
+    this.visibleSubmitDialog = this.save
   }
 
   get recordsLength (): number {
@@ -343,6 +376,8 @@ export default class PrintForm extends Vue {
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+    ShipmentModule.setSelectedKeys(selectedRowKeys)
+    this.sendKeysChange(selectedRowKeys)
   }
 
   goBack () {
@@ -350,13 +385,17 @@ export default class PrintForm extends Vue {
   }
 
   onSave () {
-    ShipmentModule.printLabel(this.selectedRowKeys)
+    ShipmentModule.printLabel(ShipmentModule.getSelectedKeys)
     this.visibleSubmitDialog = false
+    this.currentPage = 1
+    this.onSaveSelection()
     this.$router.push('/print')
+    ShipmentModule.setSelectedKeys([])
   }
 
-  onPageChange (page: {current: number}) {
-    this.handlePageChange(page.current)
+  onPageChange (page: {current: number; pageSize: number}) {
+    this.pageSize = page.pageSize
+    this.handlePageChange(page.current, page.pageSize)
   }
 }
 </script>

@@ -15,8 +15,10 @@
             :update="isUpdate"
             :loading="isLoading"
             :amount="getTotalLength"
+            :save="save"
             @pageChange="handlePageChange"
-            @cancel="handleCancelUpdate"
+            @cancel="onSaveChange"
+            @selectChange="onSelectChange"
           />
         </a-tab-pane>
         <a-tab-pane key="unprinted">
@@ -28,7 +30,10 @@
             :update="false"
             :loading="isLoading"
             :amount="getUnprintedLength"
+            :save="save"
             @pageChange="handlePageChange"
+            @cancel="onSaveChange"
+            @selectChange="onSelectChange"
           />
         </a-tab-pane>
         <a-tab-pane key="printed">
@@ -40,45 +45,79 @@
             :update="isUpdate"
             :loading="isLoading"
             :amount="getPrintedLength"
+            :save="save"
             @pageChange="handlePageChange"
-            @cancel="handleCancelUpdate"
+            @cancel="onSaveChange"
+            @selectChange="onSelectChange"
           />
         </a-tab-pane>
-        <div
-          v-if="!isUpdate"
-          slot="tabBarExtraContent"
-          class="print-tab__buttons"
-        >
-          <a-button
-            v-if="tabKey !== 'unprinted'"
-            class="print-button__cta"
-            @click="isUpdate = true"
-          >
-            อัปเดตการพิมพ์ใบจัดส่ง
-          </a-button>
-          <a-button
-            v-if="tabKey !== 'printed'"
-            class="print-button__cta primary"
-            @click="toCreatePrint"
-          >
-            พิมพ์ใบจัดส่งสินค้า
-          </a-button>
-        </div>
+        <!--        <div-->
+        <!--          v-if="!isUpdate"-->
+        <!--          slot="tabBarExtraContent"-->
+        <!--          class="print-tab__buttons"-->
+        <!--        >-->
+        <!--          <a-button-->
+        <!--            v-if="tabKey !== 'unprinted'"-->
+        <!--            class="print-button__cta"-->
+        <!--            @click="isUpdate = true"-->
+        <!--          >-->
+        <!--            อัปเดตการพิมพ์ใบจัดส่ง-->
+        <!--          </a-button>-->
+        <!--          <a-button-->
+        <!--            v-if="tabKey !== 'printed'"-->
+        <!--            class="print-button__cta primary"-->
+        <!--            @click="toCreatePrint"-->
+        <!--          >-->
+        <!--            พิมพ์ใบจัดส่งสินค้า-->
+        <!--          </a-button>-->
+        <!--        </div>-->
       </a-tabs>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
 import ShipmentModule from '~/store/shipment.module'
 
 @Component
 export default class PrintOverview extends Vue {
   @Prop({ required: true }) search!: string
+  @Prop({ required: true }) option!: boolean
+  @Prop({ required: true }) save!: boolean
 
   tabKey: string = 'all'
   isUpdate: boolean = false
+
+  @Watch('option', { immediate: true, deep: true })
+  onOptionChange () {
+    this.isUpdate = this.option
+  }
+
+  @Emit('sendTabKey')
+  handleSendTab (value: string) {
+    return value
+  }
+
+  @Emit('selectedKeys')
+  onSelectChange (selectedKeys: number[]) {
+    return selectedKeys
+  }
+
+  @Emit('sendTabUpdate')
+  handleSendTabUpdate (value: boolean) {
+    return value
+  }
+
+  @Emit('sendCancelTabUpdate')
+  handleCancelTabUpdate (value: boolean) {
+    return value
+  }
+
+  @Emit('saveSelection')
+  onSaveChange (isSave: boolean = false) {
+    return { savable: false, isSave }
+  }
 
   get isLoading () {
     return ShipmentModule.loading
@@ -106,39 +145,48 @@ export default class PrintOverview extends Vue {
 
   handleCancelUpdate () {
     this.isUpdate = false
+    this.handleSendTabUpdate(this.isUpdate)
   }
 
-  handlePageChange (page: number) {
-    this.onTabChange(this.tabKey, page, true)
-    this.isUpdate = true
+  handlePageChange (payload: {page: number; page_size: number, isUpdate: boolean}) {
+    this.onTabChange(this.tabKey, payload.page, payload.page_size, payload.isUpdate)
+    // this.handleSendTabUpdate(false)
   }
 
   toCreatePrint () {
     this.$router.push('/print/create-print')
   }
 
-  onTabChange (key: string, page: number = 1, isUpdate: boolean = false) {
+  onTabChange (key: string, page: number = 1, page_size: number = 100, isUpdate: boolean = false) {
     if (key === 'all') {
       ShipmentModule.initialiseShipment({
-        page
+        page,
+        page_size
       })
     }
     if (key === 'unprinted') {
       ShipmentModule.initialiseShipment({
         label_printed: false,
         deliver: false,
-        page
+        page,
+        page_size
       })
     }
     if (key === 'printed') {
       ShipmentModule.initialiseShipment({
         label_printed: true,
         deliver: false,
-        page
+        page,
+        page_size
       })
     }
+    if (this.tabKey !== key) {
+      this.handleSendTab(key)
+    }
     this.tabKey = key
-    this.isUpdate = isUpdate
+    if (isUpdate) {
+      this.onSaveChange(true)
+    }
   }
 }
 </script>

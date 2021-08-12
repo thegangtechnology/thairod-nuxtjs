@@ -1,62 +1,83 @@
 <template>
   <div class="overview-body">
-    <div class="overview-body__container">
-      <div class="overview-filter__container">
-        <div class="overview-filter__header">
-          <img :src="FilterIcon" alt="FilterIcon">
-          <span> ตัวกรองข้อมูล </span>
-        </div>
-        <a-form layout="vertical">
-          <div class="overview-filter__form">
-            <div class="date">
-              <a-form-item label="วันและเวลาที่สั่ง">
-                <a-date-picker @change="onDateFilterChange">
-                  <div slot="suffixIcon">
-                    <img :src="CalendarIcon" alt="CalendarIcon">
-                  </div>
-                </a-date-picker>
-              </a-form-item>
-            </div>
-            <div class="batch">
-              <a-form-item label="ล็อตการจัดส่ง">
-                <a-select
-                  label-in-value
-                  :default-value="{ key: '' }"
-                  @change="handleBatchFilterChange"
-                >
-                  <a-select-option value="">
-                    All
-                  </a-select-option>
-                  <a-select-option
-                    v-for="batch in exportBatchSelect"
-                    :key="batch"
-                    :value="batch"
+    <div class="shipment-body__container">
+      <div class="shipment-filter__container">
+        <a-form>
+          <div class="shipment-filter__form">
+            <a-row :gutter="16">
+              <a-col :md="4" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="วันและเวลาที่สั่ง">
+                    <a-date-picker @change="onDateFilterChange">
+                      <div slot="suffixIcon" class="date-picker__custom">
+                        <img :src="CalendarIcon" alt="CalendarIcon">
+                      </div>
+                    </a-date-picker>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="ล็อตการจัดส่ง" block>
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      style="width: 100%"
+                      @change="handleBatchFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option
+                        v-for="batch in exportBatchSelect"
+                        :key="batch"
+                        :value="batch"
+                      >
+                        {{ batch }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item
+                    label="สินค้าในรายการสั่งซื้อ"
                   >
-                    {{ batch }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </div>
-            <div class="package">
-              <a-form-item label="สินค้าในรายการสั่งซื้อ">
-                <a-select
-                  label-in-value
-                  :default-value="{ key: '' }"
-                  @change="handleOrderedItemFilterChange"
-                >
-                  <a-select-option value="">
-                    All
-                  </a-select-option>
-                  <a-select-option
-                    v-for="item in shipmentItemSelect"
-                    :key="item"
-                    :value="item"
-                  >
-                    {{ item }}
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </div>
+                    <a-select
+                      label-in-value
+                      :default-value="{ key: '' }"
+                      style="width: 100%"
+                      @change="handleOrderedItemFilterChange"
+                    >
+                      <a-select-option value="">
+                        All
+                      </a-select-option>
+                      <a-select-option
+                        v-for="item in shipmentItemSelect"
+                        :key="item"
+                        :value="item"
+                      >
+                        {{ item }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <div class="filter-input__container">
+                  <a-form-item label="ค้นหารายการสั่งซื้อ">
+                    <a-input
+                      v-model="search"
+                      class="input__search"
+                      placeholder="ค้นหา"
+                    >
+                      <a-icon slot="prefix" type="search" />
+                    </a-input>
+                  </a-form-item>
+                </div>
+              </a-col>
+            </a-row>
           </div>
         </a-form>
       </div>
@@ -74,18 +95,23 @@
             "
             :pagination="{
               total: amount,
+              position:'top',
+              showSizeChanger:true,
+              pageSize:pageSize,
+              current:currentPage,
+              pageSizeOptions:['100','200', '300', '400', String(amount)]
             }"
             :loading="loading"
             :columns="tableColumns"
             :data-source="data"
-            :custom-row="option === 'default' ? customRow : null"
             @change="onPageChange"
           >
+            <!--            :custom-row="option === 'default' ? customRow : null"-->
             <div slot="id" slot-scope="text, record" class="table-form__input">
               <div>
                 {{ record.id }}
               </div>
-              <div>
+              <div class="sub-detail__info">
                 {{ record.created_date | date }}
               </div>
             </div>
@@ -104,7 +130,7 @@
               class="table-form__input"
             >
               <div v-for="item in record.shipmentItem" :key="item.id">
-                x{{ item.quantity }} {{ item.unit }}
+                x{{ item.quantity }}
               </div>
             </div>
             <div
@@ -115,8 +141,16 @@
               <div>
                 {{ text }}
               </div>
-              <div>
+              <div class="sub-detail__info">
                 {{ record.cid }}
+              </div>
+            </div>
+            <div
+              slot="trackingCode"
+              slot-scope="text"
+            >
+              <div>
+                <a class="tracking-code__link" :href="`https://www.shippop.com/tracking?typeid=domestic&tracking_code=${text}`" target="_blank">{{ text }}</a>
               </div>
             </div>
             <div
@@ -156,23 +190,14 @@
                 </div>
               </div>
             </div>
-            <div slot="operation" class="table-form__input">
-              <img :src="RightIcon" alt="RightIcon">
+            <div slot="operation" slot-scope="record" class="table-form__input">
+              <div class="table-cursor__pointer" @click="customRowTo(record)">
+                <img :src="RightIcon" alt="RightIcon">
+              </div>
             </div>
           </a-table>
         </div>
       </div>
-    </div>
-    <div v-if="option !== 'default'" class="overview-button__container">
-      <a-button class="overview-button__cta cancel" @click="cancelUpdate">
-        <span> ยกเลิก </span>
-      </a-button>
-      <a-button
-        class="overview-button__cta submit"
-        @click="visibleSubmitDialog = true"
-      >
-        <span> อัปเดตข้อมูล ({{ updateIdList.length }}) </span>
-      </a-button>
     </div>
     <a-modal
       v-model="visibleSubmitDialog"
@@ -197,14 +222,14 @@
         <div class="overview-modal__footer">
           <a-button
             key="back"
-            class="overview-button__cta cancel"
-            @click="visibleSubmitDialog = false"
+            class="overview-button__cta no-border-btn cancel"
+            @click="onCancelSubmit"
           >
             ยกเลิก
           </a-button>
           <a-button
             key="submit"
-            class="overview-button__cta submit"
+            class="overview-button__cta no-border-btn submit"
             type="primary"
             @click="onSave"
           >
@@ -232,12 +257,11 @@ import {
 } from '~/static/ShipmentColumns'
 import { ShipmentFilter, ShipmentLine } from '~/types/shipment.type'
 
-type Status = 'wait' | 'print' | 'out' | 'received'
-
 @Component
 export default class OverviewTable extends Vue {
   @Prop({ required: true }) originalData!: ShipmentLine[]
   @Prop({ required: true }) loading!: boolean
+  @Prop({ required: true }) save!: boolean
   @Prop({ required: true }) option!: string
   @Prop({ required: true }) search!: string
   @Prop({ required: true }) amount!: number
@@ -249,6 +273,8 @@ export default class OverviewTable extends Vue {
   private RightIcon = RightSvg
   private BoxImg = BoxSvg
 
+  pageSize:number = 100
+  currentPage:number = 1
   data: ShipmentLine[] = []
   selectedRowKeys: number[] = []
   originalSelectedRowKeys: number[] = []
@@ -267,13 +293,28 @@ export default class OverviewTable extends Vue {
   }
 
   @Emit('pageChange')
-  handlePageChange (page: number) {
-    return page
+  handlePageChange (page: number, page_size: number, isSave: boolean = false) {
+    return { page, page_size, isSave }
+  }
+
+  @Emit('selectChange')
+  sendKeysChange (selectedRowKeys: number[]) {
+    return selectedRowKeys
+  }
+
+  @Emit('cancelSubmit')
+  onCancelSubmit () {
+    return false
   }
 
   @Watch('search', { immediate: true, deep: true })
   onSearchChange () {
     this.filterForm.search = this.search
+  }
+
+  @Watch('save', { immediate: true, deep: true })
+  onSaveChange () {
+    this.visibleSubmitDialog = this.save
   }
 
   @Watch('filterForm', { immediate: true, deep: true })
@@ -308,12 +349,6 @@ export default class OverviewTable extends Vue {
     return this.$itemSelection(this.originalData)
   }
 
-  get unselectedIds () {
-    return this.data
-      .filter(item => !this.selectedRowKeys.includes(item.id))
-      .map(filtered => filtered.id)
-  }
-
   get getModalDescription () {
     if (this.option === 'updatePrint') {
       if (this.tabKey === 'wait') {
@@ -340,24 +375,7 @@ export default class OverviewTable extends Vue {
   }
 
   get updateIdList (): number[] {
-    if (this.option === 'updatePrint') {
-      return this.unselectedIds
-    }
-    if (this.option === 'updateDelivery') {
-      if (this.tabKey === 'print') {
-        return this.selectedRowKeys
-      } else {
-        return this.unselectedIds
-      }
-    }
-    if (this.option === 'updateReceived') {
-      if (this.tabKey === 'out') {
-        return this.selectedRowKeys
-      } else {
-        return this.unselectedIds
-      }
-    }
-    return []
+    return this.selectedRowKeys
   }
 
   get tableColumns (): IColumns[] {
@@ -374,25 +392,7 @@ export default class OverviewTable extends Vue {
   }
 
   initSelect () {
-    this.originalSelectedRowKeys = this.originalData
-      .filter((item) => {
-        return this.handleCondition(item.status)
-      })
-      .map(filtered => filtered.id)
-    this.selectedRowKeys = this.originalSelectedRowKeys
-  }
-
-  handleCondition (status: Status) {
-    if (this.option === 'updatePrint') {
-      return status === 'print'
-    }
-    if (this.option === 'updateDelivery') {
-      return status === 'out'
-    }
-    if (this.option === 'updateReceived') {
-      return status === 'received'
-    }
-    return true
+    this.selectedRowKeys = []
   }
 
   onDateFilterChange (_date: object, dateString: string) {
@@ -440,29 +440,24 @@ export default class OverviewTable extends Vue {
     return row[key as keyof ShipmentLine] === this.filterForm[key as keyof ShipmentFilter]
   }
 
-  handleUpdatePrint () {
-    ShipmentModule.setPrintStatus({
-      selectedRowKeys: this.unselectedIds,
+  async handleUpdatePrint () {
+    await ShipmentModule.setPrintStatus({
+      selectedRowKeys: ShipmentModule.getSelectedKeys,
       printStatus: false
     })
+    ShipmentModule.setSelectedKeys([])
   }
 
-  handleUpdateDelievery () {
+  async handleUpdateDelievery () {
     /**
      * If tab === 'print' => change selected to 'out' status
      * If tab === 'out' => change unselected to 'print' status
      */
-    if (this.tabKey === 'print') {
-      ShipmentModule.setDeliverStatus({
-        selectedRowKeys: this.selectedRowKeys,
-        deliverStatus: true
-      })
-    } else {
-      ShipmentModule.setDeliverStatus({
-        selectedRowKeys: this.unselectedIds,
-        deliverStatus: false
-      })
-    }
+    await ShipmentModule.setDeliverStatus({
+      selectedRowKeys: ShipmentModule.getSelectedKeys,
+      deliverStatus: this.tabKey === 'print'
+    })
+    ShipmentModule.setSelectedKeys([])
   }
 
   // handleUpdateReceived() {
@@ -478,19 +473,26 @@ export default class OverviewTable extends Vue {
   // }
 
   // if (this.option === 'updateReceived') this.handleUpdateReceived()
-  onSave () {
-    if (this.option === 'updatePrint') { this.handleUpdatePrint() }
-    if (this.option === 'updateDelivery') { this.handleUpdateDelievery() }
-    this.onPageChange({ current: 1 })
+  async onSave () {
+    if (this.option === 'updatePrint') { await this.handleUpdatePrint() }
+    if (this.option === 'updateDelivery') { await this.handleUpdateDelievery() }
+    this.onPageChange({ current: 1, pageSize: this.pageSize })
+    this.handlePageChange(1, this.pageSize, true)
+    this.currentPage = 1
     this.visibleSubmitDialog = false
+    this.initSelect()
   }
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
+    ShipmentModule.setSelectedKeys(selectedRowKeys)
+    this.sendKeysChange(selectedRowKeys)
   }
 
-  onPageChange (page: {current: number}) {
-    this.handlePageChange(page.current)
+  onPageChange (page: { current: number; pageSize: number }) {
+    this.pageSize = page.pageSize
+    this.currentPage = page.current
+    this.handlePageChange(page.current, page.pageSize)
   }
 
   customRow (record: ShipmentLine) {
@@ -501,6 +503,10 @@ export default class OverviewTable extends Vue {
         }
       }
     }
+  }
+
+  customRowTo (record: ShipmentLine) {
+    this.$router.push(`/order-overview/${record.id}`)
   }
 }
 </script>

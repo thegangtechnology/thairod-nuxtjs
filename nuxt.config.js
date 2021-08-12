@@ -125,5 +125,9 @@ export default {
       baseURL:
         process.env.SERVER_URL || 'https://backend.mall.dev.thairod.care/'
     }
+  },
+  env: {
+    server_url:
+      process.env.SERVER_URL || 'https://backend.mall.dev.thairod.care/'
   }
 }

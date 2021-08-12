@@ -68,19 +68,6 @@
     background: rgba(0, 23, 64, 0.05);
     border-radius: 12px;
     margin-bottom: 1.25rem;
-    .assign-filter__header {
-      font-style: normal;
-      font-weight: bold;
-      font-size: 18px;
-      line-height: 24px;
-      color: #001740;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      img {
-        margin-right: 0.5rem;
-      }
-    }
     .assign-filter__form {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -149,8 +136,8 @@
     justify-content: center;
     align-items: center;
     .assign-row__status {
-      border-radius: 20px;
-      padding: 5px 12px;
+      border-radius: 4px;
+      padding: 2px 12px;
       font-style: normal;
       font-weight: bold;
       font-size: 14px;
@@ -158,9 +145,13 @@
       display: flex;
       &.wait {
         background: #fab752;
+        //border: 1px solid #fab752;
+        //background: rgba(250, 183, 82 , 0.20);
       }
       &.print {
         background: #ffe458;
+        //background: rgb(255 228 88 / 40%);
+        //border: 1px solid #ffe458;
       }
       &.out {
         background: #87eb7e;
@@ -174,6 +165,32 @@
     }
   }
 }
+
+.shipment-table__container{
+
+  .tracking-code__link{
+    color: #5A92E5;
+    text-decoration: underline;
+  }
+  .ant-table-row{
+    cursor:default;
+  }
+  .ant-pagination{
+    position:relative;
+    text-align:right;
+    margin-bottom: 20px;
+    width:100%
+  }
+  ul.ant-table-pagination li.ant-pagination-options:nth-last-child(1) {
+    order: 1!important;
+    float:left;
+    margin-left: 0;
+  }
+  .table-cursor__pointer{
+    cursor:pointer;
+  }
+}
+
 .assign-button__container {
   border-top: 1px solid #e8eaee;
   display: flex;
@@ -274,4 +291,20 @@
       }
     }
   }
+}
+
+.assign-body__container{
+    .sub-detail__info{
+      color: #999999;
+    }
+    .tracking-code__link{
+      color: #5A92E5;
+      text-decoration: underline;
+    }
+    .ant-table-row{
+      cursor:default;
+    }
+    .table-cursor__pointer{
+      cursor:pointer;
+    }
 }
