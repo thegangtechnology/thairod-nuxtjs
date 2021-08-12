@@ -1,6 +1,7 @@
 const apiPath = {
   address: 'api/address',
   batchShipment: 'api/batch-shipments',
+  dashboard: 'api/dashboard',
   order: 'api/orders',
   orderItems: 'api/order-items',
   orderFlow: {
@@ -10,6 +11,7 @@ const apiPath = {
     patientCheckout: 'api/order-flows/patient-checkout',
   },
   printLabel: 'api/printlabel',
+  printOfTheDay: 'api/print-of-the-day',
   product: 'api/products',
   productImage: 'api/product-images',
   productVariation: 'api/product-variations',

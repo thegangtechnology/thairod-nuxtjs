@@ -13,10 +13,10 @@
 import Vue from 'vue'
 import UpdateInventoryForm from '~/components/procurement/UpdateInventoryForm.vue'
 import ProcurementHeader from '~/components/procurement/headers/ProcurementHeader.vue'
-import { UpdateInventoryFormData, Warehouse } from '~/types/procurement.type'
+import { UpdateInventoryFormData, Warehouse } from '~/types/procurement/procurement.type'
 import ProcurementModule from '~/store/procurement.module'
 import { updateProcurement } from '~/services/procurement.service'
-import { UpdateProcurementBody } from '~/types/procurementService.type'
+import { UpdateProcurementBody } from '~/types/procurement/procurement-service.type'
 
 export default Vue.extend(
   {

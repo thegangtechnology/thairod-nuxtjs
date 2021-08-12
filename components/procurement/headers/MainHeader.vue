@@ -37,7 +37,7 @@ export default Vue.extend({
 }
 
 .title {
-  color: black;
+  color: #001740;
   font-size: 24px;
   font-weight: bold;
   min-width: 120px;

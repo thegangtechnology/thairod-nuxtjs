@@ -1,13 +1,13 @@
 import { AxiosResponse } from 'axios'
-import { ItemDetail, ItemOverviewInfo, StockInfo } from '~/types/procurement.type'
+import { ItemDetail, ItemOverviewInfo, StockInfo } from '~/types/procurement/procurement.type'
 import { $axios } from '~/utils/api'
 import apiPath from '~/data/api_path'
 import {
   ProductVariationsParam,
-  ProductVariationsReturn,
+  ProductVariationsResponse,
   UpdateProcurementBody
-} from '~/types/procurementService.type'
-import { defaultItemDetail } from '~/types/procurement.default'
+} from '~/types/procurement/procurement-service.type'
+import { defaultItemDetail } from '~/types/procurement/procurement.default'
 import { Warehouse } from '~/models/Warehouse'
 
 export function getStockInfo (idList: number[] | string[]) : Promise<StockInfo> {
@@ -22,7 +22,7 @@ export function getStockInfo (idList: number[] | string[]) : Promise<StockInfo> 
     })
 }
 
-export function getItemOverviewInfo (params: ProductVariationsParam) : Promise<ProductVariationsReturn> {
+export function getItemOverviewInfo (params: ProductVariationsParam) : Promise<ProductVariationsResponse> {
   return $axios
     .get(`${apiPath.productVariation}/`, {
       params

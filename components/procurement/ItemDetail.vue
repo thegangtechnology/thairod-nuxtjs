@@ -60,9 +60,9 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
-import { ItemDetail, Stock } from '~/types/procurement.type'
+import { ItemDetail, Stock } from '~/types/procurement/procurement.type'
 import { productImageMap } from '~/data/image-map'
-import { defaultItemDetail, defaultStock } from '~/types/procurement.default'
+import { defaultItemDetail, defaultStock } from '~/types/procurement/procurement.default'
 
 export default Vue.extend({
   components: { PrimaryButton },

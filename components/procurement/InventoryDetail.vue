@@ -38,8 +38,8 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
-import { WarehouseStock, InventoryDetailCard } from '~/types/procurement.type'
-import { defaultInventoryDetailCard } from '~/types/procurement.default'
+import { WarehouseStock, InventoryDetailCard } from '~/types/procurement/procurement.type'
+import { defaultInventoryDetailCard } from '~/types/procurement/procurement.default'
 
 export default Vue.extend({
   props: {

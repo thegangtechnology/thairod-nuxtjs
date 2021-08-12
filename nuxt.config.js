@@ -91,7 +91,7 @@ export default {
     },
     redirect: {
       logout: '/',
-      home: '/print',
+      home: '/dashboard',
       login: '/'
     }
   },
@@ -123,7 +123,7 @@ export default {
     axios: {
       // proxy: true
       baseURL:
-        process.env.SERVER_URL || 'https://thairod.charity.dev.thegang.tech/'
-    },
+        process.env.SERVER_URL || 'https://backend.mall.dev.thairod.care/'
+    }
   }
 }

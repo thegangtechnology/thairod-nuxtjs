@@ -5,10 +5,10 @@ import {
   ItemOverviewInfo,
   Warehouse,
   StockInfo, Stock
-} from '~/types/procurement.type'
+} from '~/types/procurement/procurement.type'
 import { getItemOverviewInfo, getItemDetail, getWarehouseList, getStockInfo } from '~/services/procurement.service'
-import { ProductVariationsParam } from '~/types/procurementService.type'
-import { defaultItemDetail, defaultStock } from '~/types/procurement.default'
+import { ProductVariationsParam } from '~/types/procurement/procurement-service.type'
+import { defaultItemDetail, defaultStock } from '~/types/procurement/procurement.default'
 
 // remove duplicate module
 const name: string = 'procurementModule'

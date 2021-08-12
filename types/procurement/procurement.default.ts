@@ -26,6 +26,8 @@ export const defaultStock: Stock = {
   fulfilled: 0,
   procured: 0,
   adjustment: 0,
+  ordered: 0,
   pending: 0,
-  currentTotal: 0
+  currentTotal: 0,
+  toBeShipped: 0
 }

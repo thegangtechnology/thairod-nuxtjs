@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="update-inventory-form">
     <div class="container">
       <img
         alt="item-image"
@@ -53,7 +53,7 @@
       </a-row>
     </div>
     <a-modal
-      class="modal"
+      id="update-inventory-modal"
       :visible="modal.visible"
       :confirm-loading="modal.confirmLoading"
       :footer="null"
@@ -70,7 +70,7 @@ import Vue, { PropType } from 'vue'
 import ConfirmModalContent from '~/components/procurement/ConfirmModalContent.vue'
 import PrimaryButton from '~/components/procurement/buttons/PrimaryButton.vue'
 import SecondaryButton from '~/components/procurement/buttons/SecondaryButton.vue'
-import { Warehouse } from '~/types/procurement.type'
+import { Warehouse } from '~/types/procurement/procurement.type'
 import { productImageMap } from '~/data/image-map'
 
 export default Vue.extend({
@@ -129,18 +129,18 @@ export default Vue.extend({
 </script>
 
 <style lang="less">
-.ant-select-selection {
+#update-inventory-form .ant-select-selection {
   border-radius: 25px;
   height: 38px;
   padding-top: 4px;
   font-size: 20px !important;
 }
 
-.ant-input-number-handler-wrap {
+#update-inventory-form .ant-input-number-handler-wrap {
   background-color: transparent;
 }
 
-.ant-modal {
+#update-inventory-modal .ant-modal{
   max-width: 80vw;
 }
 

@@ -14,20 +14,27 @@
         </a-list-item-meta>
       </a-list-item>
     </a-list>
-    <a-menu mode="inline" :default-selected-keys="['1']">
-      <a-menu-item key="1" @click="$router.push('/procurement')">
+    <a-menu mode="inline" :default-selected-keys="[defaultSelectedMenu]">
+      <a-menu-item key="procurement" @click="$router.push('/procurement')">
         <a-icon type="shop" />
         <span>จัดการคลังสินค้า</span>
       </a-menu-item>
-      <a-menu-item key="2" @click="$router.push('/order-overview')">
+      <a-menu-item
+        key="dashboard"
+        @click="$router.push('/dashboard')"
+      >
+        <a-icon type="bar-chart" />
+        <span>ภาพรวมคลังสินค้าและการจัดส่ง</span>
+      </a-menu-item>
+      <a-menu-item key="order-overview" @click="$router.push('/order-overview')">
         <a-icon type="profile" />
         <span>ภาพรวมรายการจัดสั่ง</span>
       </a-menu-item>
-      <a-menu-item key="3" @click="$router.push('/assign')">
+      <a-menu-item key="assign" @click="$router.push('/assign')">
         <a-icon type="build" />
         <span>จัดการล็อตรายการจัดส่ง</span>
       </a-menu-item>
-      <a-menu-item key="4" @click="$router.push('/print')">
+      <a-menu-item key="print" @click="$router.push('/print')">
         <a-icon type="printer" />
         <span>พิมพ์ใบจัดส่งสินค้า</span>
       </a-menu-item>
@@ -41,12 +48,16 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { UserInfo } from '~/types/procurement.type'
+import { UserInfo } from '~/types/procurement/procurement.type'
 
 export default Vue.extend({
   components: {},
   layout: 'empty',
   props: {
+    defaultSelectedMenu: {
+      type: String,
+      default: 'dashboard'
+    }
   },
   data () {
     return {
