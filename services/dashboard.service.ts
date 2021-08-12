@@ -1,9 +1,9 @@
-import { AxiosResponse } from 'axios'
-import { $axios } from '~/utils/api'
+import {AxiosResponse} from 'axios'
+import {$axios} from '~/utils/api'
 import apiPath from '~/data/api_path'
-import { DashboardResponse } from '~/types/dashboard/dashboard-service.type'
+import {DashboardResponse} from '~/types/dashboard/dashboard-service.type'
 
-export function getDashboardInfo () : Promise<DashboardResponse> {
+export function getDashboardInfo(): Promise<DashboardResponse> {
   return $axios
     .get(`${apiPath.dashboard}/`)
     .then((res) => {
@@ -14,12 +14,12 @@ export function getDashboardInfo () : Promise<DashboardResponse> {
     })
 }
 
-export function printShipment (dateStr: string) : Promise<AxiosResponse> {
+export function printShipment(dateStr: string) {
   const dateObj = new Date(dateStr)
   const year = dateObj.getFullYear()
   const month_no = dateObj.getMonth() + 1
   const month = month_no < 10 ? '0' + month_no : month_no
   const date = dateObj.getDate() < 10 ? '0' + dateObj.getDate() : dateObj.getDate()
-  console.log(`${apiPath.printOfTheDay}/?date=${year}-${month}-${date}`)
-  return $axios.get(`${apiPath.printOfTheDay}/?date=${year}-${month}-${date}`)
+  const url = `${process.env.server_url}${apiPath.printOfTheDay}/?date=${year}-${month}-${date}`
+  window.open(url, '_blank')
 }
