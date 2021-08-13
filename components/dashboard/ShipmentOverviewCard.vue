@@ -16,8 +16,6 @@
           :xs="24"
           class="tag-col"
         >
-<!--          <a-tag v-if="hasEnoughStock()" class="green-tag">มีสินค้าในคลังเพียงพอ</a-tag>-->
-<!--          <a-tag v-else class="red-tag">มีสินค้าในคลังไม่เพียงพอ</a-tag>-->
         </a-col>
         <a-col :xl="4" :lg="5" :md="7" :sm="10" :xs="24">
           <a-button class="dashboard-btn" :disabled="shipmentOverview.totalShipmentConfirmed <= 0" @click="onPrintShipment(shipmentOverview.end)">
@@ -44,7 +42,6 @@
           <td class="spacer" />
           <td>
             x {{ stock.ordered }}
-            <!--            <span v-if="stock.fulfilled < stock.ordered" class="asterisk">*</span>-->
           </td>
         </tr>
       </a-descriptions-item>
@@ -59,7 +56,6 @@
           <td class="spacer" />
           <td>
             x {{ stock.toBeShipped }}
-<!--            <span v-if="stock.fulfilled < stock.ordered" class="asterisk">*</span>-->
           </td>
         </tr>
       </a-descriptions-item>
@@ -96,9 +92,6 @@ export default Vue.extend({
     onPrintShipment (date: string) : void {
       printShipment(date)
     }
-    // hasEnoughStock (): boolean {
-    //   return this.shipmentOverview.totalShipmentConfirmed >= this.shipmentOverview.totalShipmentCreated
-    // }
   }
 })
 </script>
@@ -134,27 +127,11 @@ export default Vue.extend({
   width: calc(100% - 6px);
 }
 
-.red-tag {
-  color: #FF8787;
-  border-color: #FF8787;
-  background-color: rgba(255, 135, 135, 0.15);
-}
-
-.green-tag {
-  color: #61C57D;
-  border-color: #61C57D;
-  background-color: #61c57d1f;
-}
-
 #shipment-overview-card {
   margin: 0 0 24px 0;
 }
 
-.asterisk {
-  color: #FF8787;
-}
-
-.dashboard-btn, .dashboard-btn:hover, .dashboard-btn:active, .dashboard-btn:focus {
+.dashboard-btn {
   border: 2px solid #001740;
   font-size: 18px;
   font-weight: bold;
