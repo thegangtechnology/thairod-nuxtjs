@@ -15,10 +15,13 @@
           :sm="8"
           :xs="24"
           class="tag-col"
-        >
-        </a-col>
+        />
         <a-col :xl="4" :lg="5" :md="7" :sm="10" :xs="24">
-          <a-button class="dashboard-btn" :disabled="shipmentOverview.totalShipmentConfirmed <= 0" @click="onPrintShipment(shipmentOverview.end)">
+          <a-button
+            :class="isPrintNotAllowed ? 'ant-btn-disabled' : 'ant-btn'"
+            :disabled="isPrintNotAllowed"
+            @click="onPrintShipment(shipmentOverview.end)"
+          >
             <a-icon type="printer" /> พิมพ์ใบจัดส่งสินค้า
           </a-button>
         </a-col>
@@ -79,6 +82,11 @@ export default Vue.extend({
   data () {
     return {}
   },
+  computed: {
+    isPrintNotAllowed () : boolean {
+      return this.shipmentOverview.totalShipmentConfirmed <= 0
+    }
+  },
   methods: {
     formatDate (date: string): string {
       return new Date(date).toLocaleString('th', {
@@ -91,7 +99,7 @@ export default Vue.extend({
     },
     onPrintShipment (date: string) : void {
       printShipment(date)
-    }
+    },
   }
 })
 </script>
@@ -123,7 +131,7 @@ export default Vue.extend({
   text-align: right;
 }
 
-.dashboard-btn {
+.print-shipment-btn {
   width: calc(100% - 6px);
 }
 
@@ -131,11 +139,19 @@ export default Vue.extend({
   margin: 0 0 24px 0;
 }
 
-.dashboard-btn {
+.ant-btn, .ant-btn:hover, .ant-btn:active, .ant-btn:focus {
   border: 2px solid #001740;
   font-size: 18px;
   font-weight: bold;
   color: #001740;
+}
+
+.ant-btn-disabled {
+  color: rgba(0, 0, 0, 0.25);
+  background-color: #f5f5f5;
+  border-color: #d9d9d9;
+  text-shadow: none;
+  box-shadow: none;
 }
 
 </style>

@@ -40,6 +40,7 @@ export default Vue.extend({
 #dashboard-layout .ant-layout-header {
   height: 60px;
   padding: 0;
+  width: 100vw;
 }
 
 #dashboard-layout .ant-layout-content {
