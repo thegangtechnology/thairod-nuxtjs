@@ -129,7 +129,7 @@
             class="table-form__input"
           >
             <div v-for="item in record.shipmentItem" :key="item.id">
-              x{{ item.quantity }} {{ item.unit }}
+              x{{ item.quantity }}
             </div>
           </div>
           <div
