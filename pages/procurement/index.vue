@@ -46,7 +46,7 @@ export default Vue.extend({
   data () {
     return {
       currentPage: 1,
-      pageSize: 1,
+      pageSize: 4,
       search: '',
       collapsed: true
     }
