@@ -28,7 +28,7 @@
       </a-menu-item>
       <a-menu-item key="order-overview" @click="$router.push('/order-overview')">
         <a-icon type="profile" />
-        <span>ภาพรวมรายการจัดสั่ง</span>
+        <span>ภาพรวมรายการจัดส่ง</span>
       </a-menu-item>
       <a-menu-item key="assign" @click="$router.push('/assign')">
         <a-icon type="build" />

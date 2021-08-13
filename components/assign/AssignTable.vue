@@ -89,7 +89,8 @@
             position: 'top',
             showSizeChanger: true,
             pageSize: pageSize,
-            pageSizeOptions:['100','200', '300', '400', String(amount)]
+            pageSizeOptions:['100','200', '300', '400', String(amount)],
+            class: 'default-pagination'
           }"
           :custom-row="customRow"
           :loading="loading"

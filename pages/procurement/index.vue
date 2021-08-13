@@ -18,12 +18,12 @@
           </a-row>
           <a-row class="pagination-row">
             <a-pagination
-              id="pagination"
               v-model="currentPage"
               show-size-changer
               show-quick-jumper
               :total="totalItems"
               :default-page-size="pageSize"
+              class="default-pagination"
             />
           </a-row>
         </a-layout-content>
@@ -125,29 +125,4 @@ export default Vue.extend({
 </style>
 
 <style>
-#pagination > .ant-pagination-item {
-  font-size: 14px;
-}
-
-#pagination > li.ant-pagination-options > div.ant-select.ant-select-enabled.ant-pagination-options-size-changer > div,
-#pagination > li.ant-pagination-options > div.ant-pagination-options-quick-jumper > input[type=text] {
-  font-size: 17px;
-}
-
-#pagination > li.ant-pagination-item:active,
-#pagination > li.ant-pagination-item:focus,
-#pagination > li.ant-pagination-item-focus:focus,
-#pagination > li.ant-pagination-item:hover,
-#pagination  .ant-pagination-item-active {
-  border-color: #001740;
-  color: #001740;
-}
-
-#pagination > li.ant-pagination-item.ant-pagination-item-active:focus a,
-#pagination > .ant-pagination-item-active:hover a,
-#pagination > li.ant-pagination-item.ant-pagination-item-active a,
-#pagination > .ant-pagination-item:hover a{
-  color: #001740;
-}
-
 </style>
