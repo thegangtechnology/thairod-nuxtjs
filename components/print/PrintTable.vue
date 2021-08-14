@@ -98,7 +98,8 @@
             showSizeChanger:true,
             pageSize:pageSize,
             current:currentPage,
-            pageSizeOptions:['100','200', '300', '400', String(amount)]
+            pageSizeOptions:['100','200', '300', '400', String(amount)],
+            class: 'default-pagination'
           }"
           :loading="loading"
           :columns="tableColumns"
@@ -128,7 +129,7 @@
             class="table-form__input"
           >
             <div v-for="item in record.shipmentItem" :key="item.id">
-              x{{ item.quantity }} {{ item.unit }}
+              x{{ item.quantity }}
             </div>
           </div>
           <div

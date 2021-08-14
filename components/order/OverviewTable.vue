@@ -99,7 +99,8 @@
               showSizeChanger:true,
               pageSize:pageSize,
               current:currentPage,
-              pageSizeOptions:['100','200', '300', '400', String(amount)]
+              pageSizeOptions:['100','200', '300', '400', String(amount)],
+              class: 'default-pagination'
             }"
             :loading="loading"
             :columns="tableColumns"
