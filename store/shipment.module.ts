@@ -12,6 +12,7 @@ import {
   ShipmentLine
 } from '~/types/shipment.type'
 import { getShipmentDetail, getShipments, setDeliverStatus, setPrintStatus, updateBatchNumber } from '~/services/shipment.service'
+import { $axios } from '~/utils/api'
 
 const name: string = 'shipmentModule'
 if (store.state[name]) {
@@ -215,7 +216,7 @@ class ShipmentModule extends VuexModule {
 
   @Action({ rawError: true })
   public printLabel (selectedRowKeys: number[]) {
-    const printURL = new URL(`${process.env.server_url}api/printlabel/`)
+    const printURL = new URL(`${$axios.defaults.baseURL}api/printlabel/`)
     selectedRowKeys.forEach((rowKey) => {
       printURL.searchParams.append('shipments', `${rowKey}`)
     })

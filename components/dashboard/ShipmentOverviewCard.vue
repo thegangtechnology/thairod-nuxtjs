@@ -98,7 +98,7 @@ export default Vue.extend({
       })
     },
     onPrintShipment (date: string) : void {
-      printShipment(date)
+      printShipment(date, this.$config.axios.baseURL)
     },
   }
 })
@@ -146,7 +146,7 @@ export default Vue.extend({
   color: #001740;
 }
 
-.ant-btn-disabled {
+.ant-btn-disabled, .ant-btn-disabled:hover {
   color: rgba(0, 0, 0, 0.25);
   background-color: #f5f5f5;
   border-color: #d9d9d9;
