@@ -20,7 +20,7 @@
                 class="assign-button__cta"
                 @click="isUpdate = true"
               >
-                อัปเดตการพิมพ์ใบจัดส่ง
+                แก้ไขการพิมพ์ใบจัดส่ง
               </a-button>
               <a-button
                 v-if="tabKey !== 'printed'"
@@ -38,7 +38,7 @@
                 class="overview-button__cta no-border-btn submit"
                 @click="onSave"
               >
-                <span> บันทึก ({{ selectedRowKeys.length }}) </span>
+                <span> แก้ไข ({{ selectedRowKeys.length }}) </span>
               </a-button>
             </div>
           </div>
