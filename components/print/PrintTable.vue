@@ -87,8 +87,6 @@
               ? {
                 selectedRowKeys: selectedRowKeys,
                 onChange: onSelectChange,
-                onSelect: handleSelectChange,
-                onSelectAll: handleSelectAllChange,
               }
               : null
           "
@@ -198,7 +196,7 @@
         class="print-button__cta submit"
         @click="visibleSubmitDialog = true"
       >
-        <span> บันทึก ({{ changedRows.length }}) </span>
+        <span> บันทึก ({{ selectedRowKeys.length }}) </span>
       </a-button>
     </div> -->
     <a-modal
@@ -215,7 +213,7 @@
         ยืนยันการอัปเดตข้อมูล
       </div>
       <div class="print-modal__subtitle">
-        รายการสั่งซื้อจำนวน ({{ changedRows.length }}) รายการ
+        รายการสั่งซื้อจำนวน ({{ selectedRowKeys.length }}) รายการ
         กำลังจะถูกอัปเดตข้อมูลการพิมพ์ใบจัดส่ง
       </div>
       <template slot="footer">
@@ -282,8 +280,6 @@ export default class PrintTable extends Vue {
   data: ShipmentLine[] = this.originalData ? this.originalData : []
 
   selectedRowKeys: number[] = []
-
-  changedRows: { id: number; status: boolean }[] = []
 
   visibleSubmitDialog: boolean = false
 
@@ -379,17 +375,7 @@ export default class PrintTable extends Vue {
 
   importData () {
     this.data = this.originalData
-    if (this.changedRows.length < 1) {
-      this.selectedRowKeys = this.originalData
-        .filter(line => line.label_printed)
-        .map(line => line.id)
-      this.changedRows = []
-    } else {
-      const deselected = this.changedRows.filter(line => !line.status).map(line => line.id)
-      this.selectedRowKeys = this.originalData
-        .filter(line => line.label_printed && !deselected.includes(line.id))
-        .map(line => line.id)
-    }
+    this.selectedRowKeys = []
   }
 
   onDateFilterChange (_date: object, dateString: string) {
@@ -453,38 +439,8 @@ export default class PrintTable extends Vue {
 
   onSelectChange (selectedRowKeys: number[]) {
     this.selectedRowKeys = selectedRowKeys
-  }
-
-  handleSelectAllChange (
-    selected: boolean,
-    _selectedRows: ShipmentLine[],
-    changedRows: ShipmentLine[]
-  ) {
-    changedRows.forEach((row) => {
-      this.handleSelectChange(row, selected)
-    })
-  }
-
-  handleSelectChange (record: ShipmentLine, selected: boolean) {
-    const allChangeId: number[] = this.changedRows.map(item => item.id)
-    const newSelect = {
-      id: record.id,
-      status: selected
-    }
-    if (allChangeId.includes(record.id)) {
-      this.changedRows = this.changedRows
-        .map(item => (item.id === record.id ? newSelect : item))
-        .filter((mapped) => {
-          const originalRow = this.originalData.find(
-            item => item.id === mapped.id
-          )
-          return originalRow && originalRow.label_printed !== mapped.status
-        })
-    } else {
-      this.changedRows.push(newSelect)
-    }
-    ShipmentModule.setChangedRows(this.changedRows)
-    this.sendKeysChange(this.changedRows.map(item => item.id))
+    ShipmentModule.setSelectedKeys(selectedRowKeys)
+    this.sendKeysChange(selectedRowKeys)
   }
 
   goBack () {
@@ -493,11 +449,7 @@ export default class PrintTable extends Vue {
 
   onSave () {
     ShipmentModule.setPrintStatus({
-      selectedRowKeys: this.filterStatus(true),
-      printStatus: true
-    })
-    ShipmentModule.setPrintStatus({
-      selectedRowKeys: this.filterStatus(false),
+      selectedRowKeys: ShipmentModule.getSelectedKeys,
       printStatus: false
     })
     this.onPageChange({ current: 1, pageSize: this.pageSize })
@@ -505,20 +457,14 @@ export default class PrintTable extends Vue {
     this.currentPage = 1
     this.visibleSubmitDialog = false
     this.onCancelUpdate()
-    this.changedRows = []
-    ShipmentModule.setChangedRows([])
+    ShipmentModule.setSelectedKeys([])
+    this.importData()
   }
 
   onPageChange (page: {current: number; pageSize: number}) {
     this.pageSize = page.pageSize
     this.currentPage = page.current
     this.handlePageChange(page.current, page.pageSize)
-  }
-
-  filterStatus (status: boolean) {
-    return ShipmentModule.getChangedRows
-      .filter(row => row.status === status)
-      .map(filtered => filtered.id)
   }
 
   printRow (record: ShipmentLine) {
