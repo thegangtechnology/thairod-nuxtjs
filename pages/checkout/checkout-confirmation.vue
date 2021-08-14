@@ -22,6 +22,7 @@
       :closable='false'
       :footer='null'
       :style="{width: '130px'}"
+      :mask-closable='false'
       class='modal'
     >
       <div class='modal-content'>
