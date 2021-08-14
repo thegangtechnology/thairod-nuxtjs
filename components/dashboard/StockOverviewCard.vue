@@ -9,8 +9,8 @@
       </a-list-item-meta>
     </a-list-item>
     <a-list-item>
-      <a-list-item-meta :description="stockOverview.stock.procured.toLocaleString() + ' ' + stockOverview.unit">
-        <span slot="title">ยอดรวมสะสม</span>
+      <a-list-item-meta :description="stockOverview.stock.fulfilled.toLocaleString() + ' ' + stockOverview.unit">
+        <span slot="title">ยอดใช้ไปรวมสะสม</span>
       </a-list-item-meta>
     </a-list-item>
   </a-card>
