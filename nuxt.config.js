@@ -96,7 +96,7 @@ export default {
     },
     cookie: {
       options: {
-        domain: '.mall.dev.thairod.care'
+        domain: 'mall.dev.thairod.care'
       }
     }
   },
