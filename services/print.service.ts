@@ -1,14 +1,15 @@
 import { $axios } from '~/utils/api'
 
-export function openPrintResponse (url: string) : void {
-  const tab = window.open('')
-  if (tab === null) { return }
-  $axios
+export function openPrintResponse (url: string) : Promise<void> {
+  return $axios
     .get(url)
     .then((res) => {
-      tab.document.write(res.request.response)
+      const tab = window.open('')
+      if (tab !== null) {
+        tab.document.write(res.request.response)
+      }
     })
-    .catch(() => {
-      $nuxt.error({ statusCode: 404 })
+    .catch((err) => {
+      window.$nuxt.error({ statusCode: err.statusCode })
     })
 }
