@@ -10,6 +10,7 @@ export function openPrintResponse (url: string) : Promise<void> {
       }
     })
     .catch((err) => {
-      window.$nuxt.error({ statusCode: err.statusCode })
+      // @ts-ignore
+      $nuxt.error({ statusCode: err.statusCode })
     })
 }
