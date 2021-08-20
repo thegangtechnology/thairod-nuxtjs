@@ -1,6 +1,6 @@
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-  ssr: true,
+  ssr: false,
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -93,11 +93,6 @@ export default {
       logout: '/',
       home: '/dashboard',
       login: '/'
-    },
-    cookie: {
-      options: {
-        domain: 'mall.dev.thairod.care'
-      }
     }
   },
 
