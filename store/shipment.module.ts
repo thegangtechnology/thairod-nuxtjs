@@ -13,6 +13,7 @@ import {
 } from '~/types/shipment.type'
 import { getShipmentDetail, getShipments, setDeliverStatus, setPrintStatus, updateBatchNumber } from '~/services/shipment.service'
 import { $axios } from '~/utils/api'
+import { openPrintResponse } from '~/services/print.service'
 
 const name: string = 'shipmentModule'
 if (store.state[name]) {
@@ -199,7 +200,7 @@ class ShipmentModule extends VuexModule {
     selectedRowKeys.forEach((rowKey) => {
       printURL.searchParams.append('shipments', `${rowKey}`)
     })
-    window.open(printURL.href, 'Print')?.focus()
+    openPrintResponse(printURL)
     this.setPrintStatus({ selectedRowKeys, printStatus: true })
   }
 }

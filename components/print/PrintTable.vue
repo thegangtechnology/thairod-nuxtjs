@@ -181,7 +181,7 @@
             </div>
           </div>
           <div slot="operation" slot-scope="record" class="table-form__input">
-            <div class="table-cursor__pointer" @click="printRow(record)">
+            <div class="table-cursor__pointer" v-if="record.tracking_code" @click="printRow(record)">
               <img :src="PrintImg" alt="PrintIcon">
             </div>
           </div>
