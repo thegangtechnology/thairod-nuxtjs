@@ -200,8 +200,10 @@ class ShipmentModule extends VuexModule {
     selectedRowKeys.forEach((rowKey) => {
       printURL.searchParams.append('shipments', `${rowKey}`)
     })
-    openPrintResponse(printURL)
-    this.setPrintStatus({ selectedRowKeys, printStatus: true })
+    openPrintResponse(printURL.toString())
+      .then(() => {
+        this.setPrintStatus({ selectedRowKeys, printStatus: true })
+      })
   }
 }
 
